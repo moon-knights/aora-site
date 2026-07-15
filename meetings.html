@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>جلسات مجازی — آرا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+<nav class="nav" id="mainNav"><div class="container">
+<a href="index.html" class="nav-logo">آ<span>را</span></a>
+<a href="index.html" style="font-size:.75rem;color:var(--text-muted)">بازگشت</a>
+</div></nav>
+
+<div class="tool-page">
+<div class="tool-header">
+<div class="container">
+<div class="tool-icon" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)">📹</div>
+<div>
+<h1>جلسات مجازی آرا</h1>
+<p>جلسات تعاملی برگزار کنید — اشتراک تصویر، صفحه، چت و اتاق‌های گروهی</p>
+</div>
+</div>
+</div>
+
+<div class="container">
+<div class="stats-row">
+<div class="stat-card"><div class="num" id="totalMeetings">0</div><div class="label">جلسات</div></div>
+<div class="stat-card"><div class="num">100</div><div class="label">حداکثر شرکت‌کننده</div></div>
+<div class="stat-card"><div class="num">HD</div><div class="label">کیفیت ویدیو</div></div>
+</div>
+
+<!-- ایجاد / پیوستن -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem">
+
+<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem">
+<h3 style="font-size:1rem;font-weight:600;color:var(--text-primary);margin-bottom:1rem">📹 جلسه جدید</h3>
+<input type="text" id="newMeetingTitle" placeholder="عنوان جلسه" style="width:100%;padding:.6rem 1rem;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-family:var(--font-fa);font-size:.85rem;outline:none;margin-bottom:1rem">
+<input type="text" id="newMeetingHost" placeholder="نام شما" style="width:100%;padding:.6rem 1rem;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-family:var(--font-fa);font-size:.85rem;outline:none;margin-bottom:1rem">
+<button class="btn-primary" id="createMeeting" style="width:100%;justify-content:center">ایجاد و ورود</button>
+</div>
+
+<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem">
+<h3 style="font-size:1rem;font-weight:600;color:var(--text-primary);margin-bottom:1rem">🔗 پیوستن به جلسه</h3>
+<input type="text" id="joinCode" placeholder="xxx-xxx-xxxx" class="lobby-input mono" style="margin-bottom:1rem">
+<input type="text" id="joinName" placeholder="نام شما" style="width:100%;padding:.6rem 1rem;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-family:var(--font-fa);font-size:.85rem;outline:none;margin-bottom:1rem">
+<button class="btn-primary" id="joinMeeting" style="width:100%;justify-content:center;background:var(--bg-surface);border:1px solid var(--accent);color:var(--accent)">پیوستن</button>
+</div>
+
+</div>
+
+<!-- لیست جلسات -->
+<h3 style="font-size:1rem;font-weight:600;color:var(--text-primary);margin-bottom:1rem">جلسات اخیر</h3>
+<div id="meetingsList" class="meetings-grid"></div>
+
+</div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/meeting.js"></script>
+<script src="js/access.js"></script>
+<script>
+$(document).ready(function(){
+  renderMeetings();
+
+  $('#createMeeting').on('click', function(){
+    var title = $('#newMeetingTitle').val().trim() || 'جلسه جدید';
+    var host = $('#newMeetingHost').val().trim() || 'میزبان';
+    var meeting = Meeting.create({ title: title, host: host });
+    window.location.href = 'meeting-lobby.html?id=' + meeting.id + '&name=' + encodeURIComponent(host);
+  });
+
+  $('#joinMeeting').on('click', function(){
+    var code = $('#joinCode').val().trim();
+    var name = $('#joinName').val().trim();
+    if(!code){ alert('کد جلسه را وارد کنید.'); return; }
+    if(!name){ alert('نام خود را وارد کنید.'); return; }
+
+    var meeting = Meeting.getByCode(code);
+    if(!meeting){
+      alert('جلسه‌ای با این کد یافت نشد.');
+      return;
+    }
+    window.location.href = 'meeting-lobby.html?id=' + meeting.id + '&name=' + encodeURIComponent(name);
+  });
+
+  function renderMeetings(){
+    var meetings = Meeting.getAll();
+    $('#totalMeetings').text(meetings.length);
+
+    if(meetings.length === 0){
+      $('#meetingsList').html('<div style="text-align:center;padding:2rem;color:var(--text-muted);font-size:.85rem">جلسه‌ای ثبت نشده. اولین جلسه خود را ایجاد کنید.</div>');
+      return;
+    }
+
+    var html = '';
+    meetings.forEach(function(m){
+      var date = new Date(m.createdAt);
+      var dateStr = date.toLocaleDateString('fa-IR') + ' — ' + date.toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'});
+      var statusClass = m.status === 'live' ? 'live' : m.status === 'scheduled' ? 'scheduled' : 'ended';
+      var statusText = m.status === 'live' ? 'در حال برگزاری' : m.status === 'scheduled' ? 'برنامه‌ریزی‌شده' : 'پایان‌یافته';
+
+      html += '<div class="meeting-card">';
+      html += '<div class="card-top">';
+      html += '<div class="card-icon" style="background:linear-gradient(135deg,#1b5e20,#388e3c)">📹</div>';
+      html += '<div><h3>' + m.title + '</h3><p style="font-family:var(--font-mono);font-size:.72rem;direction:ltr;color:var(--text-muted)">' + m.code + '</p></div>';
+      html += '</div>';
+      html += '<div class="card-meta">';
+      html += '<span>📅 ' + dateStr + '</span>';
+      html += '<span class="status-badge ' + statusClass + '">' + statusText + '</span>';
+      html += '</div>';
+      html += '<div style="display:flex;gap:.5rem;margin-top:1rem">';
+      html += '<a href="meeting-lobby.html?id=' + m.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">ورود</a>';
+      html += '<button onclick="copyCode(\'' + m.code + '\')" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">کپی کد</button>';
+      html += '<button onclick="deleteMeeting(\'' + m.id + '\')" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem;color:#e74c3c;border-color:#e74c3c">حذف</button>';
+      html += '</div></div>';
+    });
+
+    $('#meetingsList').html(html);
+  }
+
+  window.copyCode = function(code){
+    if(navigator.clipboard) navigator.clipboard.writeText(code);
+    prompt('کد جلسه را کپی کنید:', code);
+  };
+
+  window.deleteMeeting = function(id){
+    if(confirm('حذف شود؟')){ Meeting.delete(id); renderMeetings(); }
+  };
+});
+</script>
+</body>
+</html>

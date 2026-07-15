@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>بازارچه دوره‌ها — آئورا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+/* ── استایل‌های اختصاصی بازارچه ── */
+.marketplace{padding-top:80px;min-height:100vh}
+.market-hero{background:linear-gradient(180deg,var(--bg-surface),var(--bg-deep));padding:3rem 0 2rem;text-align:center}
+.market-hero h1{font-size:2rem;font-weight:800;color:var(--text-primary);margin-bottom:.5rem}
+.market-hero p{font-size:.88rem;color:var(--text-muted);margin-bottom:2rem}
+.search-box{max-width:600px;margin:0 auto;position:relative}
+.search-box input{width:100%;padding:1rem 1.25rem 1rem 3rem;background:var(--bg-card);border:2px solid var(--border);border-radius:var(--radius-lg);color:var(--text-primary);font-family:var(--font-fa);font-size:.95rem;outline:none;transition:border-color var(--ease)}
+.search-box input:focus{border-color:var(--accent)}
+.search-box .search-icon{position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:1.1rem;color:var(--text-muted)}
+.categories-bar{padding:1rem 0;border-bottom:1px solid var(--border);background:var(--bg-deep);position:sticky;top:60px;z-index:90}
+.categories-scroll{display:flex;gap:.5rem;overflow-x:auto;padding:0 1.5rem;scrollbar-width:none;-ms-overflow-style:none}
+.categories-scroll::-webkit-scrollbar{display:none}
+.cat-chip{padding:.45rem 1rem;background:var(--bg-card);border:1px solid var(--border);border-radius:30px;font-size:.75rem;color:var(--text-muted);cursor:pointer;transition:all var(--ease);white-space:nowrap;flex-shrink:0}
+.cat-chip:hover,.cat-chip.active{background:var(--accent-glow);border-color:var(--accent);color:var(--accent)}
+.market-filters{padding:1.5rem 0;display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+.filter-select{padding:.45rem .75rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-family:var(--font-fa);font-size:.75rem;outline:none;cursor:pointer}
+.filter-select:focus{border-color:var(--accent)}
+.results-count{font-size:.78rem;color:var(--text-muted);margin-right:auto}
+.sort-select{padding:.45rem .75rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-family:var(--font-fa);font-size:.75rem;outline:none}
+.market-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem;padding-bottom:3rem}
+.market-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:all var(--ease);display:flex;flex-direction:column}
+.market-card:hover{border-color:var(--accent-dim);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.market-card .card-img{height:160px;background:linear-gradient(135deg,var(--bg-elevated),var(--bg-surface));display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.market-card .card-img .course-emoji{font-size:3.5rem}
+.market-card .card-img .badge-discount{position:absolute;top:10px;right:10px;background:#e74c3c;color:#fff;font-size:.6rem;font-weight:600;padding:.2rem .5rem;border-radius:20px}
+.market-card .card-img .badge-level{position:absolute;top:10px;left:10px;padding:.2rem .5rem;border-radius:20px;font-size:.58rem;font-weight:500}
+.badge-mb{background:rgba(76,175,80,.2);color:#4caf50}
+.badge-md{background:rgba(33,150,243,.2);color:#2196f3}
+.badge-adv{background:rgba(255,152,0,.2);color:#ff9800}
+.market-card .card-body{padding:1rem;flex:1;display:flex;flex-direction:column}
+.market-card .card-title{font-size:.88rem;font-weight:600;color:var(--text-primary);margin-bottom:.5rem;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.market-card .card-instructor{font-size:.72rem;color:var(--text-muted);margin-bottom:.75rem;display:flex;align-items:center;gap:6px}
+.market-card .card-instructor .inst-avatar{width:22px;height:22px;border-radius:50%;background:var(--accent-glow);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.5rem;font-weight:600}
+.market-card .card-stats{display:flex;gap:.75rem;font-size:.65rem;color:var(--text-muted);margin-bottom:.75rem;flex-wrap:wrap}
+.market-card .card-stats span{display:flex;align-items:center;gap:3px}
+.market-card .card-tags{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:1rem}
+.market-card .card-tags span{padding:.15rem .45rem;background:var(--bg-deep);border-radius:20px;font-size:.58rem;color:var(--text-muted)}
+.market-card .card-footer{margin-top:auto;padding-top:.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.market-card .price-group{display:flex;align-items:center;gap:.5rem}
+.market-card .price-original{font-size:.65rem;color:var(--text-muted);text-decoration:line-through}
+.market-card .price-current{font-size:.95rem;font-weight:700;color:var(--accent);font-family:var(--font-mono);direction:ltr}
+.market-card .price-free{font-size:.85rem;font-weight:600;color:#4caf50}
+.market-card .btn-enroll{padding:.4rem .8rem;background:var(--accent);color:var(--bg-deep);border:none;border-radius:var(--radius-sm);font-size:.72rem;font-weight:600;cursor:pointer;font-family:var(--font-fa);transition:all var(--ease)}
+.market-card .btn-enroll:hover{box-shadow:0 4px 15px rgba(232,197,71,.3)}
+.market-stats{display:flex;gap:2rem;justify-content:center;padding:1.5rem 0;font-size:.78rem;color:var(--text-muted)}
+.market-stats .stat{display:flex;align-items:center;gap:6px}
+.market-stats .stat strong{color:var(--text-primary);font-family:var(--font-mono);font-size:.95rem}
+.no-results{text-align:center;padding:4rem 1.5rem;grid-column:1/-1}
+.no-results .icon{font-size:3rem;opacity:.3;margin-bottom:1rem}
+.no-results h3{color:var(--text-muted);font-size:1rem;margin-bottom:.5rem}
+.no-results p{color:var(--text-muted);font-size:.82rem}
+.featured-section{padding:2rem 0 0}
+.featured-scroll{display:flex;gap:1.25rem;overflow-x:auto;padding-bottom:1rem;scrollbar-width:none}
+.featured-scroll::-webkit-scrollbar{display:none}
+.featured-card{min-width:320px;flex-shrink:0;background:linear-gradient(135deg,rgba(232,197,71,.05),rgba(232,197,71,.02));border:1px solid var(--accent-dim);border-radius:var(--radius-lg);padding:1.5rem;display:flex;gap:1rem;transition:all var(--ease)}
+.featured-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.featured-card .f-icon{font-size:2.5rem}
+.featured-card .f-info h3{font-size:.95rem;font-weight:600;color:var(--text-primary);margin-bottom:.25rem}
+.featured-card .f-info p{font-size:.72rem;color:var(--text-muted);margin-bottom:.5rem}
+.featured-card .f-info .f-meta{font-size:.65rem;color:var(--text-muted);display:flex;gap:.75rem}
+@media(max-width:768px){.market-grid{grid-template-columns:1fr}.market-stats{flex-wrap:wrap;gap:1rem}}
+</style>
+</head>
+<body>
+
+<!-- ═══ ناوبری ═══ -->
+<nav class="nav" id="mainNav"><div class="container">
+<a href="index.html" class="nav-logo">آئو<span>را</span></a>
+<ul class="nav-links">
+  <li><a href="index.html">خانه</a></li>
+  <li><a href="courses.html" class="active">بازارچه دوره‌ها</a></li>
+  <li><a href="professors.html">اساتید</a></li>
+  <li><a href="forum.html">تالار گفتگو</a></li>
+  <li><a href="resources.html">منابع</a></li>
+  <li><a href="research.html">پژوهش</a></li>
+  <li><a href="about.html">درباره ما</a></li>
+</ul>
+<div class="nav-actions">
+  <a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+  <div id="authArea"></div>
+</div>
+</div></nav>
+
+<div class="marketplace">
+
+<!-- ═══ هدر ═══ -->
+<div class="market-hero">
+  <h1 data-cm-key="page_title">بازارچه دوره‌های آئورا</h1>
+  <p data-cm-key="page_subtitle">از بین بیش از ۱۲ دوره تخصصی، مسیر یادگیری خود را بسازید</p>
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="marketSearch" data-cm-placeholder="search_placeholder" placeholder="جستجوی دوره، استاد یا موضوع...">
+  </div>
+  <div class="market-stats">
+    <div class="stat"><strong data-cm-key="stat_courses">۱۲</strong> دوره</div>
+    <div class="stat"><strong data-cm-key="stat_profs">۱۰</strong> استاد</div>
+    <div class="stat"><strong data-cm-key="stat_students">۳,۴۰۰+</strong> کارآموز</div>
+    <div class="stat"><strong data-cm-key="stat_rating">۴.۷</strong> میانگین امتیاز</div>
+  </div>
+</div>
+
+<!-- ═══ دسته‌بندی‌ها ═══ -->
+<div class="categories-bar"><div class="categories-scroll" id="categoryChips">
+  <div class="cat-chip active" data-cat="all">همه دوره‌ها</div>
+  <div class="cat-chip" data-cat="زیست‌شناسی">🧬 زیست‌شناسی</div>
+  <div class="cat-chip" data-cat="بیوانفورماتیک">🧫 بیوانفورماتیک</div>
+  <div class="cat-chip" data-cat="ژنتیک">🔬 ژنتیک</div>
+  <div class="cat-chip" data-cat="علم داده">📊 علم داده</div>
+  <div class="cat-chip" data-cat="برنامه‌نویسی">🐍 برنامه‌نویسی</div>
+  <div class="cat-chip" data-cat="اکولوژی">🌿 اکولوژی</div>
+  <div class="cat-chip" data-cat="آمار">📈 آمار</div>
+  <div class="cat-chip" data-cat="میکروبیولوژی">🧫 میکروبیولوژی</div>
+  <div class="cat-chip" data-cat="پردازش تصویر">🖼 پردازش تصویر</div>
+  <div class="cat-chip" data-cat="داروسازی">💊 داروسازی</div>
+  <div class="cat-chip" data-cat="عصب‌شناسی">🧠 عصب‌شناسی</div>
+</div></div>
+
+<div class="container">
+
+<!-- ═══ دوره‌های ویژه ═══ -->
+<div class="featured-section" id="featuredSection">
+  <h3 style="font-size:.95rem;font-weight:600;color:var(--text-primary);margin-bottom:1rem" data-cm-key="featured_title">⭐ دوره‌های ویژه و پرتقاضا</h3>
+  <div class="featured-scroll" id="featuredScroll"></div>
+</div>
+
+<!-- ═══ فیلترها ═══ -->
+<div class="market-filters">
+  <span class="results-count" id="resultsCount">نمایش ۱۲ دوره</span>
+  <select class="filter-select" id="filterLevel">
+    <option value="all">همه سطوح</option>
+    <option value="مبتدی">مبتدی</option>
+    <option value="متوسط">متوسط</option>
+    <option value="پیشرفته">پیشرفته</option>
+  </select>
+  <select class="filter-select" id="filterPrice">
+    <option value="all">همه قیمت‌ها</option>
+    <option value="free">رایگان</option>
+    <option value="paid">پولی</option>
+  </select>
+  <select class="sort-select" id="sortSelect">
+    <option value="popular">محبوب‌ترین</option>
+    <option value="newest">جدیدترین</option>
+    <option value="cheapest">ارزان‌ترین</option>
+    <option value="expensive">گران‌ترین</option>
+    <option value="rating">بالاترین امتیاز</option>
+  </select>
+</div>
+
+<!-- ═══ لیست دوره‌ها ═══ -->
+<div class="market-grid" id="marketGrid"></div>
+
+</div>
+</div>
+
+<!-- ═══ فوتر ═══ -->
+<footer class="footer"><div class="container">
+<div class="footer-grid">
+  <div>
+    <div class="footer-logo">آئو<span>را</span></div>
+    <p class="footer-about">پلتفرم آموزش مدرن علوم زیستی و بیوانفارماتیک</p>
+  </div>
+  <div>
+    <h4 class="footer-title">لینک‌ها</h4>
+    <ul class="footer-links">
+      <li><a href="courses.html">بازارچه دوره‌ها</a></li>
+      <li><a href="professors.html">اساتید</a></li>
+      <li><a href="forum.html">تالار گفتگو</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4 class="footer-title">پشتیبانی</h4>
+    <ul class="footer-links">
+      <li><a href="about.html">درباره ما</a></li>
+      <li><a href="faq.html">سوالات</a></li>
+    </ul>
+  </div>
+</div>
+<div class="footer-bottom">
+  <span>© ۱۴۰۵ آئورا</span>
+  <span>support@aoura.ir</span>
+</div>
+</div></footer>
+
+
+<!-- ═══ اسکریپت‌ها ═══ -->
+<script src="js/content-manager.js"></script>
+<script src="js/ajax.js"></script>
+<script src="js/app.js"></script>
+<script>
+$(document).ready(function () {
+
+  var allCourses = [];
+  var activeCategory = 'all';
+
+
+  /* ── اعمال محتوای ذخیره‌شده ادمین ── */
+  if (typeof ContentManager !== 'undefined') {
+    ContentManager.applyToPage('courses.html');
+
+    // placeholder جستجو
+    var searchPh = ContentManager.getValue('courses.html', 'search_placeholder');
+    $('#marketSearch').attr('placeholder', searchPh);
+  }
+
+
+  /* ── بارگذاری دوره‌ها ── */
+  API.get('/courses').done(function (courses) {
+    allCourses = courses;
+    renderFeatured(courses.filter(function (c) { return c.featured; }));
+    renderGrid(courses);
+    $('#statCourses').text(courses.length);
+  });
+
+
+  /* ── دسته‌بندی ── */
+  $('#categoryChips').on('click', '.cat-chip', function () {
+    $('.cat-chip').removeClass('active');
+    $(this).addClass('active');
+    activeCategory = $(this).data('cat');
+    filterAndRender();
+  });
+
+
+  /* ── جستجو ── */
+  $('#marketSearch').on('input', function () {
+    filterAndRender();
+  });
+
+
+  /* ── فیلترها ── */
+  $('#filterLevel, #filterPrice, #sortSelect').on('change', function () {
+    filterAndRender();
+  });
+
+
+  /* ── فیلتر و رندر ── */
+  function filterAndRender() {
+    var q = $('#marketSearch').val().toLowerCase();
+    var level = $('#filterLevel').val();
+    var price = $('#filterPrice').val();
+    var sort = $('#sortSelect').val();
+
+    var filtered = allCourses.filter(function (c) {
+      if (activeCategory !== 'all' && c.category !== activeCategory) return false;
+      if (level !== 'all' && c.level !== level) return false;
+      if (price === 'free' && c.price > 0) return false;
+      if (price === 'paid' && c.price === 0) return false;
+      if (q && c.title.toLowerCase().indexOf(q) < 0 && c.instructor.toLowerCase().indexOf(q) < 0 && (c.description || '').toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+
+    filtered.sort(function (a, b) {
+      switch (sort) {
+        case 'newest':   return b.students - a.students;
+        case 'cheapest': return a.price - b.price;
+        case 'expensive':return b.price - a.price;
+        case 'rating':   return b.rating - a.rating;
+        default:         return b.students - a.students;
+      }
+    });
+
+    renderGrid(filtered);
+    $('#resultsCount').text('نمایش ' + filtered.length + ' دوره');
+  }
+
+
+  /* ── رندر دوره‌های ویژه ── */
+  function renderFeatured(courses) {
+    var html = '';
+    courses.forEach(function (c) {
+      html += '<a href="course-single.html?id=' + c.id + '" class="featured-card" style="text-decoration:none">';
+      html += '<div class="f-icon">' + (c.icon || '📚') + '</div>';
+      html += '<div class="f-info"><h3>' + c.title + '</h3><p>' + c.instructor + '</p>';
+      html += '<div class="f-meta"><span>⭐ ' + c.rating + '</span><span>👥 ' + c.students + ' نفر</span><span>💰 ' + c.price.toLocaleString('fa-IR') + ' ت</span></div>';
+      html += '</div></a>';
+    });
+    $('#featuredScroll').html(html);
+  }
+
+
+  /* ── رندر گرید ── */
+  function renderGrid(courses) {
+    // پیام خالی بودن از ContentManager
+    var emptyMsg = (typeof ContentManager !== 'undefined')
+      ? ContentManager.getValue('courses.html', 'empty_msg')
+      : 'هنوز دوره‌ای ثبت نشده است';
+
+    var noResultIcon  = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('courses.html', 'no_result_icon')  : '🔍';
+    var noResultTitle = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('courses.html', 'no_result_title') : 'دوره‌ای یافت نشد';
+    var noResultText  = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('courses.html', 'no_result_text')  : 'فیلترها را تغییر دهید یا عبارت دیگری جستجو کنید';
+
+    if (courses.length === 0) {
+      $('#marketGrid').html(
+        '<div class="no-results">' +
+        '<div class="icon">' + noResultIcon + '</div>' +
+        '<h3>' + noResultTitle + '</h3>' +
+        '<p>' + noResultText + '</p>' +
+        '</div>'
+      );
+      return;
+    }
+
+    var html = '';
+    courses.forEach(function (c) {
+      var disc = c.originalPrice > c.price ? Math.round((1 - c.price / c.originalPrice) * 100) : 0;
+      var lvlClass = c.level === 'مبتدی' ? 'badge-mb' : c.level === 'متوسط' ? 'badge-md' : 'badge-adv';
+      var inCart = typeof Cart !== 'undefined' && Cart.hasItem(c.id);
+      var enrolled = typeof Payment !== 'undefined' && Payment.isEnrolled(c.id);
+
+      html += '<div class="market-card">';
+      html += '<a href="course-single.html?id=' + c.id + '" class="card-img" style="text-decoration:none">';
+      html += '<span class="course-emoji">' + (c.icon || '📚') + '</span>';
+      if (disc > 0) html += '<span class="badge-discount">-' + disc + '%</span>';
+      html += '<span class="badge-level ' + lvlClass + '">' + c.level + '</span></a>';
+      html += '<div class="card-body">';
+      html += '<a href="course-single.html?id=' + c.id + '" class="card-title" style="text-decoration:none">' + c.title + '</a>';
+      html += '<div class="card-instructor"><span class="inst-avatar">' + c.instructor.charAt(0) + '</span>' + c.instructor + '</div>';
+      html += '<div class="card-stats"><span>⏱ ' + c.duration + '</span><span>👥 ' + c.students + ' نفر</span><span>⭐ ' + c.rating + '</span></div>';
+      html += '<div class="card-tags">';
+      (c.tags || []).slice(0, 3).forEach(function (t) { html += '<span>' + t + '</span>'; });
+      html += '</div>';
+      html += '<div class="card-footer"><div class="price-group">';
+      if (c.price > 0) {
+        if (disc > 0) html += '<span class="price-original">' + c.originalPrice.toLocaleString('fa-IR') + '</span>';
+        html += '<span class="price-current">' + c.price.toLocaleString('fa-IR') + ' ت</span>';
+      } else {
+        html += '<span class="price-free">رایگان</span>';
+      }
+      html += '</div>';
+      if (enrolled) html += '<a href="course-study.html?id=' + c.id + '" class="btn-enroll">ادامه یادگیری</a>';
+      else if (inCart) html += '<a href="cart.html" class="btn-enroll" style="background:var(--bg-surface);border:1px solid var(--accent);color:var(--accent)">در سبد</a>';
+      else html += '<button class="btn-enroll add-cart" data-id="' + c.id + '">ثبت‌نام</button>';
+      html += '</div></div></div>';
+    });
+    $('#marketGrid').html(html);
+
+    // رویداد سبد
+    $('.add-cart').off('click').on('click', function () {
+      var id = $(this).data('id');
+      if (typeof Cart !== 'undefined' && Cart.addItem(id)) {
+        $(this).text('✓ در سبد').css({
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--accent)',
+          color: 'var(--accent)'
+        });
+        if (typeof showNotification === 'function') showNotification('دوره به سبد اضافه شد');
+      }
+    });
+  }
+
+});
+</script>
+</body>
+</html>

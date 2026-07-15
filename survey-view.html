@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>پاسخ به نظرسنجی — آرا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+<nav class="nav" id="mainNav"><div class="container">
+<a href="index.html" class="nav-logo">آ<span>را</span></a>
+</div></nav>
+
+<div class="tool-page" style="padding-top:100px">
+<div class="container">
+<div class="survey-viewer" id="surveyViewer">
+<div id="surveyContent"></div>
+<div id="surveySubmitted" style="display:none;text-align:center;padding:3rem">
+<div style="font-size:4rem;margin-bottom:1rem">✅</div>
+<h2 style="font-size:1.3rem;color:var(--text-primary);margin-bottom:.5rem">پاسخ شما ثبت شد!</h2>
+<p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1.5rem">از مشارکت شما سپاسگزاریم.</p>
+<a href="index.html" class="btn-primary">بازگشت به خانه</a>
+</div>
+</div>
+</div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/survey.js"></script>
+<script src="js/access.js"></script>
+<script>
+$(document).ready(function(){
+  var surveyId = new URLSearchParams(window.location.search).get('id');
+  if(!surveyId){
+    $('#surveyContent').html('<div style="text-align:center;padding:4rem"><h2>شناسه نظرسنجی یافت نشد.</h2><a href="surveys.html" class="btn-ghost" style="margin-top:1rem">بازگشت</a></div>');
+    return;
+  }
+
+  var survey = Survey.getById(surveyId);
+  if(!survey){
+    $('#surveyContent').html('<div style="text-align:center;padding:4rem"><h2>نظرسنجی یافت نشد.</h2></div>');
+    return;
+  }
+
+  // رندر
+  var html = '<div class="survey-card">';
+  html += '<h2>' + survey.title + '</h2>';
+  if(survey.description) html += '<p class="desc">' + survey.description + '</p>';
+  html += '<div class="survey-progress"><div class="bar" style="width:0%"></div></div>';
+  html += '</div>';
+
+  survey.questions.forEach(function(q, i){
+    html += Survey.renderQuestionView(q, i);
+  });
+
+  html += '<button class="btn-primary" id="submitSurvey" style="width:100%;justify-content:center;padding:1rem;font-size:.9rem;margin-top:1rem">ارسال پاسخ</button>';
+
+  $('#surveyContent').html(html);
+
+  // اینتراکشن‌ها
+  $('.star-rating .star').on('click', function(){
+    var val = $(this).data('value');
+    var $p = $(this).closest('.star-rating');
+    $p.find('.star').each(function(i){ $(this).toggleClass('active', i < val); });
+    $p.find('input').val(val);
+    updateProgress();
+  });
+
+  $('.scale-num').on('click', function(){
+    var $p = $(this).closest('.scale-row');
+    $p.find('.scale-num').removeClass('active');
+    $(this).addClass('active');
+    $p.find('input').val($(this).data('value'));
+    updateProgress();
+  });
+
+  $('input, textarea, select').on('input change', function(){ updateProgress(); });
+
+  function updateProgress(){
+    var total = survey.questions.length;
+    var answered = 0;
+    survey.questions.forEach(function(q){
+      var $el = $('[data-qid="' + q.id + '"]');
+      var val = $el.find('input, textarea, select').not('[type="hidden"]').val();
+      if(q.type === 'checkbox'){
+        if($el.find('input:checked').length > 0) answered++;
+      } else if(val && val.trim() !== ''){
+        answered++;
+      }
+    });
+    var pct = total > 0 ? Math.round((answered / total) * 100) : 0;
+    $('.survey-progress .bar').css('width', pct + '%');
+  }
+
+  // ارسال
+  $('#submitSurvey').on('click', function(){
+    // بررسی اجباری‌ها
+    for(var i = 0; i < survey.questions.length; i++){
+      var q = survey.questions[i];
+      if(!q.required) continue;
+      var $el = $('[data-qid="' + q.id + '"]');
+      if(q.type === 'checkbox'){
+        if($el.find('input:checked').length === 0){
+          alert('لطفاً به سوال "' + q.text + '" پاسخ دهید.');
+          return;
+        }
+      } else {
+        var val = $el.find('input, textarea, select').not('[type="hidden"]').val();
+        if(!val || val.trim() === ''){
+          alert('لطفاً به سوال "' + q.text + '" پاسخ دهید.');
+          return;
+        }
+      }
+    }
+
+    // جمع‌آوری پاسخ‌ها
+    var answers = {};
+    survey.questions.forEach(function(q){
+      var $el = $('[data-qid="' + q.id + '"]');
+      if(q.type === 'checkbox'){
+        answers[q.id] = [];
+        $el.find('input:checked').each(function(){ answers[q.id].push($(this).val()); });
+      } else {
+        answers[q.id] = $el.find('input, textarea, select').not('[type="hidden"]').val();
+      }
+    });
+
+    Survey.saveResponse(surveyId, answers);
+    $('#surveyContent').hide();
+    $('#surveySubmitted').fadeIn();
+  });
+});
+</script>
+</body>
+</html>

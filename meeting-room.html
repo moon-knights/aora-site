@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>اتاق جلسه — آرا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+<div class="meeting-room">
+
+<!-- ═══ ناحیه ویدیو ═══ -->
+<div class="video-area">
+<div class="video-main">
+<!-- اشتراک صفحه (وقتی فعال می‌شود) -->
+<div class="screen-share-active" id="screenShareArea" style="display:none">
+<div class="placeholder"><span class="icon">🖥</span><br>اشتراک‌گذاری صفحه فعال است</div>
+</div>
+
+<!-- تایل‌های ویدیو -->
+<div class="video-participants grid-2" id="videoGrid"></div>
+</div>
+
+<!-- واکنش‌ها -->
+<div class="reactions-bar" id="reactionsBar">
+<button class="reaction-btn" data-emoji="👍">👍</button>
+<button class="reaction-btn" data-emoji="❤️">❤️</button>
+<button class="reaction-btn" data-emoji="😂">😂</button>
+<button class="reaction-btn" data-emoji="👏">👏</button>
+<button class="reaction-btn" data-emoji="🎉">🎉</button>
+<button class="reaction-btn" data-emoji="🤔">🤔</button>
+</div>
+
+<!-- نوار کنترل -->
+<div class="meeting-controls">
+<div class="ctrl-group">
+<button class="ctrl-btn on" id="ctrlMic"><span class="tooltip">میکروفون</span>🎤</button>
+<button class="ctrl-btn on" id="ctrlCam"><span class="tooltip">دوربین</span>📷</button>
+<button class="ctrl-btn on" id="ctrlScreen"><span class="tooltip">اشتراک صفحه</span>🖥</button>
+<button class="ctrl-btn on" id="ctrlRecord"><span class="tooltip">ضبط</span>⏺</button>
+</div>
+<div class="ctrl-group">
+<span class="meeting-timer" id="meetingTimer">00:00:00</span>
+<span class="meeting-code" id="meetingCode" title="کلیک برای کپی">—</span>
+</div>
+<div class="ctrl-group">
+<button class="ctrl-btn on" id="ctrlReactions" title="واکنش‌ها">😊</button>
+<button class="ctrl-btn on" id="ctrlRaise" title="دست بلند کردن">✋</button>
+<button class="ctrl-btn on" id="ctrlChat"><span class="tooltip">چت</span>💬</button>
+<button class="ctrl-btn on" id="ctrlParticipants"><span class="tooltip">شرکت‌کنندگان</span>👥</button>
+<button class="ctrl-btn on" id="ctrlFiles"><span class="tooltip">فایل‌ها</span>📎</button>
+<button class="ctrl-btn end-call" id="ctrlEnd"><span>خروج</span></button>
+</div>
+</div>
+</div>
+
+<!-- ═══ پنل جانبی ═══ -->
+<div class="side-panel" id="sidePanel">
+<div class="panel-header">
+<h3 id="panelTitle">چت</h3>
+<button class="panel-close" id="panelClose">✕</button>
+</div>
+<div class="panel-tabs">
+<button class="panel-tab active" data-tab="chat">💬 چت</button>
+<button class="panel-tab" data-tab="participants">👥 افراد</button>
+<button class="panel-tab" data-tab="files">📎 فایل‌ها</button>
+</div>
+
+<!-- تب چت -->
+<div class="chat-panel" id="tabChat">
+<div class="chat-messages" id="chatMessages"></div>
+<div class="chat-input-area">
+<input type="text" id="chatInput" placeholder="پیام بنویسید...">
+<button id="sendChat">↑</button>
+</div>
+</div>
+
+<!-- تب شرکت‌کنندگان -->
+<div class="participants-list" id="tabParticipants" style="display:none"></div>
+
+<!-- تب فایل‌ها -->
+<div class="shared-files" id="tabFiles" style="display:none">
+<div style="text-align:center;padding:2rem;color:var(--text-muted);font-size:.78rem">
+📎 فایلی به اشتراک گذاشته نشده<br>
+<button class="btn-ghost" style="margin-top:1rem;padding:.4rem .8rem;font-size:.72rem" id="uploadFileBtn">بارگذاری فایل</button>
+</div>
+</div>
+</div>
+
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/meeting.js"></script>
+<script src="js/access.js"></script>
+<script>
+$(document).ready(function(){
+  var params = new URLSearchParams(window.location.search);
+  var meetingId = params.get('id');
+  var userName = decodeURIComponent(params.get('name') || 'کاربر');
+  var camOn = params.get('cam') !== 'false';
+  var micOn = params.get('mic') !== 'false';
+  var screenSharing = false;
+  var recording = false;
+  var panelVisible = true;
+  var seconds = 0;
+
+  // ── تایمر ──
+  setInterval(function(){
+    seconds++;
+    var h = String(Math.floor(seconds/3600)).padStart(2,'0');
+    var m = String(Math.floor((seconds%3600)/60)).padStart(2,'0');
+    var s = String(seconds%60).padStart(2,'0');
+    $('#meetingTimer').text(h + ':' + m + ':' + s);
+  }, 1000);
+
+  // ── کد جلسه ──
+  if(meetingId){
+    var mt = Meeting.getById(meetingId);
+    if(mt) $('#meetingCode').text(mt.code);
+  }
+  $('#meetingCode').on('click', function(){
+    var code = $(this).text();
+    if(navigator.clipboard) navigator.clipboard.writeText(code);
+    $(this).text('کپی شد!');
+    var $el = $(this);
+    setTimeout(function(){ $el.text(mt ? mt.code : '—'); }, 1500);
+  });
+
+  // ── رندر شرکت‌کنندگان ──
+  var allUsers = [{ name: userName, role: 'شما', isMe: true }].concat(
+    Meeting.simulatedUsers.slice(0, 3).map(function(u){ return { name: u.name, role: u.role }; })
+  );
+
+  renderVideoGrid(allUsers);
+  renderParticipantsList(allUsers);
+  renderChat();
+
+  function renderVideoGrid(users){
+    var gridClass = users.length <= 1 ? 'grid-1' : users.length <= 2 ? 'grid-2' : users.length <= 4 ? 'grid-4' : 'grid-6';
+    var html = '';
+    users.forEach(function(u, i){
+      var color = Meeting.getColor(u.name);
+      var initials = Meeting.getInitials(u.name);
+      var speaking = i === 0 ? '' : (Math.random() > 0.7 ? ' speaking' : '');
+      html += '<div class="video-tile' + speaking + '">';
+      html += '<div class="tile-avatar" style="background:' + color + '">' + initials + '</div>';
+      html += '<div class="tile-name">' + u.name + (u.isMe ? ' (شما)' : '') + '</div>';
+      if(i > 0 && Math.random() > 0.5) html += '<div class="tile-mic">🎤</div>';
+      if(i > 0 && Math.random() > 0.8) html += '<div class="tile-mic" style="left:auto;right:8px">🔇</div>';
+      html += '</div>';
+    });
+    $('#videoGrid').attr('class', 'video-participants ' + gridClass).html(html);
+  }
+
+  function renderParticipantsList(users){
+    var html = '';
+    users.forEach(function(u){
+      var color = Meeting.getColor(u.name);
+      html += '<div class="participant-item">';
+      html += '<div class="participant-avatar" style="background:' + color + '20;color:' + color + '">' + Meeting.getInitials(u.name) + '</div>';
+      html += '<div class="participant-info"><div class="name">' + u.name + (u.isMe ? ' (شما)' : '') + '</div><div class="role">' + u.role + '</div></div>';
+      html += '<div class="participant-actions">';
+      if(!u.isMe){
+        html += '<button title="بی‌صدا">🔇</button>';
+        html += '<button title="ارسال پیام">💬</button>';
+      }
+      html += '</div></div>';
+    });
+    html += '<div style="padding:.75rem;font-size:.72rem;color:var(--text-muted);text-align:center">' + users.length + ' نفر حاضر</div>';
+    $('#tabParticipants').html(html);
+  }
+
+  function renderChat(){
+    var user = userName;
+    var html = '';
+    Meeting.chatMessages.forEach(function(msg){
+      var isMe = msg.sender === user;
+      html += '<div class="chat-msg ' + (isMe ? 'outgoing' : 'incoming') + '">';
+      if(!isMe) html += '<div class="msg-sender">' + msg.sender + '</div>';
+      html += '<div class="msg-bubble">' + msg.text + '</div>';
+      html += '<div class="msg-time">' + msg.time + '</div>';
+      html += '</div>';
+    });
+    $('#chatMessages').html(html);
+    scrollChat();
+  }
+
+  function scrollChat(){
+    var el = document.getElementById('chatMessages');
+    if(el) el.scrollTop = el.scrollHeight;
+  }
+
+  // ── چت ──
+  $('#sendChat').on('click', sendMessage);
+  $('#chatInput').on('keypress', function(e){ if(e.which === 13) sendMessage(); });
+
+  function sendMessage(){
+    var text = $('#chatInput').val().trim();
+    if(!text) return;
+    var now = new Date();
+    var time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+    var html = '<div class="chat-msg outgoing"><div class="msg-bubble">' + text + '</div><div class="msg-time">' + time + '</div></div>';
+    $('#chatMessages').append(html);
+    $('#chatInput').val('');
+    scrollChat();
+
+    // پاسخ خودکار (شبیه‌سازی)
+    setTimeout(function(){
+      var responses = ['ممنون 👍', 'بله دقیقاً', 'نکته خوبی بود', 'موافقم', 'می‌تونید بیشتر توضیح بدید؟'];
+      var rText = responses[Math.floor(Math.random() * responses.length)];
+      var rSender = Meeting.simulatedUsers[Math.floor(Math.random() * Meeting.simulatedUsers.length)];
+      var rTime = new Date();
+      var rt = rTime.getHours().toString().padStart(2,'0') + ':' + rTime.getMinutes().toString().padStart(2,'0');
+      var rHtml = '<div class="chat-msg incoming"><div class="msg-sender">' + rSender.name + '</div><div class="msg-bubble">' + rText + '</div><div class="msg-time">' + rt + '</div></div>';
+      $('#chatMessages').append(rHtml);
+      scrollChat();
+    }, 1500 + Math.random() * 2000);
+  }
+
+  // ── تب‌ها ──
+  $('.panel-tab').on('click', function(){
+    var tab = $(this).data('tab');
+    $('.panel-tab').removeClass('active');
+    $(this).addClass('active');
+    $('#tabChat').toggle(tab === 'chat');
+    $('#tabParticipants').toggle(tab === 'participants');
+    $('#tabFiles').toggle(tab === 'files');
+    var titles = { chat:'چت', participants:'شرکت‌کنندگان', files:'فایل‌های مشترک' };
+    $('#panelTitle').text(titles[tab] || '');
+  });
+
+  // ── پنل ──
+  $('#panelClose').on('click', function(){
+    panelVisible = !panelVisible;
+    $('#sidePanel').toggleClass('hidden');
+  });
+
+  // ── کنترل‌ها ──
+  $('#ctrlMic').on('click', function(){
+    micOn = !micOn;
+    $(this).toggleClass('on off').text(micOn ? '🎤' : '🔇');
+  });
+
+  $('#ctrlCam').on('click', function(){
+    camOn = !camOn;
+    $(this).toggleClass('on off').text(camOn ? '📷' : '🚫');
+    // مخفی/نمایش تایل خود
+    var $myTile = $('.video-tile').first();
+    if(camOn) $myTile.find('.tile-avatar').show(); else $myTile.find('.tile-avatar').hide();
+  });
+
+  $('#ctrlScreen').on('click', function(){
+    screenSharing = !screenSharing;
+    $(this).toggleClass('on off');
+    $('#screenShareArea').toggle(screenSharing);
+    $('#videoGrid').toggle(!screenSharing);
+  });
+
+  $('#ctrlRecord').on('click', function(){
+    recording = !recording;
+    $(this).toggleClass('on off').css('color', recording ? '#e74c3c' : '');
+    $(this).text(recording ? '⏹' : '⏺');
+    // نمایش نشانگر ضبط
+    if(recording){
+      $('body').append('<div id="recIndicator" style="position:fixed;top:12px;left:12px;background:rgba(231,76,60,.9);color:#fff;padding:.25rem .6rem;border-radius:20px;font-size:.65rem;z-index:1000;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse-live 1s infinite"></span>در حال ضبط</div>');
+    } else {
+      $('#recIndicator').remove();
+    }
+  });
+
+  // ── واکنش‌ها ──
+  $('#ctrlReactions').on('click', function(){
+    $('#reactionsBar').toggleClass('visible');
+  });
+
+  $('.reaction-btn').on('click', function(){
+    var emoji = $(this).data('emoji');
+    var $float = $('<div class="reaction-float">' + emoji + '</div>');
+    $float.css({ left: (30 + Math.random() * 40) + '%' });
+    $('body').append($float);
+    setTimeout(function(){ $float.remove(); }, 2000);
+    $('#reactionsBar').removeClass('visible');
+  });
+
+  // ── دست بلند ──
+  var handRaised = false;
+  $('#ctrlRaise').on('click', function(){
+    handRaised = !handRaised;
+    $(this).toggleClass('on off');
+    $(this).css('background', handRaised ? 'var(--gold)' : '');
+    if(handRaised){
+      var $myName = $('.video-tile .tile-name').first();
+      if(!$myName.siblings('.hand-indicator').length){
+        $myName.after('<span class="hand-indicator" style="position:absolute;top:8px;right:8px;font-size:1.2rem">✋</span>');
+      }
+    } else {
+      $('.hand-indicator').remove();
+    }
+  });
+
+  // ── چت / شرکت‌کنندگان toggle ──
+  $('#ctrlChat').on('click', function(){
+    if(!panelVisible){ panelVisible = true; $('#sidePanel').removeClass('hidden'); }
+    $('.panel-tab[data-tab="chat"]').click();
+  });
+  $('#ctrlParticipants').on('click', function(){
+    if(!panelVisible){ panelVisible = true; $('#sidePanel').removeClass('hidden'); }
+    $('.panel-tab[data-tab="participants"]').click();
+  });
+  $('#ctrlFiles').on('click', function(){
+    if(!panelVisible){ panelVisible = true; $('#sidePanel').removeClass('hidden'); }
+    $('.panel-tab[data-tab="files"]').click();
+  });
+
+  // ── خروج ──
+  $('#ctrlEnd').on('click', function(){
+    if(confirm('آیا می‌خواهید از جلسه خارج شوید؟')){
+      window.location.href = 'meetings.html';
+    }
+  });
+
+  // ── آپلود فایل (شبیه‌سازی) ──
+  $('#uploadFileBtn').on('click', function(){
+    var files = [
+      { name: 'اسلاید-فصل۳.pdf', size: '2.4 MB', icon: '📄' },
+      { name: 'داده‌های-آزمایش.xlsx', size: '850 KB', icon: '📊' },
+      { name: 'تصویر-میکروسکوپ.png', size: '1.1 MB', icon: '🖼' }
+    ];
+    var html = '';
+    files.forEach(function(f){
+      html += '<div class="shared-file"><span class="file-icon">' + f.icon + '</span><div class="file-info"><div class="name">' + f.name + '</div><div class="size">' + f.size + '</div></div></div>';
+    });
+    html += '<div style="text-align:center;padding:1rem;font-size:.72rem;color:var(--text-muted)">' + files.length + ' فایل مشترک</div>';
+    $('#tabFiles').html(html);
+  });
+
+  // ── شبیه‌سازی تغییر speaking ──
+  setInterval(function(){
+    $('.video-tile').removeClass('speaking');
+    var idx = Math.floor(Math.random() * allUsers.length);
+    $('.video-tile').eq(idx).addClass('speaking');
+  }, 3000);
+
+});
+</script>
+</body>
+</html>

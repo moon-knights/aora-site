@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>منابع آموزشی — آئورا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+.resources-page{padding-top:80px;min-height:100vh}
+.res-header{text-align:center;padding:3rem 0 2rem;background:linear-gradient(180deg,var(--bg-surface),var(--bg-deep))}
+.res-header h1{font-size:2rem;font-weight:800;color:var(--text-primary);margin-bottom:.5rem}
+.res-tabs{display:flex;gap:.5rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap}
+.res-tab{padding:.5rem 1rem;background:var(--bg-card);border:1px solid var(--border);border-radius:30px;font-size:.78rem;color:var(--text-muted);cursor:pointer;transition:all var(--ease)}
+.res-tab.active{background:var(--accent-glow);border-color:var(--accent);color:var(--accent)}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;padding:2rem 0 3rem}
+.res-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;transition:all var(--ease)}
+.res-card:hover{border-color:var(--accent-dim);transform:translateY(-2px)}
+.res-card .res-icon{font-size:2rem;margin-bottom:.75rem}
+.res-card h3{font-size:.9rem;font-weight:600;color:var(--text-primary);margin-bottom:.35rem}
+.res-card p{font-size:.75rem;color:var(--text-muted);line-height:1.7;margin-bottom:.75rem}
+.res-card .res-meta{display:flex;gap:1rem;font-size:.65rem;color:var(--text-muted);margin-bottom:.75rem}
+.res-card .res-tags{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.75rem}
+.res-card .res-tags span{padding:.15rem .4rem;background:var(--bg-deep);border-radius:10px;font-size:.58rem;color:var(--text-muted)}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav"><div class="container">
+<a href="index.html" class="nav-logo">آئو<span>را</span></a>
+<ul class="nav-links"><li><a href="index.html">خانه</a></li><li><a href="courses.html">بازارچه</a></li><li><a href="resources.html" class="active">منابع</a></li><li><a href="forum.html">تالار گفتگو</a></li><li><a href="about.html">درباره ما</a></li></ul>
+<div class="nav-actions"><a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a><div id="authArea"></div></div>
+</div></nav>
+
+<div class="resources-page">
+<div class="res-header">
+<h1>📚 منابع آموزشی</h1>
+<p style="font-size:.88rem;color:var(--text-muted)">کتاب‌ها، مقالات، ابزارها و ویدیوهای آموزشی</p>
+<div class="res-tabs">
+<div class="res-tab active" data-type="all">همه</div>
+<div class="res-tab" data-type="book">📖 کتاب</div>
+<div class="res-tab" data-type="article">📄 مقاله</div>
+<div class="res-tab" data-type="tool">🛠 ابزار</div>
+<div class="res-tab" data-type="video">🎥 ویدیو</div>
+<div class="res-tab" data-type="dataset">💾 دیتاست</div>
+</div>
+</div>
+<div class="container"><div class="res-grid" id="resGrid"></div></div>
+</div>
+
+<footer class="footer"><div class="container"><div class="footer-bottom"><span>© ۱۴۰۵ آئورا</span></div></div></footer>
+
+<script src="js/ajax.js"></script>
+<script src="js/app.js"></script>
+<script>
+var resources = [
+  {type:'book',icon:'📖',title:'Biological Sequence Analysis',desc:'کتاب مرجع تحلیل توالی بیولوژیکی — Durbin, Eddy, Krogh, Mitchison',tags:['بیوانفارماتیک','تحلیل توالی'],link:'#'},
+  {type:'book',icon:'📖',title:'Introduction to Bioinformatics',desc:'آرتور لسک — مقدمه‌ای جامع بر بیوانفارماتیک',tags:['بیوانفارماتیک','مبتدی'],link:'#'},
+  {type:'tool',icon:'🛠',title:'BLAST — NCBI',desc:'ابزار جستجوی توالی در پایگاه‌داده‌های بیولوژیکی',tags:['جستجو','توالی'],link:'https://blast.ncbi.nlm.nih.gov'},
+  {type:'tool',icon:'🛠',title:'PyMOL',desc:'نرم‌افزار تجسم ساختار سه‌بعدی مولکول‌ها',tags:['مدل‌سازی','پروتئین'],link:'#'},
+  {type:'article',icon:'📄',title:'CRISPR-Cas9: A Guide for Beginners',desc:'مروری بر فناوری CRISPR و کاربردهای آن',tags:['ژنتیک','CRISPR'],link:'#'},
+  {type:'video',icon:'🎥',title:'آموزش Python برای زیست‌شناسان',desc:'مجموعه ویدیوهای آموزشی Python از مبتدی تا پیشرفته',tags:['پایتون','برنامه‌نویسی'],link:'#'},
+  {type:'dataset',icon:'💾',title:'UniProt — پایگاه‌داده پروتئین‌ها',desc:'بزرگ‌ترین مرجع توالی و اطلاعات پروتئین‌ها',tags:['پروتئین','دیتابیس'],link:'https://uniprot.org'},
+  {type:'tool',icon:'🛠',title:'R Studio',desc:'محیط توسعه یکپارچه برای تحلیل آماری با R',tags:['آمار','R'],link:'#'},
+  {type:'article',icon:'📄',title:'Machine Learning in Bioinformatics',desc:'مروری بر کاربرد یادگیری ماشین در بیوانفارماتیک',tags:['یادگیری ماشین','AI'],link:'#'},
+  {type:'video',icon:'🎥',title:'مقدمه‌ای بر ژنومیکس',desc:'ویدیوهای آموزشی ژنومیکس مقایسه‌ای',tags:['ژنوم','ژنومیکس'],link:'#'},
+  {type:'dataset',icon:'💾',title:'PDB — بانک داده پروتئین',desc:'ساختارهای سه‌بعدی ماکرومولکول‌های بیولوژیکی',tags:['ساختار','پروتئین'],link:'https://rcsb.org'},
+  {type:'book',icon:'📖',title:'Applied Predictive Modeling',desc:'مدل‌سازی پیش‌بینانه با R — Kuhn & Johnson',tags:['مدل‌سازی','R'],link:'#'}
+];
+
+$(document).ready(function(){
+  renderRes(resources);
+  $('.res-tab').on('click',function(){
+    $('.res-tab').removeClass('active');
+    $(this).addClass('active');
+    var type = $(this).data('type');
+    renderRes(type==='all'?resources:resources.filter(function(r){return r.type===type}));
+  });
+
+  function renderRes(items){
+    var html='';
+    items.forEach(function(r){
+      html+='<div class="res-card"><div class="res-icon">'+r.icon+'</div>';
+      html+='<h3>'+r.title+'</h3><p>'+r.desc+'</p>';
+      html+='<div class="res-tags">';
+      r.tags.forEach(function(t){html+='<span>'+t+'</span>';});
+      html+='</div>';
+      if(r.link && r.link!=='#') html+='<a href="'+r.link+'" target="_blank" class="btn-ghost" style="padding:.35rem .75rem;font-size:.72rem">مشاهده ↗</a>';
+      html+='</div>';
+    });
+    $('#resGrid').html(html);
+  }
+});
+</script>
+</body>
+</html>

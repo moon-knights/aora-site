@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>درباره آئورا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+.about-page{padding-top:80px}
+.about-hero{text-align:center;padding:5rem 0 3rem;background:linear-gradient(180deg,var(--bg-surface),var(--bg-deep))}
+.about-hero h1{font-size:2.5rem;font-weight:900;color:var(--text-primary);margin-bottom:.5rem}
+.about-hero h1 span{color:var(--accent)}
+.about-hero p{font-size:1rem;color:var(--text-muted);max-width:600px;margin:0 auto;line-height:2}
+.about-section{padding:3rem 0}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.about-text h2{font-size:1.4rem;font-weight:700;color:var(--text-primary);margin-bottom:1rem}
+.about-text p{font-size:.85rem;color:var(--text-muted);line-height:2;margin-bottom:1rem}
+
+/* آمار */
+.about-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;text-align:center;padding:3rem 0;background:var(--bg-surface);border-radius:var(--radius-lg);margin:3rem 0}
+.about-stat .as-num{font-size:2.5rem;font-weight:800;color:var(--accent);font-family:var(--font-mono)}
+.about-stat .as-label{font-size:.75rem;color:var(--text-muted);margin-top:.25rem}
+
+/* ارزش‌ها */
+.value-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.value-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;text-align:center;transition:all var(--ease)}
+.value-card:hover{border-color:var(--accent-dim)}
+.value-card .icon{font-size:2rem;margin-bottom:.75rem}
+.value-card h3{font-size:.88rem;font-weight:600;color:var(--text-primary);margin-bottom:.35rem}
+.value-card p{font-size:.72rem;color:var(--text-muted);line-height:1.7}
+
+/* تیم */
+.team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.5rem}
+.team-card{text-align:center}
+.team-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto .75rem;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700}
+.team-card h4{font-size:.88rem;font-weight:600;color:var(--text-primary);margin-bottom:.15rem}
+.team-card p{font-size:.72rem;color:var(--text-muted)}
+
+/* CTA */
+.about-cta{text-align:center;padding:3rem 0;background:linear-gradient(135deg,rgba(232,197,71,.05),rgba(232,197,71,.02));border-top:1px solid var(--accent-dim);border-bottom:1px solid var(--accent-dim);margin-top:2rem}
+.about-cta h2{font-size:1.8rem;font-weight:800;color:var(--text-primary);margin-bottom:.5rem}
+.about-cta p{font-size:.9rem;color:var(--text-muted);margin-bottom:2rem}
+
+@media(max-width:768px){
+  .about-grid{grid-template-columns:1fr}
+  .value-grid{grid-template-columns:1fr}
+  .about-stats{grid-template-columns:1fr 1fr;gap:1rem}
+  .about-stat .as-num{font-size:1.8rem}
+  .about-hero h1{font-size:1.8rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ ناوبری ═══ -->
+<nav class="nav" id="mainNav"><div class="container">
+<a href="index.html" class="nav-logo">آئو<span>را</span></a>
+<ul class="nav-links">
+  <li><a href="index.html">خانه</a></li>
+  <li><a href="courses.html">بازارچه دوره‌ها</a></li>
+  <li><a href="professors.html">اساتید</a></li>
+  <li><a href="forum.html">تالار گفتگو</a></li>
+  <li><a href="resources.html">منابع</a></li>
+  <li><a href="research.html">پژوهش</a></li>
+  <li><a href="about.html" class="active">درباره ما</a></li>
+</ul>
+<div class="nav-actions">
+  <a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+  <div id="authArea"></div>
+</div>
+</div></nav>
+
+<div class="about-page">
+
+  <!-- ═══ هیرو ═══ -->
+  <div class="about-hero">
+    <h1 data-cm-key="hero_title">درباره <span>آئورا</span></h1>
+    <p data-cm-key="hero_subtitle">پلتفرم آموزش نسل نو علوم زیستی و بیوانفارماتیک در ایران</p>
+  </div>
+
+  <div class="container">
+
+    <!-- ═══ ماموریت + ارزش‌ها ═══ -->
+    <div class="about-section">
+      <div class="about-grid">
+        <div class="about-text">
+          <h2 data-cm-key="mission_title">ماموریت ما</h2>
+          <p data-cm-key="mission_p1">آئورا با هدف ایجاد یک پلتفرم جامع آموزشی در حوزه‌های زیست‌شناسی محاسباتی، بیوانفارماتیک و علوم زیستی تأسیس شده است.</p>
+          <p data-cm-key="mission_p2">ما معتقدیم آموزش با کیفیت نباید محدود به دانشگاه‌های خاص باشد. با آئورا، هر کسی از هر نقطه‌ای می‌تواند از بهترین اساتید کشور بیاموزد.</p>
+          <p data-cm-key="mission_p3">ترکیب آموزش آنلاین، پژوهش و ابزارهای تعاملی مثل نظرسنجی‌ساز و جلسات مجازی، آئورا را به بیش از یک پلتفرم آموزشی تبدیل کرده است.</p>
+        </div>
+
+        <div class="value-grid">
+          <div class="value-card">
+            <div class="icon" data-cm-key="v1_icon">🎯</div>
+            <h3 data-cm-key="v1_title">کیفیت</h3>
+            <p data-cm-key="v1_desc">دوره‌های طراحی‌شده توسط متخصصان با استانداردهای بین‌المللی</p>
+          </div>
+          <div class="value-card">
+            <div class="icon" data-cm-key="v2_icon">🌍</div>
+            <h3 data-cm-key="v2_title">دسترسی</h3>
+            <p data-cm-key="v2_desc">آموزش از هر نقطه، در هر زمان، با هر دستگاهی</p>
+          </div>
+          <div class="value-card">
+            <div class="icon" data-cm-key="v3_icon">🔬</div>
+            <h3 data-cm-key="v3_title">پژوهش‌محور</h3>
+            <p data-cm-key="v3_desc">آموزش مبتنی بر آخرین یافته‌های علمی و پژوهشی</p>
+          </div>
+          <div class="value-card">
+            <div class="icon" data-cm-key="v4_icon">🤝</div>
+            <h3 data-cm-key="v4_title">انجمن</h3>
+            <p data-cm-key="v4_desc">ایجاد شبکه‌ای از پژوهشگران و علاقه‌مندان علوم زیستی</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ آمار ═══ -->
+    <div class="about-stats">
+      <div class="about-stat">
+        <div class="as-num" data-cm-key="stats_1_num">۳,۴۰۰+</div>
+        <div class="as-label" data-cm-key="stats_1_label">کارآموز</div>
+      </div>
+      <div class="about-stat">
+        <div class="as-num" data-cm-key="stats_2_num">۱۲</div>
+        <div class="as-label" data-cm-key="stats_2_label">دوره تخصصی</div>
+      </div>
+      <div class="about-stat">
+        <div class="as-num" data-cm-key="stats_3_num">۱۰</div>
+        <div class="as-label" data-cm-key="stats_3_label">استاد برتر</div>
+      </div>
+      <div class="about-stat">
+        <div class="as-num" data-cm-key="stats_4_num">۱۲۷</div>
+        <div class="as-label" data-cm-key="stats_4_label">مقاله پژوهشی</div>
+      </div>
+    </div>
+
+    <!-- ═══ تیم ═══ -->
+    <div class="about-section">
+      <h2 style="font-size:1.4rem;font-weight:700;color:var(--text-primary);text-align:center;margin-bottom:2rem" data-cm-key="team_title">تیم آئورا</h2>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar" style="background:rgba(232,197,71,.15);color:var(--accent)">س ا</div>
+          <h4 data-cm-key="team_1_name">دکتر سارا احمدی</h4>
+          <p data-cm-key="team_1_role">مدیر آموزشی</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="background:rgba(33,150,243,.15);color:#2196f3">ع ر</div>
+          <h4 data-cm-key="team_2_name">دکتر علی رضایی</h4>
+          <p data-cm-key="team_2_role">مدیر پژوهشی</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="background:rgba(76,175,80,.15);color:#4caf50">م ن</div>
+          <h4 data-cm-key="team_3_name">دکتر مریم نوری</h4>
+          <p data-cm-key="team_3_role">مدیر فنی</p>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="background:rgba(255,152,0,.15);color:#ff9800">م ک</div>
+          <h4 data-cm-key="team_4_name">محمد کاظمی</h4>
+          <p data-cm-key="team_4_role">توسعه‌دهنده ارشد</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ CTA ═══ -->
+  <div class="about-cta">
+    <div class="container">
+      <h2 data-cm-key="cta_title">به جامعه آئورا بپیوندید</h2>
+      <p data-cm-key="cta_subtitle">همین الان مسیر یادگیری خود را شروع کنید</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <a href="register.html" class="btn-primary" style="padding:.8rem 2rem;font-size:.95rem">
+          ثبت‌نام رایگان <span class="arrow">&larr;</span>
+        </a>
+        <a href="courses.html" class="btn-ghost" style="padding:.8rem 1.5rem;font-size:.9rem">
+          مشاهده دوره‌ها
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- ═══ فوتر ═══ -->
+<footer class="footer"><div class="container">
+<div class="footer-grid">
+  <div>
+    <div class="footer-logo">آئو<span>را</span></div>
+    <p class="footer-about">پلتفرم آموزش مدرن علوم زیستی</p>
+  </div>
+  <div>
+    <h4 class="footer-title">لینک‌ها</h4>
+    <ul class="footer-links">
+      <li><a href="courses.html">بازارچه دوره‌ها</a></li>
+      <li><a href="about.html">درباره ما</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4 class="footer-title">تماس</h4>
+    <ul class="footer-links">
+      <li>📧 support@aoura.ir</li>
+      <li>📞 ۰۲۱-۱۲۳۴۵۶۷۸</li>
+    </ul>
+  </div>
+</div>
+<div class="footer-bottom">
+  <span>© ۱۴۰۵ آئورا</span>
+  <span>support@aoura.ir</span>
+</div>
+</div></footer>
+
+
+<!-- ═══ اسکریپت‌ها ═══ -->
+<script src="js/content-manager.js"></script>
+<script src="js/ajax.js"></script>
+<script src="js/app.js"></script>
+<script>
+$(document).ready(function () {
+
+  /* ── اعمال محتوای ذخیره‌شده ادمین ── */
+  if (typeof ContentManager !== 'undefined') {
+    ContentManager.applyToPage('about.html');
+  }
+
+});
+</script>
+</body>
+</html>

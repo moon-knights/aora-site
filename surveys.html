@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>نظرسنجی‌ساز — آرا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+<nav class="nav" id="mainNav"><div class="container">
+<a href="index.html" class="nav-logo">آ<span>را</span></a>
+<div style="display:flex;align-items:center;gap:1rem">
+<a href="index.html" style="font-size:.75rem;color:var(--text-muted)">بازگشت</a>
+</div>
+</div></nav>
+
+<div class="tool-page">
+<div class="tool-header">
+<div class="container">
+<div class="tool-icon" style="background:linear-gradient(135deg,#1a237e,#0d47a1)">📋</div>
+<div>
+<h1>نظرسنجی‌ساز آرا</h1>
+<p>پرسشنامه‌های آنلاین بسازید، به اشتراک بگذارید و نتایج را تحلیل کنید</p>
+</div>
+</div>
+</div>
+
+<div class="container">
+<div class="stats-row" id="surveyStats">
+<div class="stat-card"><div class="num" id="totalSurveys">0</div><div class="label">نظرسنجی فعال</div></div>
+<div class="stat-card"><div class="num" id="totalResponses">0</div><div class="label">کل پاسخ‌ها</div></div>
+<div class="stat-card"><div class="num" id="totalQuestions">0</div><div class="label">کل سوالات</div></div>
+</div>
+
+<div style="display:flex;gap:1rem;align-items:center;margin-bottom:2rem;flex-wrap:wrap">
+<a href="survey-builder.html" class="btn-primary">➕ نظرسنجی جدید</a>
+<div style="flex:1"></div>
+<input type="text" id="searchSurveys" placeholder="جستجو..." style="max-width:250px;padding:.5rem 1rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-family:var(--font-fa);font-size:.78rem;outline:none">
+</div>
+
+<div id="surveysList" class="meetings-grid"></div>
+
+<div id="emptyState" style="display:none;text-align:center;padding:4rem 1.5rem">
+<div style="font-size:3rem;margin-bottom:1rem;opacity:.3">📋</div>
+<h3 style="font-size:1rem;color:var(--text-muted);margin-bottom:.5rem">هنوز نظرسنجی نساخته‌اید</h3>
+<p style="font-size:.78rem;color:var(--text-muted);margin-bottom:1.5rem">اولین نظرسنجی خود را بسازید و با مخاطبانتان به اشتراک بگذارید</p>
+<a href="survey-builder.html" class="btn-primary">شروع ساخت نظرسنجی</a>
+</div>
+</div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/survey.js"></script>
+<script src="js/access.js"></script>
+<script>
+$(document).ready(function(){
+  renderDashboard();
+
+  $('#searchSurveys').on('input', function(){
+    renderDashboard($(this).val());
+  });
+
+  function renderDashboard(search){
+    var surveys = Survey.getAll();
+    var totalResponses = 0;
+    var totalQuestions = 0;
+
+    if(search){
+      surveys = surveys.filter(function(s){ return s.title.indexOf(search) >= 0; });
+    }
+
+    surveys.forEach(function(s){
+      totalResponses += Survey.getResponses(s.id).length;
+      totalQuestions += s.questions.length;
+    });
+
+    $('#totalSurveys').text(surveys.length);
+    $('#totalResponses').text(totalResponses);
+    $('#totalQuestions').text(totalQuestions);
+
+    if(surveys.length === 0){
+      $('#surveysList').hide();
+      $('#emptyState').show();
+      return;
+    }
+
+    $('#emptyState').hide();
+    $('#surveysList').show();
+
+    var html = '';
+    surveys.forEach(function(s){
+      var respCount = Survey.getResponses(s.id).length;
+      var date = new Date(s.createdAt);
+      var dateStr = date.toLocaleDateString('fa-IR');
+
+      html += '<div class="meeting-card" data-id="' + s.id + '">';
+      html += '<div class="card-top">';
+      html += '<div class="card-icon" style="background:linear-gradient(135deg,#1a237e,#283593)">📋</div>';
+      html += '<div><h3>' + s.title + '</h3><p>' + s.questions.length + ' سوال · ' + respCount + ' پاسخ</p></div>';
+      html += '</div>';
+      if(s.description) html += '<p style="font-size:.72rem;color:var(--text-muted);margin-bottom:.75rem">' + s.description.substring(0, 100) + '</p>';
+      html += '<div class="card-meta">';
+      html += '<span>📅 ' + dateStr + '</span>';
+      html += '<span class="status-badge ' + (s.status === 'active' ? 'live' : 'ended') + '">' + (s.status === 'active' ? 'فعال' : 'بسته') + '</span>';
+      html += '</div>';
+      html += '<div style="display:flex;gap:.5rem;margin-top:1rem">';
+      html += '<a href="survey-view.html?id=' + s.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">مشاهده</a>';
+      html += '<a href="survey-results.html?id=' + s.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">نتایج</a>';
+      html += '<button onclick="copySurveyLink(\'' + s.id + '\')" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">کپی لینک</button>';
+      html += '<button onclick="deleteThisSurvey(\'' + s.id + '\')" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem;color:#e74c3c;border-color:#e74c3c">حذف</button>';
+      html += '</div>';
+      html += '</div>';
+    });
+
+    $('#surveysList').html(html);
+  }
+
+  window.copySurveyLink = function(id){
+    var url = window.location.origin + window.location.pathname.replace('surveys.html','') + 'survey-view.html?id=' + id;
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(url);
+      alert('لینک کپی شد: ' + url);
+    } else {
+      prompt('لینک نظرسنجی را کپی کنید:', url);
+    }
+  };
+
+  window.deleteThisSurvey = function(id){
+    if(confirm('آیا از حذف این نظرسنجی مطمئنید؟')){
+      Survey.delete(id);
+      renderDashboard();
+    }
+  };
+});
+</script>
+</body>
+</html>

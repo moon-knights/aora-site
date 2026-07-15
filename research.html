@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>پژوهش — آئورا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+.research-page{padding-top:80px;min-height:100vh}
+.res-hero{text-align:center;padding:4rem 0 3rem;background:linear-gradient(180deg,var(--bg-surface),var(--bg-deep))}
+.res-hero h1{font-size:2.2rem;font-weight:800;color:var(--text-primary);margin-bottom:.5rem}
+.res-hero p{font-size:.9rem;color:var(--text-muted);max-width:600px;margin:0 auto 2rem;line-height:1.8}
+
+/* جستجو */
+.res-search{max-width:500px;margin:0 auto 2rem;position:relative}
+.res-search input{width:100%;padding:.85rem 1rem .85rem 2.8rem;background:var(--bg-card);border:2px solid var(--border);border-radius:var(--radius-lg);color:var(--text-primary);font-family:var(--font-fa);font-size:.9rem;outline:none;transition:border-color var(--ease)}
+.res-search input:focus{border-color:var(--accent)}
+.res-search .s-icon{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);font-size:1rem;color:var(--text-muted)}
+
+/* آمار */
+.res-counters{display:flex;gap:3rem;justify-content:center;flex-wrap:wrap}
+.res-count{text-align:center}
+.res-count .num{font-size:2.5rem;font-weight:800;color:var(--accent);font-family:var(--font-mono)}
+.res-count .label{font-size:.75rem;color:var(--text-muted)}
+
+/* شمارنده نتایج */
+.res-result-count{font-size:.78rem;color:var(--text-muted);padding:1rem 0 .5rem}
+
+.res-section{padding:3rem 0}
+.res-section h2{font-size:1.3rem;font-weight:700;color:var(--text-primary);margin-bottom:1.5rem;display:flex;align-items:center;gap:10px}
+
+/* مقالات */
+.paper-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1rem;transition:all var(--ease)}
+.paper-card:hover{border-color:var(--accent-dim)}
+.paper-card .paper-type{display:inline-block;padding:.15rem .5rem;background:var(--accent-glow);color:var(--accent);border-radius:20px;font-size:.6rem;margin-bottom:.5rem}
+.paper-card h3{font-size:.95rem;font-weight:600;color:var(--text-primary);margin-bottom:.35rem}
+.paper-card .paper-authors{font-size:.72rem;color:var(--text-muted);margin-bottom:.35rem}
+.paper-card .paper-journal{font-size:.7rem;color:var(--accent);margin-bottom:.5rem}
+.paper-card .paper-abstract{font-size:.78rem;color:var(--text-muted);line-height:1.8;margin-bottom:.75rem}
+.paper-card .paper-tags{display:flex;gap:.35rem;flex-wrap:wrap}
+.paper-card .paper-tags span{padding:.15rem .4rem;background:var(--bg-deep);border-radius:10px;font-size:.6rem;color:var(--text-muted)}
+
+/* آزمایشگاه‌ها */
+.lab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem}
+.lab-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;transition:all var(--ease)}
+.lab-card:hover{border-color:var(--accent-dim)}
+.lab-card .lab-icon{font-size:2rem;margin-bottom:.75rem}
+.lab-card h3{font-size:.95rem;font-weight:600;color:var(--text-primary);margin-bottom:.25rem}
+.lab-card .lab-uni{font-size:.72rem;color:var(--accent);margin-bottom:.5rem}
+.lab-card p{font-size:.75rem;color:var(--text-muted);line-height:1.7}
+
+/* خالی */
+.res-empty{text-align:center;padding:4rem 1.5rem}
+.res-empty .re-icon{font-size:3.5rem;opacity:.3;margin-bottom:1rem}
+.res-empty h3{font-size:1rem;font-weight:600;color:var(--text-muted);margin-bottom:.4rem}
+.res-empty p{font-size:.82rem;color:var(--text-muted);margin-bottom:1rem}
+
+@media(max-width:768px){
+  .res-hero h1{font-size:1.6rem}
+  .res-counters{gap:1.5rem}
+  .res-count .num{font-size:1.8rem}
+  .lab-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ ناوبری ═══ -->
+<nav class="nav" id="mainNav"><div class="container">
+<a href="index.html" class="nav-logo">آئو<span>را</span></a>
+<ul class="nav-links">
+  <li><a href="index.html">خانه</a></li>
+  <li><a href="courses.html">بازارچه دوره‌ها</a></li>
+  <li><a href="professors.html">اساتید</a></li>
+  <li><a href="forum.html">تالار گفتگو</a></li>
+  <li><a href="resources.html">منابع</a></li>
+  <li><a href="research.html" class="active">پژوهش</a></li>
+  <li><a href="about.html">درباره ما</a></li>
+</ul>
+<div class="nav-actions">
+  <a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+  <div id="authArea"></div>
+</div>
+</div></nav>
+
+<div class="research-page">
+
+  <!-- ═══ هیرو ═══ -->
+  <div class="res-hero">
+    <h1 data-cm-key="page_title">🔬 پژوهش‌های آئورا</h1>
+    <p data-cm-key="page_subtitle">حمایت از پژوهش‌های نوآورانه در حوزه‌های بیوانفارماتیک، ژنومیکس و زیست‌شناسی محاسباتی</p>
+
+    <div class="res-search">
+      <span class="s-icon">🔍</span>
+      <input type="text" id="resSearch" data-cm-placeholder="search_placeholder" placeholder="جستجوی پژوهش...">
+    </div>
+
+    <div class="res-counters">
+      <div class="res-count">
+        <div class="num" data-cm-key="stat_papers">۱۲۷</div>
+        <div class="label" data-cm-key="stat_papers_label">مقاله منتشر شده</div>
+      </div>
+      <div class="res-count">
+        <div class="num" data-cm-key="stat_researchers">۴۵</div>
+        <div class="label" data-cm-key="stat_researchers_label">پروژه فعال</div>
+      </div>
+      <div class="res-count">
+        <div class="num" data-cm-key="stat_projects">۲۳</div>
+        <div class="label" data-cm-key="stat_projects_label">آزمایشگاه همکار</div>
+      </div>
+      <div class="res-count">
+        <div class="num" data-cm-key="stat_collabs">۸</div>
+        <div class="label" data-cm-key="stat_collabs_label">گرنت پژوهشی</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- ═══ مقالات ═══ -->
+    <div class="res-section" id="papersSection">
+      <h2 data-cm-key="papers_title">📄 آخرین مقالات</h2>
+      <div class="res-result-count" id="papersCount"></div>
+      <div id="papersList">
+
+        <div class="paper-card">
+          <span class="paper-type">مقاله پژوهشی</span>
+          <h3>تحلیل شبکه‌های تنظیمی ژن در سرطان پستان با رویکرد یادگیری عمیق</h3>
+          <div class="paper-authors">احمدی س، رضایی ع، نوری م — ۱۴۰۵</div>
+          <div class="paper-journal">نشریه بیوانفارماتیک ایران — جلد ۱۲، شماره ۳</div>
+          <div class="paper-abstract">در این پژوهش با استفاده از شبکه‌های عصبی عمیق، الگوهای تنظیمی ژن در نمونه‌های سرطان پستان تحلیل شد. نتایج نشان داد مدل پیشنهادی با دقت ۹۴.۲٪ قادر به شناسایی ژن‌های کلیدی مرتبط با پیشرفت بیماری است.</div>
+          <div class="paper-tags"><span>یادگیری عمیق</span><span>سرطان</span><span>شبکه ژنی</span></div>
+        </div>
+
+        <div class="paper-card">
+          <span class="paper-type">مقاله مروری</span>
+          <h3>کاربردهای CRISPR-Cas9 در ژن‌درمانی: چالش‌ها و چشم‌اندازها</h3>
+          <div class="paper-authors">نوری م، کریمی ز — ۱۴۰۵</div>
+          <div class="paper-journal">فصلنامه ژنتیک پزشکی — جلد ۸</div>
+          <div class="paper-abstract">مروری جامع بر آخرین پیشرفت‌ها در فناوری CRISPR و کاربردهای بالینی آن در درمان بیماری‌های ژنتیکی نادر.</div>
+          <div class="paper-tags"><span>CRISPR</span><span>ژن‌درمانی</span><span>بیماری نادر</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ آزمایشگاه‌ها ═══ -->
+    <div class="res-section" id="labsSection">
+      <h2 data-cm-key="labs_title">🏛 آزمایشگاه‌های همکار</h2>
+      <div class="lab-grid" id="labsGrid">
+
+        <div class="lab-card">
+          <div class="lab-icon">🧬</div>
+          <h3>آزمایشگاه بیوانفارماتیک</h3>
+          <div class="lab-uni">دانشگاه تهران</div>
+          <p>تحلیل داده‌های ژنومیکس و پروتئومیکس، مدل‌سازی ساختار پروتئین</p>
+        </div>
+
+        <div class="lab-card">
+          <div class="lab-icon">🔬</div>
+          <h3>آزمایشگاه ژنتیک مولکولی</h3>
+          <div class="lab-uni">علوم پزشکی تهران</div>
+          <p>تشخیص ژنتیکی بیماری‌های نادر و توسعه روش‌های نوین تشخیصی</p>
+        </div>
+
+        <div class="lab-card">
+          <div class="lab-icon">🧪</div>
+          <h3>آزمایشگاه شیمی محاسباتی</h3>
+          <div class="lab-uni">دانشگاه شیراز</div>
+          <p>طراحی دارو با رویکرد محاسباتی و داکینگ مولکولی</p>
+        </div>
+
+        <div class="lab-card">
+          <div class="lab-icon">📊</div>
+          <h3>مرکز علم داده زیستی</h3>
+          <div class="lab-uni">شریف</div>
+          <p>کاربرد یادگیری ماشین در تحلیل داده‌های بیولوژیکی</p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══ فوتر ═══ -->
+<footer class="footer"><div class="container">
+<div class="footer-grid">
+  <div>
+    <div class="footer-logo">آئو<span>را</span></div>
+    <p class="footer-about">پلتفرم آموزش مدرن علوم زیستی</p>
+  </div>
+  <div>
+    <h4 class="footer-title">لینک‌ها</h4>
+    <ul class="footer-links">
+      <li><a href="courses.html">بازارچه دوره‌ها</a></li>
+      <li><a href="research.html">پژوهش</a></li>
+      <li><a href="forum.html">تالار گفتگو</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4 class="footer-title">پشتیبانی</h4>
+    <ul class="footer-links">
+      <li><a href="about.html">درباره ما</a></li>
+      <li><a href="faq.html">سوالات</a></li>
+    </ul>
+  </div>
+</div>
+<div class="footer-bottom">
+  <span>© ۱۴۰۵ آئورا</span>
+  <span>support@aoura.ir</span>
+</div>
+</div></footer>
+
+
+<!-- ═══ اسکریپت‌ها ═══ -->
+<script src="js/content-manager.js"></script>
+<script src="js/ajax.js"></script>
+<script src="js/app.js"></script>
+<script>
+$(document).ready(function () {
+
+  /* ── اعمال محتوای ذخیره‌شده ادمین ── */
+  if (typeof ContentManager !== 'undefined') {
+    ContentManager.applyToPage('research.html');
+    $('#resSearch').attr('placeholder', ContentManager.getValue('research.html', 'search_placeholder'));
+  }
+
+  /* ── خواندن پیام‌ها از ContentManager ── */
+  var emptyIcon  = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('research.html', 'empty_icon')  : '🔬';
+  var emptyTitle = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('research.html', 'empty_title') : 'هنوز پژوهشی ثبت نشده';
+  var emptyText  = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('research.html', 'empty_text')  : 'پژوهش‌ها به زودی منتشر خواهند شد';
+
+
+  /* ── ذخیره محتوای اصلی مقالات برای جستجو ── */
+  var allPaperCards = [];
+  $('#papersList .paper-card').each(function () {
+    var $card = $(this);
+    allPaperCards.push({
+      el: $card.clone(),
+      text: $card.text().toLowerCase()
+    });
+  });
+  var totalPapers = allPaperCards.length;
+
+  // شمارنده اولیه
+  $('#papersCount').text('نمایش ' + totalPapers + ' مقاله');
+
+
+  /* ── ذخیره محتوای آزمایشگاه‌ها ── */
+  var allLabCards = [];
+  $('#labsGrid .lab-card').each(function () {
+    var $card = $(this);
+    allLabCards.push({
+      el: $card.clone(),
+      text: $card.text().toLowerCase()
+    });
+  });
+
+
+  /* ── جستجو ── */
+  $('#resSearch').on('input', function () {
+    var q = $(this).val().toLowerCase().trim();
+
+    // فیلتر مقالات
+    var papersFound = 0;
+    if (!q) {
+      $('#papersList').empty();
+      allPaperCards.forEach(function (item) {
+        $('#papersList').append(item.el.clone());
+        papersFound++;
+      });
+    } else {
+      $('#papersList').empty();
+      allPaperCards.forEach(function (item) {
+        if (item.text.indexOf(q) >= 0) {
+          $('#papersList').append(item.el.clone());
+          papersFound++;
+        }
+      });
+    }
+
+    // فیلتر آزمایشگاه‌ها
+    if (!q) {
+      $('#labsGrid').empty();
+      allLabCards.forEach(function (item) {
+        $('#labsGrid').append(item.el.clone());
+      });
+    } else {
+      $('#labsGrid').empty();
+      allLabCards.forEach(function (item) {
+        if (item.text.indexOf(q) >= 0) {
+          $('#labsGrid').append(item.el.clone());
+        }
+      });
+    }
+
+    // شمارنده مقالات
+    $('#papersCount').text('نمایش ' + papersFound + ' مقاله');
+
+    // پیام خالی مقالات
+    if (papersFound === 0) {
+      $('#papersList').html(
+        '<div class="res-empty">' +
+        '<div class="re-icon">' + emptyIcon + '</div>' +
+        '<h3>' + emptyTitle + '</h3>' +
+        '<p>' + emptyText + '</p>' +
+        '</div>'
+      );
+    }
+
+    // پیام خالی آزمایشگاه‌ها
+    var labsVisible = $('#labsGrid .lab-card').length;
+    if (labsVisible === 0 && q) {
+      $('#labsGrid').html(
+        '<div class="res-empty" style="grid-column:1/-1">' +
+        '<div class="re-icon">🏛</div>' +
+        '<h3>آزمایشگاهی یافت نشد</h3>' +
+        '<p>عبارت دیگری جستجو کنید</p>' +
+        '</div>'
+      );
+    }
+
+    // نمایش/مخفی بخش‌ها
+    if (q) {
+      if (papersFound > 0) $('#papersSection').show();
+      else $('#papersSection').show();
+      if (labsVisible > 0 || q) $('#labsSection').show();
+    } else {
+      $('#papersSection').show();
+      $('#labsSection').show();
+    }
+  });
+
+});
+</script>
+</body>
+</html>

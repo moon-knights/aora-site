@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>اساتید — آئورا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+.professors-page{padding-top:80px;min-height:100vh}
+.prof-header{text-align:center;padding:3rem 0 2rem;background:linear-gradient(180deg,var(--bg-surface),var(--bg-deep))}
+.prof-header h1{font-size:2rem;font-weight:800;color:var(--text-primary);margin-bottom:.5rem}
+.prof-header p{font-size:.88rem;color:var(--text-muted);margin-bottom:1.5rem}
+
+/* جستجو */
+.prof-search{max-width:500px;margin:0 auto 1rem;position:relative}
+.prof-search input{width:100%;padding:.85rem 1rem .85rem 2.8rem;background:var(--bg-card);border:2px solid var(--border);border-radius:var(--radius-lg);color:var(--text-primary);font-family:var(--font-fa);font-size:.9rem;outline:none;transition:border-color var(--ease)}
+.prof-search input:focus{border-color:var(--accent)}
+.prof-search .s-icon{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);font-size:1rem;color:var(--text-muted)}
+
+/* آمار */
+.prof-header-stats{display:flex;gap:2rem;justify-content:center;margin-top:1rem;font-size:.78rem;color:var(--text-muted)}
+.prof-header-stats .phs{display:flex;align-items:center;gap:6px}
+.prof-header-stats .phs strong{color:var(--text-primary);font-family:var(--font-mono);font-size:.95rem}
+
+.prof-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:1.5rem;padding:2rem 0}
+.prof-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;display:flex;gap:1.25rem;transition:all var(--ease);cursor:pointer}
+.prof-card:hover{border-color:var(--accent-dim);transform:translateY(-2px)}
+.prof-avatar{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;flex-shrink:0}
+.prof-info{flex:1}
+.prof-info h3{font-size:1rem;font-weight:600;color:var(--text-primary);margin-bottom:.15rem}
+.prof-info .title{font-size:.72rem;color:var(--accent);margin-bottom:.15rem}
+.prof-info .uni{font-size:.68rem;color:var(--text-muted);margin-bottom:.5rem}
+.prof-info .bio{font-size:.72rem;color:var(--text-muted);line-height:1.7;margin-bottom:.75rem}
+.prof-stats{display:flex;gap:1rem;flex-wrap:wrap}
+.prof-stats .ps{font-size:.65rem;color:var(--text-muted)}
+.prof-stats .ps strong{color:var(--text-primary);font-family:var(--font-mono);font-size:.8rem}
+
+/* شمارنده نتایج */
+.prof-count{font-size:.78rem;color:var(--text-muted);padding:.75rem 0 0}
+
+/* بدون نتیجه */
+.prof-empty{text-align:center;padding:4rem 1.5rem}
+.prof-empty .pe-icon{font-size:3.5rem;opacity:.3;margin-bottom:1rem}
+.prof-empty h3{font-size:1rem;font-weight:600;color:var(--text-muted);margin-bottom:.4rem}
+.prof-empty p{font-size:.82rem;color:var(--text-muted)}
+
+@media(max-width:768px){
+  .prof-grid{grid-template-columns:1fr}
+  .prof-card{flex-direction:column;align-items:center;text-align:center}
+  .prof-stats{justify-content:center}
+  .prof-header-stats{flex-wrap:wrap;gap:1rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ ناوبری ═══ -->
+<nav class="nav" id="mainNav"><div class="container">
+<a href="index.html" class="nav-logo">آئو<span>را</span></a>
+<ul class="nav-links">
+  <li><a href="index.html">خانه</a></li>
+  <li><a href="courses.html">بازارچه دوره‌ها</a></li>
+  <li><a href="professors.html" class="active">اساتید</a></li>
+  <li><a href="forum.html">تالار گفتگو</a></li>
+  <li><a href="resources.html">منابع</a></li>
+  <li><a href="research.html">پژوهش</a></li>
+  <li><a href="about.html">درباره ما</a></li>
+</ul>
+<div class="nav-actions">
+  <a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+  <div id="authArea"></div>
+</div>
+</div></nav>
+
+<div class="professors-page">
+
+  <!-- ═══ هدر ═══ -->
+  <div class="prof-header">
+    <h1 data-cm-key="page_title">اساتید آئورا</h1>
+    <p data-cm-key="page_subtitle">از بهترین متخصصان علوم زیستی کشور بیاموزید</p>
+
+    <div class="prof-search">
+      <span class="s-icon">🔍</span>
+      <input type="text" id="profSearch" data-cm-placeholder="search_placeholder" placeholder="جستجوی استاد...">
+    </div>
+
+    <div class="prof-header-stats">
+      <div class="phs"><strong data-cm-key="stat_profs">۱۰</strong> استاد</div>
+      <div class="phs"><strong data-cm-key="stat_students">۳,۴۰۰+</strong> کارآموز</div>
+      <div class="phs"><strong data-cm-key="stat_courses">۱۲</strong> دوره</div>
+      <div class="phs"><strong data-cm-key="stat_rating">۴.۸</strong> میانگین امتیاز</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="prof-count" id="profCount"></div>
+    <div class="prof-grid" id="profGrid"></div>
+  </div>
+
+</div>
+
+
+<!-- ═══ فوتر ═══ -->
+<footer class="footer"><div class="container">
+<div class="footer-grid">
+  <div>
+    <div class="footer-logo">آئو<span>را</span></div>
+    <p class="footer-about">پلتفرم آموزش مدرن علوم زیستی</p>
+  </div>
+  <div>
+    <h4 class="footer-title">لینک‌ها</h4>
+    <ul class="footer-links">
+      <li><a href="courses.html">بازارچه دوره‌ها</a></li>
+      <li><a href="professors.html">اساتید</a></li>
+      <li><a href="forum.html">تالار گفتگو</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4 class="footer-title">پشتیبانی</h4>
+    <ul class="footer-links">
+      <li><a href="about.html">درباره ما</a></li>
+      <li><a href="faq.html">سوالات</a></li>
+    </ul>
+  </div>
+</div>
+<div class="footer-bottom">
+  <span>© ۱۴۰۵ آئورا</span>
+  <span>support@aoura.ir</span>
+</div>
+</div></footer>
+
+
+<!-- ═══ اسکریپت‌ها ═══ -->
+<script src="js/content-manager.js"></script>
+<script src="js/ajax.js"></script>
+<script src="js/app.js"></script>
+<script>
+$(document).ready(function () {
+
+  var allProfs = [];
+
+  /* ── اعمال محتوای ذخیره‌شده ادمین ── */
+  if (typeof ContentManager !== 'undefined') {
+    ContentManager.applyToPage('professors.html');
+    $('#profSearch').attr('placeholder', ContentManager.getValue('professors.html', 'search_placeholder'));
+  }
+
+  /* ── خواندن پیام‌ها از ContentManager ── */
+  var emptyIcon  = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('professors.html', 'empty_icon')  : '👨‍🏫';
+  var emptyTitle = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('professors.html', 'empty_title') : 'هنوز استادی ثبت نشده';
+  var emptyText  = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('professors.html', 'empty_text')  : 'به زودی اساتید معرفی خواهند شد';
+
+
+  /* ── بارگذاری اساتید ── */
+  API.get('/professors').done(function (profs) {
+    allProfs = profs;
+    renderProfs(profs);
+    // بروزرسانی آمار واقعی
+    if (typeof ContentManager === 'undefined' || !ContentManager.getPageContent('professors.html').stat_profs) {
+      $('[data-cm-key="stat_profs"]').text(toPersianNum(profs.length));
+    }
+  });
+
+
+  /* ── جستجو ── */
+  $('#profSearch').on('input', function () {
+    var q = $(this).val().toLowerCase();
+    if (!q) {
+      renderProfs(allProfs);
+      return;
+    }
+    var filtered = allProfs.filter(function (p) {
+      return p.name.toLowerCase().indexOf(q) >= 0
+          || p.title.toLowerCase().indexOf(q) >= 0
+          || p.university.toLowerCase().indexOf(q) >= 0
+          || (p.bio || '').toLowerCase().indexOf(q) >= 0;
+    });
+    renderProfs(filtered);
+  });
+
+
+  /* ── رندر ── */
+  function renderProfs(profs) {
+    var colors = ['#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#009688', '#4caf50', '#ff9800'];
+
+    // شمارنده
+    $('#profCount').text('نمایش ' + profs.length + ' استاد');
+
+    // خالی
+    if (profs.length === 0) {
+      $('#profGrid').html(
+        '<div class="prof-empty">' +
+        '<div class="pe-icon">' + emptyIcon + '</div>' +
+        '<h3>' + emptyTitle + '</h3>' +
+        '<p>' + emptyText + '</p>' +
+        '</div>'
+      );
+      return;
+    }
+
+    var html = '';
+    profs.forEach(function (p, i) {
+      var color = colors[i % colors.length];
+      var parts = p.name.split(' ');
+      var initials = parts.length >= 2
+        ? parts[parts.length - 2].charAt(0) + ' ' + parts[parts.length - 1].charAt(0)
+        : p.name.charAt(0);
+
+      html += '<div class="prof-card">';
+      html += '  <div class="prof-avatar" style="background:' + color + '20;color:' + color + '">' + initials + '</div>';
+      html += '  <div class="prof-info">';
+      html += '    <h3>' + p.name + '</h3>';
+      html += '    <div class="title">' + p.title + '</div>';
+      html += '    <div class="uni">🏛 ' + p.university + '</div>';
+      html += '    <div class="bio">' + p.bio + '</div>';
+      html += '    <div class="prof-stats">';
+      html += '      <span class="ps"><strong>' + p.courses + '</strong> دوره</span>';
+      html += '      <span class="ps"><strong>' + p.students.toLocaleString('fa-IR') + '</strong> کارآموز</span>';
+      html += '      <span class="ps"><strong>⭐ ' + p.rating + '</strong></span>';
+      html += '      <span class="ps"><strong>' + p.publications + '</strong> مقاله</span>';
+      html += '      <span class="ps">h-index: <strong>' + p.hIndex + '</strong></span>';
+      html += '    </div>';
+      html += '  </div>';
+      html += '</div>';
+    });
+    $('#profGrid').html(html);
+  }
+
+
+  /* ── تبدیل عدد به فارسی ── */
+  function toPersianNum(n) {
+    var persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+    return String(n).replace(/\d/g, function (d) { return persianDigits[d]; });
+  }
+
+});
+</script>
+</body>
+</html>

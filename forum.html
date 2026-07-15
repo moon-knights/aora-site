@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تالار گفتگو — آئورا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+.forum-page{padding-top:80px;min-height:100vh}
+.forum-header{text-align:center;padding:3rem 0 2rem;background:linear-gradient(180deg,var(--bg-surface),var(--bg-deep))}
+.forum-header h1{font-size:2rem;font-weight:800;color:var(--text-primary);margin-bottom:.5rem}
+.forum-header p{font-size:.88rem;color:var(--text-muted);margin-bottom:1.5rem}
+
+/* جستجو */
+.forum-search{max-width:500px;margin:0 auto 1.5rem;position:relative}
+.forum-search input{width:100%;padding:.85rem 1rem .85rem 2.8rem;background:var(--bg-card);border:2px solid var(--border);border-radius:var(--radius-lg);color:var(--text-primary);font-family:var(--font-fa);font-size:.9rem;outline:none;transition:border-color var(--ease)}
+.forum-search input:focus{border-color:var(--accent)}
+.forum-search .s-icon{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);font-size:1rem;color:var(--text-muted)}
+
+/* آمار */
+.forum-stats{display:flex;gap:2rem;justify-content:center;margin-top:1rem;font-size:.78rem;color:var(--text-muted);flex-wrap:wrap}
+.forum-stats .fs{display:flex;align-items:center;gap:6px}
+.forum-stats .fs strong{color:var(--text-primary);font-family:var(--font-mono);font-size:.95rem}
+
+.forum-top{display:flex;gap:1rem;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap}
+.forum-cats{display:flex;gap:.35rem;flex-wrap:wrap;flex:1}
+.forum-cat{padding:.4rem .75rem;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;font-size:.7rem;color:var(--text-muted);cursor:pointer;transition:all var(--ease)}
+.forum-cat.active{background:var(--accent-glow);border-color:var(--accent);color:var(--accent)}
+
+/* شمارنده نتایج */
+.forum-count{font-size:.78rem;color:var(--text-muted);padding:.5rem 0 .75rem}
+
+.forum-post{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1rem;transition:all var(--ease);cursor:pointer}
+.forum-post:hover{border-color:var(--accent-dim)}
+.forum-post .fp-top{display:flex;align-items:center;gap:10px;margin-bottom:.75rem}
+.forum-post .fp-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;flex-shrink:0}
+.forum-post .fp-author{font-size:.82rem;font-weight:500;color:var(--text-primary)}
+.forum-post .fp-role{font-size:.6rem;padding:.1rem .4rem;border-radius:10px;margin-right:.35rem}
+.forum-post .fp-date{font-size:.65rem;color:var(--text-muted)}
+.forum-post h3{font-size:.95rem;font-weight:600;color:var(--text-primary);margin-bottom:.5rem}
+.forum-post .fp-content{font-size:.78rem;color:var(--text-muted);line-height:1.7;margin-bottom:.75rem}
+.forum-post .fp-footer{display:flex;gap:1.5rem;font-size:.68rem;color:var(--text-muted)}
+.forum-post .fp-footer span{display:flex;align-items:center;gap:4px;cursor:pointer;transition:color var(--ease)}
+.forum-post .fp-footer span:hover{color:var(--accent)}
+.forum-post .fp-cat{display:inline-block;padding:.15rem .45rem;background:var(--bg-deep);border-radius:10px;font-size:.6rem;color:var(--text-muted);margin-bottom:.5rem}
+
+/* فرم پست جدید */
+.new-post-form{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:2rem;display:none}
+.new-post-form.show{display:block}
+.new-post-form input,.new-post-form textarea,.new-post-form select{width:100%;padding:.6rem;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-family:var(--font-fa);font-size:.82rem;outline:none;margin-bottom:.75rem;transition:border-color var(--ease)}
+.new-post-form input:focus,.new-post-form textarea:focus{border-color:var(--accent)}
+
+/* خالی */
+.forum-empty{text-align:center;padding:4rem 1.5rem}
+.forum-empty .fe-icon{font-size:3.5rem;opacity:.3;margin-bottom:1rem}
+.forum-empty h3{font-size:1rem;font-weight:600;color:var(--text-muted);margin-bottom:.4rem}
+.forum-empty p{font-size:.82rem;color:var(--text-muted);margin-bottom:1rem}
+</style>
+</head>
+<body>
+
+<!-- ═══ ناوبری ═══ -->
+<nav class="nav" id="mainNav"><div class="container">
+<a href="index.html" class="nav-logo">آئو<span>را</span></a>
+<ul class="nav-links">
+  <li><a href="index.html">خانه</a></li>
+  <li><a href="courses.html">بازارچه دوره‌ها</a></li>
+  <li><a href="professors.html">اساتید</a></li>
+  <li><a href="forum.html" class="active">تالار گفتگو</a></li>
+  <li><a href="resources.html">منابع</a></li>
+  <li><a href="research.html">پژوهش</a></li>
+  <li><a href="about.html">درباره ما</a></li>
+</ul>
+<div class="nav-actions">
+  <a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+  <div id="authArea"></div>
+</div>
+</div></nav>
+
+<div class="forum-page">
+
+  <!-- ═══ هدر ═══ -->
+  <div class="forum-header">
+    <h1 data-cm-key="page_title">💬 تالار گفتگوی آئورا</h1>
+    <p data-cm-key="page_subtitle">پرسش، پاسخ و تبادل تجربه با جامعه علوم زیستی</p>
+
+    <div class="forum-search">
+      <span class="s-icon">🔍</span>
+      <input type="text" id="forumSearch" data-cm-placeholder="search_placeholder" placeholder="جستجوی پست...">
+    </div>
+
+    <div class="forum-stats">
+      <div class="fs"><strong data-cm-key="stat_posts">۰</strong> پست</div>
+      <div class="fs"><strong data-cm-key="stat_members">۳,۴۰۰+</strong> عضو</div>
+      <div class="fs"><strong data-cm-key="stat_replies">۰</strong> پاسخ</div>
+      <div class="fs"><strong data-cm-key="stat_active">۰</strong> فعال امروز</div>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:2rem">
+
+    <!-- فیلتر و دکمه -->
+    <div class="forum-top">
+      <div class="forum-cats">
+        <div class="forum-cat active" data-cat="all">همه</div>
+        <div class="forum-cat" data-cat="بیوانفارماتیک">بیوانفارماتیک</div>
+        <div class="forum-cat" data-cat="برنامه‌نویسی">برنامه‌نویسی</div>
+        <div class="forum-cat" data-cat="ژنتیک">ژنتیک</div>
+        <div class="forum-cat" data-cat="فرصت شغلی">فرصت شغلی</div>
+        <div class="forum-cat" data-cat="رویداد">رویداد</div>
+        <div class="forum-cat" data-cat="عمومی">عمومی</div>
+      </div>
+      <button class="btn-primary" id="toggleNewPost" style="padding:.5rem 1rem;font-size:.78rem" data-cm-key="new_post_btn">✏️ پست جدید</button>
+    </div>
+
+    <!-- فرم پست جدید -->
+    <div class="new-post-form" id="newPostForm">
+      <h3 style="font-size:.95rem;font-weight:600;color:var(--text-primary);margin-bottom:1rem">پست جدید</h3>
+      <input type="text" id="npTitle" placeholder="عنوان پست">
+      <select id="npCategory">
+        <option>بیوانفارماتیک</option>
+        <option>برنامه‌نویسی</option>
+        <option>ژنتیک</option>
+        <option>فرصت شغلی</option>
+        <option>رویداد</option>
+        <option>عمومی</option>
+      </select>
+      <textarea id="npContent" rows="4" placeholder="متن پست..."></textarea>
+      <div style="display:flex;gap:.5rem">
+        <button class="btn-primary" id="submitPost" style="padding:.5rem 1rem;font-size:.78rem">ارسال</button>
+        <button class="btn-ghost" id="cancelPost" style="padding:.5rem 1rem;font-size:.78rem">انصراف</button>
+      </div>
+    </div>
+
+    <!-- شمارنده -->
+    <div class="forum-count" id="forumCount"></div>
+
+    <!-- پست‌ها -->
+    <div id="forumPosts"></div>
+
+  </div>
+</div>
+
+
+<!-- ═══ فوتر ═══ -->
+<footer class="footer"><div class="container">
+<div class="footer-grid">
+  <div>
+    <div class="footer-logo">آئو<span>را</span></div>
+    <p class="footer-about">پلتفرم آموزش مدرن علوم زیستی</p>
+  </div>
+  <div>
+    <h4 class="footer-title">لینک‌ها</h4>
+    <ul class="footer-links">
+      <li><a href="courses.html">بازارچه دوره‌ها</a></li>
+      <li><a href="professors.html">اساتید</a></li>
+      <li><a href="forum.html">تالار گفتگو</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4 class="footer-title">پشتیبانی</h4>
+    <ul class="footer-links">
+      <li><a href="about.html">درباره ما</a></li>
+      <li><a href="faq.html">سوالات</a></li>
+    </ul>
+  </div>
+</div>
+<div class="footer-bottom">
+  <span>© ۱۴۰۵ آئورا</span>
+  <span>support@aoura.ir</span>
+</div>
+</div></footer>
+
+
+<!-- ═══ اسکریپت‌ها ═══ -->
+<script src="js/content-manager.js"></script>
+<script src="js/ajax.js"></script>
+<script src="js/app.js"></script>
+<script>
+$(document).ready(function () {
+
+  var allPosts = [];
+  var activeCat = 'all';
+
+  /* ── اعمال محتوای ذخیره‌شده ادمین ── */
+  if (typeof ContentManager !== 'undefined') {
+    ContentManager.applyToPage('forum.html');
+    $('#forumSearch').attr('placeholder', ContentManager.getValue('forum.html', 'search_placeholder'));
+  }
+
+  /* ── خواندن پیام‌ها از ContentManager ── */
+  var emptyIcon  = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('forum.html', 'empty_icon')  : '💬';
+  var emptyTitle = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('forum.html', 'empty_title') : 'هنوز پستی ثبت نشده';
+  var emptyText  = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('forum.html', 'empty_text')  : 'اولین بحث را شما شروع کنید';
+
+
+  /* ── بارگذاری پست‌ها ── */
+  loadPosts();
+
+
+  /* ── دسته‌بندی ── */
+  $('.forum-cat').on('click', function () {
+    $('.forum-cat').removeClass('active');
+    $(this).addClass('active');
+    activeCat = $(this).data('cat');
+    loadPosts();
+  });
+
+
+  /* ── جستجو ── */
+  $('#forumSearch').on('input', function () {
+    var q = $(this).val().toLowerCase();
+    var filtered = allPosts;
+    if (activeCat !== 'all') {
+      filtered = filtered.filter(function (p) { return p.category === activeCat; });
+    }
+    if (q) {
+      filtered = filtered.filter(function (p) {
+        return p.title.toLowerCase().indexOf(q) >= 0
+            || p.content.toLowerCase().indexOf(q) >= 0
+            || p.author.toLowerCase().indexOf(q) >= 0;
+      });
+    }
+    renderPosts(filtered);
+  });
+
+
+  /* ── پست جدید ── */
+  $('#toggleNewPost').on('click', function () {
+    var user = typeof Auth !== 'undefined' && Auth.getCurrentUser();
+    if (!user) { window.location.href = 'login.html'; return; }
+    $('#newPostForm').toggleClass('show');
+  });
+
+  $('#cancelPost').on('click', function () {
+    $('#newPostForm').removeClass('show');
+  });
+
+  $('#submitPost').on('click', function () {
+    var title = $('#npTitle').val().trim();
+    var content = $('#npContent').val().trim();
+    if (!title || !content) { alert('عنوان و متن را وارد کنید.'); return; }
+    API.post('/forum', { title: title, content: content, category: $('#npCategory').val() }).done(function () {
+      $('#npTitle, #npContent').val('');
+      $('#newPostForm').removeClass('show');
+      loadPosts();
+      if (typeof showNotification === 'function') showNotification('پست ارسال شد');
+    });
+  });
+
+
+  /* ── لود پست‌ها ── */
+  function loadPosts() {
+    API.get('/forum').done(function (posts) {
+      allPosts = posts;
+
+      // بروزرسانی آمار
+      var totalReplies = 0;
+      posts.forEach(function (p) { totalReplies += (p.replies ? p.replies.length : 0); });
+      $('[data-cm-key="stat_posts"]').text(toPersianNum(posts.length));
+
+      if (typeof ContentManager === 'undefined' || !ContentManager.getPageContent('forum.html').stat_replies) {
+        $('[data-cm-key="stat_replies"]').text(toPersianNum(totalReplies));
+      }
+
+      // فیلتر دسته‌بندی
+      var filtered = posts;
+      if (activeCat !== 'all') {
+        filtered = filtered.filter(function (p) { return p.category === activeCat; });
+      }
+
+      // فیلتر جستجو
+      var q = $('#forumSearch').val().toLowerCase();
+      if (q) {
+        filtered = filtered.filter(function (p) {
+          return p.title.toLowerCase().indexOf(q) >= 0
+              || p.content.toLowerCase().indexOf(q) >= 0
+              || p.author.toLowerCase().indexOf(q) >= 0;
+        });
+      }
+
+      renderPosts(filtered);
+    });
+  }
+
+
+  /* ── رندر پست‌ها ── */
+  function renderPosts(posts) {
+    $('#forumCount').text('نمایش ' + posts.length + ' پست');
+
+    if (!posts.length) {
+      $('#forumPosts').html(
+        '<div class="forum-empty">' +
+        '<div class="fe-icon">' + emptyIcon + '</div>' +
+        '<h3>' + emptyTitle + '</h3>' +
+        '<p>' + emptyText + '</p>' +
+        '</div>'
+      );
+      return;
+    }
+
+    var html = '';
+    posts.forEach(function (p) {
+      var colors = { 'student': '#4caf50', 'professor': '#2196f3', 'admin': '#e74c3c' };
+      var color = colors[p.authorRole] || '#9e9e9e';
+      var date = new Date(p.createdAt).toLocaleDateString('fa-IR');
+      var roleName = p.authorRole === 'professor' ? 'استاد' : p.authorRole === 'admin' ? 'ادمین' : 'کارآموز';
+
+      html += '<div class="forum-post">';
+      html += '<span class="fp-cat">' + p.category + '</span>';
+      html += '<div class="fp-top">';
+      html += '<div class="fp-avatar" style="background:' + color + '20;color:' + color + '">' + p.author.charAt(0) + '</div>';
+      html += '<div><span class="fp-author">' + p.author + '</span>';
+      html += '<span class="fp-role" style="background:' + color + '20;color:' + color + '">' + roleName + '</span>';
+      html += '<span class="fp-date">' + date + '</span></div></div>';
+      html += '<h3>' + p.title + '</h3>';
+      html += '<div class="fp-content">' + p.content + '</div>';
+      html += '<div class="fp-footer">';
+      html += '<span>❤️ ' + p.likes + '</span>';
+      html += '<span>👁 ' + p.views + '</span>';
+      html += '<span>💬 ' + (p.replies ? p.replies.length : 0) + ' پاسخ</span>';
+      html += '</div></div>';
+    });
+    $('#forumPosts').html(html);
+  }
+
+
+  /* ── تبدیل عدد به فارسی ── */
+  function toPersianNum(n) {
+    var persianDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+    return String(n).replace(/\d/g, function (d) { return persianDigits[d]; });
+  }
+
+});
+</script>
+</body>
+</html>

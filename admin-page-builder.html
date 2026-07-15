@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ویرایشگر صفحه — آئورا</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- GrapesJS CSS -->
+    <link href="https://unpkg.com/grapesjs@0.21.10/dist/css/grapes.min.css" rel="stylesheet">
+    <!-- GrapesJS Preset Webpage -->
+    <link href="https://unpkg.com/grapesjs-preset-webpage@1.0.2/dist/grapesjs-preset-webpage.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Vazirmatn', sans-serif; background: #0d0d0d; }
+
+        /* نوار بالای سفارشی */
+        .builder-topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #1a1a1a; border-bottom: 1px solid #333;
+            padding: 0 1.5rem; height: 56px; z-index: 1000;
+            position: relative;
+        }
+        .builder-topbar .logo { color: #f0ece4; font-size: 1.2rem; font-weight: 700; }
+        .builder-topbar .logo span { color: #e8c547; }
+        .builder-topbar .page-info { display: flex; align-items: center; gap: 1rem; }
+        .builder-topbar .page-info input {
+            background: #111; border: 1px solid #333; border-radius: 6px;
+            padding: .4rem .8rem; color: #f0ece4; font-family: inherit;
+            font-size: .82rem; outline: none; width: 200px;
+        }
+        .builder-topbar .page-info input:focus { border-color: #e8c547; }
+        .builder-topbar .page-info .slug-preview {
+            font-size: .72rem; color: #7a7570; direction: ltr;
+            font-family: monospace;
+        }
+        .builder-topbar .actions { display: flex; gap: .5rem; }
+        .btn-save, .btn-preview, .btn-back {
+            padding: .45rem 1rem; border-radius: 6px; border: none;
+            font-family: inherit; font-size: .78rem; cursor: pointer;
+            transition: all .2s; font-weight: 600;
+        }
+        .btn-save { background: #e8c547; color: #0d0d0d; }
+        .btn-save:hover { background: #d4b33e; }
+        .btn-preview { background: transparent; border: 1px solid #555; color: #f0ece4; }
+        .btn-preview:hover { border-color: #e8c547; color: #e8c547; }
+        .btn-back { background: transparent; color: #7a7570; }
+        .btn-back:hover { color: #f0ece4; }
+
+        /* ذخیره‌ساز */
+        .save-indicator {
+            font-size: .72rem; color: #7a7570; margin-left: .5rem;
+            transition: all .3s;
+        }
+        .save-indicator.saving { color: #e8c547; }
+        .save-indicator.saved { color: #4caf50; }
+        .save-indicator.error { color: #e74c3c; }
+
+        /* GrapesJS overrides */
+        .gjs-one-bg { background: #1a1a1a !important; }
+        .gjs-two-color { color: #f0ece4 !important; }
+        .gjs-three-bg { background: #111 !important; }
+        .gjs-four-color, .gjs-four-color-h:hover { color: #e8c547 !important; }
+        .gjs-cv-canvas { width: 100%; height: calc(100vh - 56px); }
+        .gjs-pn-panel { border-color: #333 !important; }
+        .gjs-block { border: 1px solid #333 !important; border-radius: 8px; }
+        .gjs-block:hover { border-color: #e8c547 !important; }
+        .gjs-category-title, .gjs-layer-name,
+        .gjs-sm-sector-title { color: #ccc !important; }
+        .gjs-clm-tags #gjs-clm-new { background: #e8c547; }
+
+        /* مودال پیش‌نمایش */
+        .preview-overlay {
+            display: none; position: fixed; inset: 0; z-index: 9999;
+            background: rgba(0,0,0,.8);
+        }
+        .preview-overlay.active { display: flex; align-items: center; justify-content: center; }
+        .preview-frame-wrap {
+            width: 90%; height: 90%; background: #fff; border-radius: 12px;
+            overflow: hidden; position: relative;
+        }
+        .preview-frame-wrap .close-preview {
+            position: absolute; top: 10px; left: 10px; z-index: 10;
+            background: #1a1a1a; color: #fff; border: none; border-radius: 50%;
+            width: 36px; height: 36px; font-size: 1.2rem; cursor: pointer;
+        }
+        .preview-frame-wrap iframe { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+
+    <!-- نوار بالا -->
+    <div class="builder-topbar">
+        <div class="logo">آئو<span>را</span></div>
+        <div class="page-info">
+            <input type="text" id="pageTitle" placeholder="عنوان صفحه" value="">
+            <div>
+                <input type="text" id="pageSlug" placeholder="page-slug" style="direction:ltr;text-align:left" value="">
+                <div class="slug-preview">mysite.com/<span id="slugPreview">page-slug</span></div>
+            </div>
+        </div>
+        <div class="actions">
+            <span class="save-indicator" id="saveIndicator"></span>
+            <button class="btn-preview" id="btnPreview">پیش‌نمایش</button>
+            <button class="btn-save" id="btnSave">ذخیره صفحه</button>
+            <button class="btn-back" onclick="window.location.href='dashboard-admin.html'">بازگشت</button>
+        </div>
+    </div>
+
+    <!-- GrapesJS Editor -->
+    <div id="gjs"></div>
+
+    <!-- پیش‌نمایش -->
+    <div class="preview-overlay" id="previewOverlay">
+        <div class="preview-frame-wrap">
+            <button class="close-preview" id="closePreview">✕</button>
+            <iframe id="previewFrame"></iframe>
+        </div>
+    </div>
+
+    <!-- GrapesJS -->
+    <script src="https://unpkg.com/grapesjs@0.21.10/dist/grapes.min.js"></script>
+    <script src="https://unpkg.com/grapesjs-preset-webpage@1.0.2/dist/grapesjs-preset-webpage.min.js"></script>
+    <script src="https://unpkg.com/grapesjs-plugin-forms@2.0.5/dist/grapesjs-plugin-forms.min.js"></script>
+    <script src="https://unpkg.com/grapesjs-blocks-basic@1.0.1/dist/grapesjs-blocks-basic.min.js"></script>
+    <script src="js/ajax.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        // ═══ خواندن شناسه صفحه از URL ═══
+        var params = new URLSearchParams(window.location.search);
+        var pageId = params.get('id') || null;
+        var isEdit = !!pageId;
+
+        // ═══ مقداردهی اولیه GrapesJS ═══
+        var editor = grapesjs.init({
+            container: '#gjs',
+            height: 'calc(100vh - 56px)',
+            width: '100%',
+
+            // استوریج غیرفعال — خودمان مدیریت می‌کنیم
+            storageManager: false,
+
+            // پنل‌ها
+            panels: { defaults: [] },
+
+            // بلاک‌ها و پلاگین‌ها
+            plugins: [
+                'gjs-preset-webpage',
+                'gjs-blocks-basic',
+                'gjs-plugin-forms'
+            ],
+            pluginOpts: {
+                'gjs-preset-webpage': {
+                    blocksBasicOpts: { flexGrid: true },
+                    // formsOpts: false
+                }
+            },
+
+            // تنظیمات کانواس
+            canvas: {
+                styles: [
+                    'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap'
+                ]
+            },
+
+            // تنظیمات device
+            deviceManager: {
+                devices: [
+                    { name: 'Desktop', width: '' },
+                    { name: 'Tablet', width: '768px', widthMedia: '992px' },
+                    { name: 'Mobile', width: '375px', widthMedia: '480px' }
+                ]
+            },
+
+            // استایل‌های پیش‌فرض برای صفحه جدید
+            panels: {
+                defaults: [
+                    {
+                        id: 'layers',
+                        el: '.panel__right',
+                        buttons: [{
+                            id: 'layers-btn',
+                            className: 'fa fa-bars',
+                            command: 'open-layers',
+                            active: true
+                        }]
+                    }
+                ]
+            }
+        });
+
+        // ═══ ابزارهای سفارشی در نوار بالای GrapesJS ═══
+        editor.Panels.addButton('options', [{
+            id: 'save-db',
+            className: 'fa fa-floppy-o',
+            command: 'save-db',
+            attributes: { title: 'ذخیره' }
+        }, {
+            id: 'undo',
+            className: 'fa fa-undo',
+            command: 'core:undo',
+            attributes: { title: 'بازگردانی' }
+        }, {
+            id: 'redo',
+            className: 'fa fa-repeat',
+            command: 'core:redo',
+            attributes: { title: 'انجام مجدد' }
+        }]);
+
+        // ═══ دستور ذخیره ═══
+        editor.Commands.add('save-db', {
+            run: function() { savePage(); }
+        });
+
+        // ═══ بارگذاری صفحه موجود (ویرایش) ═══
+        if (isEdit) {
+            API.get('/pages/' + pageId).done(function(page) {
+                $('#pageTitle').val(page.title);
+                $('#pageSlug').val(page.slug);
+                $('#slugPreview').text(page.slug);
+
+                // بارگذاری HTML و CSS در ویرایشگر
+                
+                // بارگذاری state کامل GrapesJS (اگر ذخیره شده)
+                if (page.grapesJsState) {
+                    try {
+                        var state = JSON.parse(page.grapesJsState);
+                        editor.loadProjectData(state);
+                    } catch(e) {
+                        console.warn('خطا در بارگذاری state:', e);
+                    }
+                } else if (page.htmlContent) {
+                    editor.setComponents(page.htmlContent);
+                    if (page.cssContent) editor.setStyle(page.cssContent);
+                }
+            }).fail(function() {
+                alert('خطا در بارگذاری صفحه.');
+            });
+        } else {
+            // محتوای پیش‌فرض برای صفحه جدید
+            editor.setComponents(
+                '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;' +
+                'background:linear-gradient(135deg,#0d0d0d,#1a1a1a);font-family:Vazirmatn,sans-serif;">' +
+                '<div style="text-align:center;padding:3rem">' +
+                '<h1 style="font-size:2.5rem;color:#f0ece4;font-weight:800;margin-bottom:1rem">صفحه جدید شما</h1>' +
+                '<p style="font-size:1rem;color:#7a7570;max-width:500px;margin:0 auto 2rem">' +
+                'از پنل سمت راست بلاک‌ها را بکشید و اینجا رها کنید</p>' +
+                '<a href="#" style="display:inline-block;padding:.8rem 2rem;background:#e8c547;' +
+                'color:#0d0d0d;border-radius:8px;font-weight:700;text-decoration:none">شروع کنید</a>' +
+                '</div></div>'
+            );
+        }
+
+        // ═══ تولید slug خودکار از عنوان ═══
+        var slugEdited = false;
+        $('#pageSlug').on('input', function() { slugEdited = true; });
+
+        $('#pageTitle').on('input', function() {
+            if (!slugEdited) {
+                var slug = generateSlug($(this).val());
+                $('#pageSlug').val(slug);
+                $('#slugPreview').text(slug);
+            }
+        });
+
+        $('#pageSlug').on('input', function() {
+            $('#slugPreview').text($(this).val() || 'page-slug');
+        });
+
+        function generateSlug(text) {
+            // تبدیل حروف فارسی و عربی به slug
+            return text
+                .trim()
+                .replace(/\s+/g, '-')
+                .replace(/[^\w\u0600-\u06FF\-]/g, '')
+                .toLowerCase()
+                .replace(/\-{2,}/g, '-')
+                .replace(/^-+|-+$/g, '') || 'page-' + Date.now();
+        }
+
+        // ═══ ذخیره صفحه ═══
+        function savePage() {
+            var title = $('#pageTitle').val().trim();
+            var slug = $('#pageSlug').val().trim();
+
+            if (!title) { alert('عنوان صفحه را وارد کنید.'); return; }
+            if (!slug) { alert('مسیر صفحه را وارد کنید.'); return; }
+
+            // استخراج HTML
+            var htmlContent = editor.getHtml();
+
+            // استخراج CSS (فقط استایل‌های سفارشی کاربر)
+            var cssContent = editor.getCss();
+
+            // استخراج کل state برای باز ویرایش آینده
+            var grapesJsState = JSON.stringify(editor.getProjectData());
+
+            // استخراج components و styles جداگانه (برای انعطاف بیشتر)
+            var components = JSON.stringify(editor.getComponents());
+            var styles = JSON.stringify(editor.getStyle());
+
+            var $indicator = $('#saveIndicator');
+            $indicator.text('در حال ذخیره...').removeClass('saved error').addClass('saving');
+
+            var payload = {
+                title: title,
+                slug: slug,
+                htmlContent: htmlContent,
+                cssContent: cssContent,
+                grapesJsState: grapesJsState,
+                isPublished: true
+            };
+
+            // اگر ویرایش هست، PUT بفرست؛ اگر جدید، POST
+            var request;
+            if (isEdit) {
+                payload.id = pageId;
+                request = API.put('/pages/' + pageId, payload);
+            } else {
+                request = API.post('/pages', payload);
+            }
+
+            request.done(function(response) {
+                $indicator.text('ذخیره شد').removeClass('saving error').addClass('saved');
+                if (!isEdit && response.id) {
+                    // تغییر URL به حالت ویرایش بدون رفرش
+                    pageId = response.id;
+                    isEdit = true;
+                    history.replaceState(null, '', 'site-builder.html?id=' + pageId);
+                }
+                setTimeout(function() { $indicator.text('').removeClass('saved'); }, 3000);
+            }).fail(function(xhr) {
+                var msg = xhr.responseText || 'خطای ناشناخته';
+                $indicator.text('خطا').removeClass('saving saved').addClass('error');
+                alert('خطا در ذخیره: ' + msg);
+                setTimeout(function() { $indicator.text('').removeClass('error'); }, 5000);
+            });
+        }
+
+        // ═══ رویداد ذخیره از نوار بالا ═══
+        $('#btnSave').on('click', savePage);
+
+        // ═══ پیش‌نمایش ═══
+        $('#btnPreview').on('click', function() {
+            var html = buildPreviewHTML();
+            var iframe = document.getElementById('previewFrame');
+            var doc = iframe.contentDocument || iframe.contentWindow.document;
+            doc.open();
+            doc.write(html);
+            doc.close();
+            $('#previewOverlay').addClass('active');
+        });
+
+        $('#closePreview').on('click', function() {
+            $('#previewOverlay').removeClass('active');
+        });
+
+        function buildPreviewHTML() {
+            var css = editor.getCss();
+            var html = editor.getHtml();
+            return '<!DOCTYPE html><html lang="fa" dir="rtl"><head>' +
+                   '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+                   '<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">' +
+                   '<style>' + css + '</style></head><body>' + html + '</body></html>';
+        }
+
+        // ═══ ذخیره خودکار (هر ۶۰ ثانیه) ═══
+        setInterval(function() {
+            if (isEdit && $('#pageTitle').val().trim()) {
+                savePage();
+            }
+        }, 60000);
+
+    })();
+    </script>
+</body>
+</html>
+```</p>
+
+
+
+## ۲. مدل EF Core و کنترلر ASP.NET Core
+
+### مدل Page.cs (اصلاح‌شده و کامل)
+
+```csharp
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Aoura.Models
+{
+    public class Page
+    {
+        [Key]
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        [Required]
+        [MaxLength(200)]
+        public string Title { get; set; } = string.Empty;
+
+        /// <summary>
+        /// مسیر منحصربه‌فرد صفحه — مثال: "about-us", "landing-1"
+        /// </summary>
+        [Required]
+        [MaxLength(200)]
+        public string Slug { get; set; } = string.Empty;
+
+        /// <summary>
+        /// خروجی نهایی HTML از GrapesJS (برای رندر به بازدیدکننده)
+        /// </summary>
+        [Column(TypeName = "nvarchar(max)")]
+        public string? HtmlContent { get; set; }
+
+        /// <summary>
+        /// استایل‌های CSS خروجی از GrapesJS
+        /// </summary>
+        [Column(TypeName = "nvarchar(max)")]
+        public string? CssContent { get; set; }
+
+        /// <summary>
+        /// کل state پروژه GrapesJS به‌صورت JSON
+        /// (components + styles + ...) — برای باز ویرایش آینده
+        /// </summary>
+        [Column(TypeName = "nvarchar(max)")]
+        public string? GrapesJsState { get; set; }
+
+        public bool IsPublished { get; set; } = true;
+
+        /// <summary>
+        /// آیا این صفحه به‌عنوان صفحه اصلی انتخاب شده
+        /// </summary>
+        public bool IsHomePage { get; set; } = false;
+
+        [MaxLength(500)]
+        public string? MetaDescription { get; set; }
+
+        [MaxLength(300)]
+        public string? OgImage { get; set; }
+
+        public int SortOrder { get; set; } = 0;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// کاربر ادمینی که صفحه را ساخته
+        /// </summary>
+        [MaxLength(100)]
+        public string? CreatedBy { get; set; }
+    }
+}

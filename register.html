@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ثبت‌نام — آئورا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;position:relative}
+.auth-bg{position:absolute;inset:0}
+.auth-bg .orb{position:absolute;border-radius:50%;filter:blur(150px);opacity:.2}
+.auth-bg .orb-1{width:500px;height:500px;background:var(--accent);top:-20%;right:-10%}
+.auth-bg .orb-2{width:400px;height:400px;background:var(--gold);bottom:-20%;left:-10%}
+.auth-card{position:relative;z-index:1;max-width:500px;width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem;max-height:95vh;overflow-y:auto}
+.auth-card .logo{font-size:1.8rem;font-weight:900;color:var(--text-primary);text-align:center;margin-bottom:.25rem}
+.auth-card .logo span{color:var(--accent)}
+.auth-card .sub{text-align:center;font-size:.82rem;color:var(--text-muted);margin-bottom:1.5rem}
+.auth-field{margin-bottom:.85rem}
+.auth-field label{display:block;font-size:.72rem;color:var(--text-muted);margin-bottom:.3rem}
+.auth-field input,.auth-field select{width:100%;padding:.6rem .85rem;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-family:var(--font-fa);font-size:.82rem;outline:none;transition:border-color var(--ease)}
+.auth-field input:focus,.auth-field select:focus{border-color:var(--accent)}
+.auth-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.auth-msg{text-align:center;font-size:.78rem;margin-top:.75rem;min-height:1.5rem}
+.auth-footer{text-align:center;margin-top:1rem;font-size:.78rem;color:var(--text-muted)}
+.auth-footer a{color:var(--accent)}
+.auth-divider{display:flex;align-items:center;gap:1rem;margin:1.25rem 0;font-size:.72rem;color:var(--text-muted)}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:.65rem;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-family:var(--font-fa);font-size:.82rem;cursor:pointer;transition:all var(--ease)}
+.btn-google:hover{border-color:#4285f4;background:rgba(66,133,244,.08)}
+.btn-google .g-icon{width:20px;height:20px}
+.role-note{background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-md);padding:.75rem 1rem;font-size:.72rem;color:var(--text-muted);text-align:center;margin-bottom:1rem;line-height:1.8}
+.role-note strong{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div class="auth-page">
+<div class="auth-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
+
+<div class="auth-card">
+<div class="logo">آئو<span>را</span></div>
+<div class="sub">ایجاد حساب کاربری جدید</div>
+
+<!-- ثبت‌نام با گوگل -->
+<button class="btn-google" id="googleRegisterBtn">
+<svg class="g-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+ثبت‌نام با گوگل
+</button>
+
+<div class="auth-divider">یا با فرم زیر</div>
+
+<!-- توضیح نقش -->
+<div class="role-note">
+🎓 ثبت‌نام در آئورا فقط برای <strong>کارآموزان</strong> آزاد است.<br>
+👨‍🏫 اساتید توسط <strong>مدیر سایت</strong> اضافه می‌شوند.
+</div>
+
+<!-- نقش مخفی: فقط student -->
+<input type="hidden" name="role" value="student">
+
+<form id="registerForm" autocomplete="on">
+
+<!-- نام و جنسیت -->
+<div class="auth-row">
+<div class="auth-field">
+<label>نام و نام خانوادگی *</label>
+<input type="text" name="fullName" placeholder="مثال: علی محمدی" autocomplete="name" required>
+</div>
+<div class="auth-field">
+<label>جنسیت *</label>
+<select name="gender" required>
+<option value="">انتخاب کنید</option>
+<option value="male">مرد</option>
+<option value="female">زن</option>
+</select>
+</div>
+</div>
+
+<!-- ایمیل و تلفن -->
+<div class="auth-row">
+<div class="auth-field">
+<label>ایمیل *</label>
+<input type="email" name="email" placeholder="email@example.com" style="direction:ltr;text-align:left" autocomplete="email" required>
+</div>
+<div class="auth-field">
+<label>شماره موبایل *</label>
+<input type="tel" name="phone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" style="direction:ltr;text-align:left" autocomplete="tel" required>
+</div>
+</div>
+
+<!-- نام پدر و کد ملی -->
+<div class="auth-row">
+<div class="auth-field">
+<label>نام پدر *</label>
+<input type="text" name="fatherName" placeholder="نام پدر" required>
+</div>
+<div class="auth-field">
+<label>کد ملی *</label>
+<input type="text" name="nationalCode" placeholder="۰۱۲۳۴۵۶۷۸۹" style="direction:ltr;text-align:left" maxlength="10" required>
+</div>
+</div>
+
+<!-- رمز عبور -->
+<div class="auth-row">
+<div class="auth-field">
+<label>رمز عبور *</label>
+<input type="password" name="password" placeholder="حداقل ۶ کاراکتر" autocomplete="new-password" required>
+</div>
+<div class="auth-field">
+<label>تکرار رمز *</label>
+<input type="password" name="confirmPassword" placeholder="تکرار رمز" autocomplete="new-password" required>
+</div>
+</div>
+
+<button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:.75rem;font-size:.9rem;margin-top:.5rem">
+ثبت‌نام <span class="arrow">&larr;</span>
+</button>
+</form>
+
+<div class="auth-msg" id="registerMsg"></div>
+<div class="auth-footer">قبلاً ثبت‌نام کرده‌اید؟ <a href="login.html">وارد شوید</a></div>
+</div>
+</div>
+
+<script src="js/ajax.js"></script>
+<script src="js/app.js"></script>
+<script>
+/* ── ثبت‌نام با گوگل ── */
+function handleGoogleRegister(response) {
+  try {
+    var payload = JSON.parse(atob(response.credential.split('.')[1]));
+    var email = payload.email;
+    var name = payload.name || email.split('@')[0];
+    var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+    var existing = users.find(function (u) { return u.email === email; });
+    if (existing) {
+      Auth.setCurrentUser(Auth._stripPassword(existing));
+      localStorage.setItem('aoura_token', 'google_token_' + Date.now());
+      window.location.href = 'dashboard-student.html';
+    } else {
+      var result = Auth.register({ fullName: name, email: email, password: 'google_' + Date.now(), role: 'student' });
+      if (result.success) {
+        $('#registerMsg').css('color', 'var(--accent)').text('ثبت‌نام با گوگل موفق!');
+        setTimeout(function () { window.location.href = 'dashboard-student.html'; }, 800);
+      }
+    }
+  } catch (e) {
+    $('#registerMsg').css('color', '#e74c3c').text('خطا در ثبت‌نام با گوگل.');
+  }
+}
+window.onload = function () {
+  if (typeof google !== 'undefined' && google.accounts) {
+    google.accounts.id.initialize({ client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com', callback: handleGoogleRegister });
+    google.accounts.id.renderButton(document.getElementById('googleRegisterBtn'), { theme: 'outline', size: 'large', text: 'signup_with', shape: 'rectangular' });
+  }
+};
+</script>
+</body>
+</html>

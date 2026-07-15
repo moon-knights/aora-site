@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>پنل استاد — آئورا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+/* ── استایل‌های پنل استاد ── */
+.dash-page{padding-top:80px;min-height:100vh}
+
+/* هدر سبز استاد */
+.dash-header{background:linear-gradient(135deg,#0d2b1a,#1a3a2a);padding:2.5rem 0;border-bottom:1px solid rgba(76,175,80,.2)}
+.dash-user-row{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}
+.dash-avatar{width:80px;height:80px;border-radius:50%;background:#4caf50;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;flex-shrink:0}
+.dash-name{font-size:1.5rem;font-weight:700;color:var(--text-primary);margin-bottom:.15rem}
+.dash-email{font-size:.82rem;color:var(--text-muted);font-family:var(--font-mono);direction:ltr}
+.dash-role-badge{display:inline-block;padding:.2rem .6rem;background:rgba(33,150,243,.15);color:#2196f3;border-radius:20px;font-size:.65rem;margin-top:.35rem}
+
+/* آمار */
+.dash-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin:2rem 0}
+.dash-stat{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;text-align:center;transition:all var(--ease)}
+.dash-stat:hover{border-color:rgba(76,175,80,.3)}
+.dash-stat .stat-icon{font-size:1.5rem;margin-bottom:.4rem}
+.dash-stat .stat-num{font-size:2rem;font-weight:700;color:#4caf50;font-family:var(--font-mono)}
+.dash-stat .stat-label{font-size:.72rem;color:var(--text-muted);margin-top:.15rem}
+
+/* تب‌ها */
+.dash-tabs{display:flex;gap:.25rem;border-bottom:1px solid var(--border);margin-bottom:2rem;overflow-x:auto;scrollbar-width:none}
+.dash-tabs::-webkit-scrollbar{display:none}
+.dash-tab{padding:.75rem 1.25rem;font-size:.82rem;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all var(--ease);white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font-fa)}
+.dash-tab.active{color:#4caf50;border-bottom-color:#4caf50}
+.dash-tab:hover:not(.active){color:var(--text-primary)}
+
+/* محتوای تب‌ها */
+.dash-body{min-height:300px;padding-bottom:3rem}
+
+/* کارت دوره استاد */
+.prof-course-card{display:flex;gap:1.25rem;align-items:center;padding:1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:1rem;transition:all var(--ease)}
+.prof-course-card:hover{border-color:rgba(76,175,80,.3);transform:translateY(-2px)}
+.prof-course-card .pc-icon{width:60px;height:60px;background:var(--bg-deep);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0}
+.prof-course-card .pc-body{flex:1}
+.prof-course-card .pc-body h4{font-size:.9rem;font-weight:600;color:var(--text-primary);margin-bottom:.15rem}
+.prof-course-card .pc-body p{font-size:.72rem;color:var(--text-muted);margin-bottom:.35rem}
+.prof-course-card .pc-stats{display:flex;gap:1rem;font-size:.68rem;color:var(--text-muted)}
+.prof-course-card .pc-stats strong{color:var(--text-primary);font-family:var(--font-mono)}
+.prof-course-card .pc-actions{display:flex;gap:.5rem;flex-shrink:0}
+
+/* فرم ایجاد دوره */
+.create-course-form{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;max-width:700px}
+.create-course-form h3{font-size:1.1rem;font-weight:600;color:var(--text-primary);margin-bottom:1.5rem;display:flex;align-items:center;gap:8px}
+.cc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.cc-field{margin-bottom:1rem}
+.cc-field.full{grid-column:1/-1}
+.cc-field label{display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:.35rem}
+.cc-field input,.cc-field select,.cc-field textarea{width:100%;padding:.65rem 1rem;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-family:var(--font-fa);font-size:.85rem;outline:none;transition:border-color var(--ease)}
+.cc-field input:focus,.cc-field select:focus,.cc-field textarea:focus{border-color:#4caf50}
+.cc-field .hint{font-size:.65rem;color:var(--text-muted);margin-top:.25rem}
+.cc-msg{font-size:.78rem;margin-top:1rem;min-height:1.5rem}
+
+/* فرم پروفایل */
+.profile-form{max-width:500px}
+.profile-field{margin-bottom:1rem}
+.profile-field label{display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:.35rem}
+.profile-field input,.profile-field textarea{width:100%;padding:.65rem 1rem;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-family:var(--font-fa);font-size:.85rem;outline:none;transition:border-color var(--ease)}
+.profile-field input:focus,.profile-field textarea:focus{border-color:#4caf50}
+.profile-field input:disabled{opacity:.5;cursor:not-allowed}
+.profile-msg{font-size:.78rem;margin-top:.75rem;min-height:1.5rem}
+
+/* خالی */
+.empty-box{text-align:center;padding:3rem 1.5rem}
+.empty-box .icon{font-size:3rem;opacity:.3;margin-bottom:1rem}
+.empty-box h3{font-size:1rem;color:var(--text-muted);margin-bottom:.5rem}
+.empty-box p{font-size:.82rem;color:var(--text-muted);margin-bottom:1.5rem}
+
+/* جدول دانشجویان دوره */
+.stu-table{width:100%;border-collapse:collapse;margin-top:1rem}
+.stu-table th{padding:.6rem 1rem;background:var(--bg-surface);font-size:.72rem;color:var(--text-muted);text-align:right;border-bottom:1px solid var(--border)}
+.stu-table td{padding:.5rem 1rem;font-size:.78rem;color:var(--text-body);border-bottom:1px solid var(--border)}
+.stu-table tr:hover td{background:var(--bg-surface)}
+
+@media(max-width:768px){.cc-grid{grid-template-columns:1fr}.prof-course-card{flex-direction:column;align-items:flex-start}.prof-course-card .pc-actions{width:100%}.prof-course-card .pc-actions .btn-ghost{flex:1;justify-content:center}}
+</style>
+</head>
+<body>
+
+<!-- ناوبری -->
+<nav class="nav" id="mainNav" style="border-bottom:1px solid rgba(76,175,80,.15)">
+<div class="container">
+<a href="index.html" class="nav-logo">آئو<span>را</span>
+<span style="font-size:.6rem;color:#4caf50;background:rgba(76,175,80,.15);padding:.1rem .4rem;border-radius:10px;margin-right:.5rem">استاد</span>
+</a>
+<ul class="nav-links">
+<li><a href="index.html">خانه</a></li>
+<li><a href="courses.html">بازارچه دوره‌ها</a></li>
+<li><a href="forum.html">تالار گفتگو</a></li>
+<li><a href="resources.html">منابع</a></li>
+</ul>
+<div class="nav-actions">
+<a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+<div id="authArea"></div>
+</div>
+</div>
+</nav>
+
+<div class="dash-page">
+
+<!-- هدر پنل استاد -->
+<div class="dash-header"><div class="container">
+<div class="dash-user-row">
+<div class="dash-avatar" id="profAvatar">?</div>
+<div>
+<div class="dash-name" id="profName">در حال بارگذاری...</div>
+<div class="dash-email" id="profEmail">—</div>
+<div class="dash-role-badge">👨‍🏫 استاد</div>
+</div>
+</div>
+</div></div>
+
+<div class="container" style="padding-top:2rem">
+
+<!-- آمار -->
+<div class="dash-stats">
+<div class="dash-stat">
+<div class="stat-icon">📚</div>
+<div class="stat-num" id="statMyCourses">0</div>
+<div class="stat-label">دوره‌های من</div>
+</div>
+<div class="dash-stat">
+<div class="stat-icon">👥</div>
+<div class="stat-num" id="statMyStudents">0</div>
+<div class="stat-label">کارآموزان</div>
+</div>
+<div class="dash-stat">
+<div class="stat-icon">⭐</div>
+<div class="stat-num" id="statMyRating">—</div>
+<div class="stat-label">میانگین امتیاز</div>
+</div>
+<div class="dash-stat">
+<div class="stat-icon">📅</div>
+<div class="stat-num" id="statJoinDate">—</div>
+<div class="stat-label">عضویت از</div>
+</div>
+</div>
+
+<!-- تب‌ها — بدون «پنل کارآموز» -->
+<div class="dash-tabs">
+<button class="dash-tab active" data-tab="mycourses">📚 دوره‌های من</button>
+<button class="dash-tab" data-tab="createcourse">➕ ایجاد دوره</button>
+<button class="dash-tab" data-tab="students">👥 کارآموزان من</button>
+<button class="dash-tab" data-tab="profile">👤 پروفایل</button>
+<button class="dash-tab" data-tab="settings">⚙ تنظیمات</button>
+</div>
+
+<!-- محتوا -->
+<div class="dash-body" id="profContent"></div>
+
+</div>
+</div>
+
+<footer class="footer"><div class="container"><div class="footer-bottom"><span>© ۱۴۰۵ آئورا</span><span>support@aoura.ir</span></div></div></footer>
+
+<script src="js/ajax.js"></script>
+<script src="js/app.js"></script>
+<script>
+$(document).ready(function () {
+
+  /* ═══ بررسی ورود و نقش ═══ */
+  var user = Auth.getCurrentUser();
+  if (!user) {
+    window.location.href = 'login.html?redirect=dashboard-professor.html';
+    return;
+  }
+  if (user.role !== 'professor' && user.role !== 'admin') {
+    window.location.href = 'index.html';
+    return;
+  }
+
+  /* ═══ نمایش اطلاعات ═══ */
+  var initials = Auth._getInitials(user.fullName);
+  $('#profAvatar').text(initials);
+  $('#profName').text(user.fullName);
+  $('#profEmail').text(user.email);
+  if (user.createdAt) {
+    $('#statJoinDate').text(new Date(user.createdAt).toLocaleDateString('fa-IR'));
+  }
+
+  /* ═══ بارگذاری دوره‌های استاد ═══ */
+  var allCourses = [];
+  var myCourses = [];
+
+  API.get('/courses').done(function (courses) {
+    allCourses = courses;
+    // پیدا کردن دوره‌هایی که این استاد تدریس می‌کنه
+    myCourses = courses.filter(function (c) {
+      return c.instructorId === user.id || c.instructor === user.fullName;
+    });
+
+    // آمار
+    $('#statMyCourses').text(myCourses.length);
+    var totalStu = 0;
+    var totalRating = 0;
+    myCourses.forEach(function (c) {
+      totalStu += (c.students || 0);
+      totalRating += (c.rating || 0);
+    });
+    $('#statMyStudents').text(totalStu);
+    if (myCourses.length > 0) {
+      $('#statMyRating').text((totalRating / myCourses.length).toFixed(1));
+    }
+
+    renderTab('mycourses');
+  });
+
+  /* ═══ تب‌ها ═══ */
+  $('.dash-tab').on('click', function () {
+    $('.dash-tab').removeClass('active');
+    $(this).addClass('active');
+    renderTab($(this).data('tab'));
+  });
+
+  function renderTab(tab) {
+    switch (tab) {
+      case 'mycourses': renderMyCourses(); break;
+      case 'createcourse': renderCreateCourse(); break;
+      case 'students': renderMyStudents(); break;
+      case 'profile': renderProfile(); break;
+      case 'settings': renderSettings(); break;
+    }
+  }
+
+  /* ═══════════════════════════════
+     تب ۱: دوره‌های من
+     ═══════════════════════════════ */
+  function renderMyCourses() {
+    var $c = $('#profContent');
+
+    if (myCourses.length === 0) {
+      $c.html(
+        '<div class="empty-box">' +
+        '<div class="icon">📚</div>' +
+        '<h3>هنوز دوره‌ای ایجاد نکرده‌اید</h3>' +
+        '<p>از تب "ایجاد دوره" اولین دوره خود را بسازید</p>' +
+        '<button class="btn-primary tab-switch" data-tab="createcourse">➕ ایجاد دوره</button>' +
+        '</div>'
+      );
+      bindTabSwitch();
+      return;
+    }
+
+    var html = '<h3 style="font-size:1rem;font-weight:600;color:var(--text-primary);margin-bottom:1.5rem">📚 دوره‌های تدریس شده توسط شما</h3>';
+
+    myCourses.forEach(function (c) {
+      var disc = c.originalPrice > c.price ? Math.round((1 - c.price / c.originalPrice) * 100) : 0;
+
+      html += '<div class="prof-course-card">';
+      html += '  <div class="pc-icon">' + (c.icon || '📚') + '</div>';
+      html += '  <div class="pc-body">';
+      html += '    <h4>' + c.title + '</h4>';
+      html += '    <p>' + c.level + ' · ' + c.duration + ' · ' + c.category + '</p>';
+      html += '    <div class="pc-stats">';
+      html += '      <span>👥 <strong>' + (c.students || 0) + '</strong> کارآموز</span>';
+      html += '      <span>⭐ <strong>' + (c.rating || 0) + '</strong></span>';
+      html += '      <span>💰 <strong>' + c.price.toLocaleString('fa-IR') + '</strong> تومان</span>';
+      if (disc > 0) html += '      <span style="color:#e74c3c">🏷 -' + disc + '%</span>';
+      html += '    </div>';
+      html += '  </div>';
+      html += '  <div class="pc-actions">';
+      html += '    <a href="course-single.html?id=' + c.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">مشاهده</a>';
+      html += '    <button class="btn-ghost edit-course" data-id="' + c.id + '" style="padding:.4rem .8rem;font-size:.72rem">ویرایش</button>';
+      html += '  </div>';
+      html += '</div>';
+    });
+
+    $c.html(html);
+
+    // ویرایش دوره
+    $('.edit-course').on('click', function () {
+      var id = $(this).data('id');
+      renderEditCourse(id);
+    });
+  }
+
+  /* ═══════════════════════════════
+     تب ۲: ایجاد دوره جدید
+     ═══════════════════════════════ */
+  function renderCreateCourse() {
+    var $c = $('#profContent');
+
+    var categories = ['زیست‌شناسی','بیوانفورماتیک','ژنتیک','علم داده','برنامه‌نویسی','اکولوژی','آمار','میکروبیولوژی','پردازش تصویر','داروسازی','عصب‌شناسی'];
+    var icons = ['🧬','🧫','🔬','📊','🐍','🌿','📈','🧫','🖼','💊','🧠','📚','🧪','🦠','💉'];
+
+    var html = '<div class="create-course-form">';
+    html += '<h3>➕ ایجاد دوره جدید</h3>';
+    html += '<div class="cc-grid">';
+
+    html += '<div class="cc-field full"><label>عنوان دوره *</label><input type="text" id="ccTitle" placeholder="مثال: مبانی بیوانفارماتیک"></div>';
+
+    html += '<div class="cc-field"><label>دسته‌بندی *</label><select id="ccCategory">';
+    categories.forEach(function (cat) { html += '<option value="' + cat + '">' + cat + '</option>'; });
+    html += '</select></div>';
+
+    html += '<div class="cc-field"><label>سطح *</label><select id="ccLevel"><option value="مبتدی">مبتدی</option><option value="متوسط">متوسط</option><option value="پیشرفته">پیشرفته</option></select></div>';
+
+    html += '<div class="cc-field"><label>مدت دوره</label><input type="text" id="ccDuration" placeholder="مثال: ۱۰ هفته"></div>';
+
+    html += '<div class="cc-field"><label>آیکون</label><select id="ccIcon">';
+    icons.forEach(function (ic) { html += '<option value="' + ic + '">' + ic + '</option>'; });
+    html += '</select></div>';
+
+    html += '<div class="cc-field"><label>قیمت (تومان) *</label><input type="number" id="ccPrice" placeholder="مثال: 2400000" style="direction:ltr;text-align:left"></div>';
+
+    html += '<div class="cc-field"><label>قیمت قبل از تخفیف</label><input type="number" id="ccOriginalPrice" placeholder="اختیاری" style="direction:ltr;text-align:left"><div class="hint">اگر تخفیف دارد، قیمت اصلی را وارد کنید</div></div>';
+
+    html += '<div class="cc-field full"><label>توضیحات دوره *</label><textarea id="ccDesc" rows="4" placeholder="توضیحات کامل دوره..."></textarea></div>';
+
+    html += '<div class="cc-field full"><label>برچسب‌ها (با کاما جدا کنید)</label><input type="text" id="ccTags" placeholder="مثال: پایتون, بیوانفارماتیک, DNA"></div>';
+
+    html += '<div class="cc-field full"><label>سرفصل‌ها (JSON)</label><textarea id="ccChapters" rows="3" placeholder=\'[{"title":"مقدمه","lessons":4},{"title":"فصل ۲","lessons":5}]\'></textarea>';
+    html += '<div class="hint">فرمت: [{"title":"عنوان فصل","lessons":تعداد درس}]</div></div>';
+
+    html += '</div>';
+
+    html += '<button class="btn-primary" id="saveNewCourse" style="padding:.7rem 2rem;font-size:.9rem;margin-top:.5rem">ایجاد دوره</button>';
+    html += '<div class="cc-msg" id="ccMsg"></div>';
+    html += '</div>';
+
+    $c.html(html);
+
+    // ذخیره
+    $('#saveNewCourse').on('click', function () {
+      var title = $('#ccTitle').val().trim();
+      var price = parseInt($('#ccPrice').val()) || 0;
+      var desc = $('#ccDesc').val().trim();
+      var $msg = $('#ccMsg');
+
+      if (!title) { $msg.css('color', '#e74c3c').text('عنوان دوره الزامی است.'); return; }
+      if (!desc) { $msg.css('color', '#e74c3c').text('توضیحات دوره الزامی است.'); return; }
+      if (price < 0) { $msg.css('color', '#e74c3c').text('قیمت معتبر وارد کنید.'); return; }
+
+      var newCourse = {
+        id: 'course-' + Date.now(),
+        title: title,
+        description: desc,
+        instructor: user.fullName,
+        instructorId: user.id,
+        price: price,
+        originalPrice: parseInt($('#ccOriginalPrice').val()) || price,
+        level: $('#ccLevel').val(),
+        duration: $('#ccDuration').val() || '—',
+        category: $('#ccCategory').val(),
+        icon: $('#ccIcon').val() || '📚',
+        image: '',
+        rating: 0,
+        students: 0,
+        featured: false,
+        tags: ($('#ccTags').val() || '').split(',').map(function (t) { return t.trim(); }).filter(Boolean),
+        chapters: (function () {
+          try { return JSON.parse($('#ccChapters').val() || '[]'); }
+          catch (e) { return []; }
+        })(),
+        createdAt: new Date().toISOString()
+      };
+
+      // ذخیره در localStorage
+      var courses = JSON.parse(localStorage.getItem('aora_courses') || '[]');
+      courses.unshift(newCourse);
+      localStorage.setItem('aora_courses', JSON.stringify(courses));
+
+      // اضافه به لیست محلی
+      myCourses.unshift(newCourse);
+      allCourses.unshift(newCourse);
+      $('#statMyCourses').text(myCourses.length);
+
+      $msg.css('color', '#4caf50').text('دوره با موفقیت ایجاد شد! شناسه: ' + newCourse.id);
+      showNotification('دوره جدید ایجاد شد: ' + title);
+
+      // پاک کردن فرم
+      $('#ccTitle,#ccDesc,#ccPrice,#ccOriginalPrice,#ccTags,#ccDuration,#ccChapters').val('');
+    });
+  }
+
+  /* ═══════════════════════════════
+     ویرایش دوره
+     ═══════════════════════════════ */
+  function renderEditCourse(courseId) {
+    var c = allCourses.find(function (x) { return x.id === courseId; });
+    if (!c) return;
+
+    var $c = $('#profContent');
+    var html = '<div class="create-course-form">';
+    html += '<h3>✏️ ویرایش دوره: ' + c.title + '</h3>';
+    html += '<div class="cc-grid">';
+
+    html += '<div class="cc-field full"><label>عنوان</label><input type="text" id="ecTitle" value="' + c.title + '"></div>';
+    html += '<div class="cc-field"><label>قیمت</label><input type="number" id="ecPrice" value="' + c.price + '" style="direction:ltr"></div>';
+    html += '<div class="cc-field"><label>قیمت اصلی</label><input type="number" id="ecOriginal" value="' + (c.originalPrice || c.price) + '" style="direction:ltr"></div>';
+    html += '<div class="cc-field full"><label>توضیحات</label><textarea id="ecDesc" rows="4">' + c.description + '</textarea></div>';
+
+    html += '</div>';
+    html += '<div style="display:flex;gap:.5rem;margin-top:1rem">';
+    html += '<button class="btn-primary" id="saveEditCourse" style="background:#4caf50;padding:.6rem 1.5rem;font-size:.85rem">ذخیره</button>';
+    html += '<button class="btn-ghost cancel-edit" style="padding:.6rem 1.5rem;font-size:.85rem">انصراف</button>';
+    html += '</div>';
+    html += '<div class="cc-msg" id="ecMsg"></div>';
+    html += '</div>';
+
+    $c.html(html);
+
+    $('#saveEditCourse').on('click', function () {
+      c.title = $('#ecTitle').val().trim();
+      c.price = parseInt($('#ecPrice').val()) || 0;
+      c.originalPrice = parseInt($('#ecOriginal').val()) || c.price;
+      c.description = $('#ecDesc').val().trim();
+
+      // بروزرسانی در localStorage
+      var courses = JSON.parse(localStorage.getItem('aora_courses') || '[]');
+      var idx = courses.findIndex(function (x) { return x.id === c.id; });
+      if (idx >= 0) courses[idx] = c;
+      localStorage.setItem('aora_courses', JSON.stringify(courses));
+
+      $('#ecMsg').css('color', '#4caf50').text('بروزرسانی شد.');
+      showNotification('دوره بروزرسانی شد.');
+      setTimeout(function () { renderMyCourses(); }, 1000);
+    });
+
+    $('.cancel-edit').on('click', function () { renderMyCourses(); });
+  }
+
+  /* ═══════════════════════════════
+     تب ۳: کارآموزان من
+     ═══════════════════════════════ */
+  function renderMyStudents() {
+    var $c = $('#profContent');
+    var enrollments = JSON.parse(localStorage.getItem('aoura_enrollments') || '[]');
+    var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+
+    // فقط ثبت‌نام‌های مربوط به دوره‌های این استاد
+    var myCourseIds = myCourses.map(function (c) { return c.id; });
+    var myEnrollments = enrollments.filter(function (e) {
+      return myCourseIds.indexOf(e.courseId) >= 0;
+    });
+
+    if (myEnrollments.length === 0) {
+      $c.html('<div class="empty-box"><div class="icon">👥</div><h3>هنوز کارآموزی در دوره‌های شما ثبت‌نام نکرده</h3></div>');
+      return;
+    }
+
+    var html = '<h3 style="font-size:1rem;font-weight:600;color:var(--text-primary);margin-bottom:1rem">👥 کارآموزان دوره‌های شما (' + myEnrollments.length + ')</h3>';
+    html += '<div style="overflow-x:auto"><table class="stu-table"><thead><tr>';
+    html += '<th>نام</th><th>دوره</th><th>پیشرفت</th><th>تاریخ ثبت‌نام</th>';
+    html += '</tr></thead><tbody>';
+
+    myEnrollments.forEach(function (e) {
+      var u = users.find(function (x) { return x.id === e.userId; });
+      var c = allCourses.find(function (x) { return x.id === e.courseId; });
+      var name = u ? u.fullName : (e.userName || 'ناشناس');
+      var courseName = c ? c.title : (e.courseName || '—');
+      var prog = e.progress || 0;
+
+      html += '<tr>';
+      html += '<td>' + name + '</td>';
+      html += '<td>' + courseName + '</td>';
+      html += '<td>';
+      html += '  <div style="display:flex;align-items:center;gap:8px">';
+      html += '    <div style="flex:1;height:4px;background:var(--bg-deep);border-radius:2px;overflow:hidden;min-width:60px"><div style="height:100%;width:' + prog + '%;background:#4caf50;border-radius:2px"></div></div>';
+      html += '    <span style="font-size:.68rem;color:var(--text-muted)">' + prog + '%</span>';
+      html += '  </div>';
+      html += '</td>';
+      html += '<td>' + new Date(e.enrolledAt).toLocaleDateString('fa-IR') + '</td>';
+      html += '</tr>';
+    });
+
+    html += '</tbody></table></div>';
+    $c.html(html);
+  }
+
+  /* ═══════════════════════════════
+     تب ۴: پروفایل
+     ═══════════════════════════════ */
+  function renderProfile() {
+    var $c = $('#profContent');
+
+    var html = '<div class="profile-form">';
+    html += '<h3 style="font-size:1.05rem;font-weight:600;color:var(--text-primary);margin-bottom:1.5rem">👤 ویرایش پروفایل استاد</h3>';
+
+    html += '<div class="profile-field"><label>نام و نام خانوادگی</label><input type="text" id="pfName" value="' + (user.fullName || '') + '"></div>';
+    html += '<div class="profile-field"><label>ایمیل</label><input type="email" value="' + user.email + '" disabled></div>';
+    html += '<div class="profile-field"><label>شماره موبایل</label><input type="text" id="pfPhone" value="' + (user.phone || '') + '" placeholder="۰۹۱۲xxxxxxx" style="direction:ltr"></div>';
+    html += '<div class="profile-field"><label>تخصص اصلی</label><input type="text" id="pfSpecialty" value="' + (user.specialty || '') + '" placeholder="مثال: بیوانفارماتیک"></div>';
+    html += '<div class="profile-field"><label>دانشگاه / مؤسسه</label><input type="text" id="pfUni" value="' + (user.university || '') + '"></div>';
+    html += '<div class="profile-field"><label>درباره من</label><textarea id="pfBio" rows="4" placeholder="سابقه آموزشی و پژوهشی...">' + (user.bio || '') + '</textarea></div>';
+
+    html += '<button class="btn-primary" id="saveProfProfile" style="background:#4caf50;padding:.6rem 1.5rem;font-size:.85rem">ذخیره تغییرات</button>';
+    html += '<div class="profile-msg" id="profProfileMsg"></div>';
+    html += '</div>';
+
+    $c.html(html);
+
+    $('#saveProfProfile').on('click', function () {
+      var updates = {
+        fullName: $('#pfName').val().trim(),
+        phone: $('#pfPhone').val().trim(),
+        specialty: $('#pfSpecialty').val().trim(),
+        university: $('#pfUni').val().trim(),
+        bio: $('#pfBio').val().trim()
+      };
+      if (!updates.fullName) {
+        $('#profProfileMsg').css('color', '#e74c3c').text('نام الزامی است.');
+        return;
+      }
+      Auth.updateProfile(updates);
+      $('#profName').text(updates.fullName);
+      $('#profAvatar').text(Auth._getInitials(updates.fullName));
+      $('#profProfileMsg').css('color', '#4caf50').text('پروفایل با موفقیت بروزرسانی شد.');
+      showNotification('پروفایل ذخیره شد.');
+    });
+  }
+
+  /* ═══════════════════════════════
+     تب ۵: تنظیمات
+     ═══════════════════════════════ */
+  function renderSettings() {
+    var $c = $('#profContent');
+
+    var html = '<div class="profile-form">';
+    html += '<h3 style="font-size:1.05rem;font-weight:600;color:var(--text-primary);margin-bottom:1.5rem">⚙ تنظیمات حساب</h3>';
+
+    html += '<div class="profile-field"><label>رمز عبور فعلی</label><input type="password" id="setOldPass"></div>';
+    html += '<div class="profile-field"><label>رمز عبور جدید</label><input type="password" id="setNewPass" placeholder="حداقل ۶ کاراکتر"></div>';
+    html += '<div class="profile-field"><label>تکرار رمز جدید</label><input type="password" id="setConfPass"></div>';
+    html += '<button class="btn-primary" id="changeProfPass" style="background:#4caf50;padding:.6rem 1.5rem;font-size:.85rem">تغییر رمز</button>';
+    html += '<div class="profile-msg" id="setMsg"></div>';
+
+    html += '<hr style="border:none;border-top:1px solid var(--border);margin:2rem 0">';
+    html += '<button class="btn-ghost" id="profLogoutBtn" style="border-color:#e74c3c;color:#e74c3c;padding:.5rem 1rem;font-size:.8rem">🚪 خروج از حساب</button>';
+    html += '</div>';
+
+    $c.html(html);
+
+    $('#changeProfPass').on('click', function () {
+      var oldP = $('#setOldPass').val();
+      var newP = $('#setNewPass').val();
+      var confP = $('#setConfPass').val();
+      if (!oldP || !newP) { $('#setMsg').css('color', '#e74c3c').text('فیلدها را پر کنید.'); return; }
+      if (newP.length < 6) { $('#setMsg').css('color', '#e74c3c').text('رمز جدید حداقل ۶ کاراکتر.'); return; }
+      if (newP !== confP) { $('#setMsg').css('color', '#e74c3c').text('رمزها مطابقت ندارند.'); return; }
+
+      var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+      var u = users.find(function (x) { return x.id === user.id; });
+      if (!u || u.password !== oldP) {
+        $('#setMsg').css('color', '#e74c3c').text('رمز فعلی اشتباه است.');
+        return;
+      }
+      u.password = newP;
+      localStorage.setItem('aoura_users', JSON.stringify(users));
+      $('#setMsg').css('color', '#4caf50').text('رمز عبور تغییر کرد.');
+      $('#setOldPass,#setNewPass,#setConfPass').val('');
+      showNotification('رمز عبور تغییر کرد.');
+    });
+
+    $('#profLogoutBtn').on('click', function () { Auth.logout(); });
+  }
+
+  /* ═══ سوئیچ تب از داخل محتوا ═══ */
+  function bindTabSwitch() {
+    $('.tab-switch').on('click', function () {
+      var tab = $(this).data('tab');
+      $('.dash-tab[data-tab="' + tab + '"]').click();
+    });
+  }
+
+});
+</script>
+</body>
+</html>

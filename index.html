@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>آئورا — پلتفرم آموزش علوم زیستی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link href="https://unpkg.com/grapesjs-preset-webpage@1.0.2/dist/grapesjs.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:var(--bg-deep)}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-orb{position:absolute;border-radius:50%;filter:blur(180px)}
+.orb-1{width:700px;height:700px;background:rgba(232,197,71,.06);top:-35%;right:-15%;animation:orbFloat 20s ease-in-out infinite}
+.orb-2{width:500px;height:500px;background:rgba(212,160,23,.04);bottom:-25%;left:-10%;animation:orbFloat 25s ease-in-out infinite reverse}
+.orb-3{width:350px;height:350px;background:rgba(232,197,71,.03);top:40%;left:40%;animation:orbFloat 18s ease-in-out infinite 5s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0)}25%{transform:translate(30px,-20px)}50%{transform:translate(-20px,30px)}75%{transform:translate(15px,15px)}}
+.hero-content{position:relative;z-index:1;text-align:center;max-width:800px;padding:0 1.5rem}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:.4rem 1rem;background:var(--accent-glow);border:1px solid var(--accent-dim);border-radius:30px;font-size:.72rem;color:var(--accent);margin-bottom:1.5rem;animation:fadeInUp .6s ease both}
+.hero-title{font-size:4.5rem;font-weight:900;color:var(--text-primary);line-height:1.1;margin-bottom:1rem;animation:fadeInUp .6s ease both .1s}
+.hero-title .accent{color:var(--accent)}
+.hero-title .thin{font-weight:200;color:var(--text-muted)}
+.hero-subtitle{font-size:1.1rem;color:var(--text-muted);line-height:2;max-width:600px;margin:0 auto 2.5rem;animation:fadeInUp .6s ease both .2s}
+.hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeInUp .6s ease both .3s}
+.hero-actions .btn-primary{padding:.8rem 2rem;font-size:.95rem}
+.hero-actions .btn-ghost{padding:.8rem 1.5rem;font-size:.9rem}
+.hero-stats{display:flex;gap:3rem;justify-content:center;margin-top:4rem;animation:fadeInUp .6s ease both .4s}
+.hero-stat{text-align:center}
+.hero-stat .num{font-size:2rem;font-weight:800;color:var(--text-primary);font-family:var(--font-mono);direction:ltr}
+.hero-stat .label{font-size:.72rem;color:var(--text-muted);margin-top:.15rem}
+.hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);animation:bounce 2s infinite;font-size:1.5rem;color:var(--text-muted);z-index:2}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(10px)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem}
+.feature-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;transition:all var(--ease);position:relative;overflow:hidden}
+.feature-card::before{content:'';position:absolute;top:0;right:0;width:100%;height:3px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity var(--ease)}
+.feature-card:hover{border-color:var(--accent-dim);transform:translateY(-4px)}
+.feature-card:hover::before{opacity:1}
+.feature-card .f-icon{font-size:2.5rem;margin-bottom:1rem}
+.feature-card h3{font-size:1rem;font-weight:600;color:var(--text-primary);margin-bottom:.5rem}
+.feature-card p{font-size:.78rem;color:var(--text-muted);line-height:1.8;margin-bottom:1rem}
+.feature-card .f-link{font-size:.75rem;color:var(--accent);display:inline-flex;align-items:center;gap:4px;transition:gap var(--ease)}
+.feature-card .f-link:hover{gap:8px}
+.popular-scroll{display:flex;gap:1.25rem;overflow-x:auto;padding-bottom:1rem;scrollbar-width:none}
+.popular-scroll::-webkit-scrollbar{display:none}
+.prof-scroll{display:flex;gap:1.5rem;overflow-x:auto;padding-bottom:1rem;scrollbar-width:none}
+.prof-scroll::-webkit-scrollbar{display:none}
+.prof-preview{min-width:260px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;text-align:center;flex-shrink:0;transition:all var(--ease)}
+.prof-preview:hover{border-color:var(--accent-dim);transform:translateY(-2px)}
+.prof-preview .pp-avatar{width:72px;height:72px;border-radius:50%;margin:0 auto .75rem;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700}
+.prof-preview h4{font-size:.9rem;font-weight:600;color:var(--text-primary);margin-bottom:.15rem}
+.prof-preview .pp-title{font-size:.72rem;color:var(--accent);margin-bottom:.15rem}
+.prof-preview .pp-uni{font-size:.68rem;color:var(--text-muted);margin-bottom:.75rem}
+.prof-preview .pp-stats{display:flex;gap:1rem;justify-content:center;font-size:.65rem;color:var(--text-muted)}
+.prof-preview .pp-stats strong{color:var(--text-primary);font-family:var(--font-mono)}
+.cta-section{background:linear-gradient(135deg,rgba(232,197,71,.05),rgba(232,197,71,.02));border-top:1px solid var(--accent-dim);border-bottom:1px solid var(--accent-dim);text-align:center;padding:5rem 0}
+.cta-section h2{font-size:1.8rem;font-weight:800;color:var(--text-primary);margin-bottom:.5rem}
+.cta-section p{font-size:.9rem;color:var(--text-muted);margin-bottom:2rem}
+.admin-only-section{display:none}
+body.user-admin .admin-only-section{display:block}
+.locked-badge{display:inline-flex;align-items:center;gap:4px;padding:.15rem .5rem;background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.2);border-radius:20px;font-size:.6rem;color:#e74c3c;position:absolute;top:12px;left:12px}
+.testimonials{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem}
+.testimonial{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem}
+.testimonial .stars{color:var(--gold);font-size:.85rem;margin-bottom:.75rem}
+.testimonial .quote{font-size:.82rem;color:var(--text-body);line-height:1.9;margin-bottom:1rem;font-style:italic}
+.testimonial .author{display:flex;align-items:center;gap:10px}
+.testimonial .author .ta-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600}
+.testimonial .author .ta-name{font-size:.78rem;font-weight:500;color:var(--text-primary)}
+.testimonial .author .ta-role{font-size:.65rem;color:var(--text-muted)}
+.counter-section{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;text-align:center}
+.counter-item .counter-num{font-size:3rem;font-weight:900;color:var(--accent);font-family:var(--font-mono);direction:ltr}
+.counter-item .counter-label{font-size:.78rem;color:var(--text-muted);margin-top:.25rem}
+@media(max-width:768px){.hero-title{font-size:2.5rem}.hero-stats{gap:1.5rem;flex-wrap:wrap}.hero-stat .num{font-size:1.5rem}.counter-section{grid-template-columns:1fr 1fr;gap:1rem}.counter-item .counter-num{font-size:2rem}}
+</style>
+</head>
+<body>
+
+<!-- ═══ ناوبری ═══ -->
+<nav class="nav" id="mainNav"><div class="container">
+<a href="index.html" class="nav-logo">آئو<span>را</span></a>
+<ul class="nav-links">
+  <li><a href="index.html" class="active">خانه</a></li>
+  <li><a href="courses.html">بازارچه دوره‌ها</a></li>
+  <li><a href="professors.html">اساتید</a></li>
+  <li><a href="forum.html">تالار گفتگو</a></li>
+  <li><a href="resources.html">منابع</a></li>
+  <li><a href="research.html">پژوهش</a></li>
+  <li><a href="about.html">درباره ما</a></li>
+</ul>
+<div class="nav-actions">
+  <a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+  <div id="authArea"></div>
+</div>
+</div></nav>
+
+<!-- ═══ هیرو ═══ -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-orb orb-1"></div>
+    <div class="hero-orb orb-2"></div>
+    <div class="hero-orb orb-3"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge" data-cm-key="hero_badge">🧬 پلتفرم تخصصی آموزش علوم زیستی</div>
+
+    <h1 class="hero-title">
+      <span data-cm-key="hero_title">آئورا</span>
+      <br>
+      <span class="thin" data-cm-key="hero_title_sub">آموزش نسل نو علوم زیستی</span>
+    </h1>
+
+    <p class="hero-subtitle" data-cm-key="hero_subtitle">
+      از بیوانفارماتیک تا ژنتیک مولکولی، از علم داده تا مدل‌سازی اکولوژیکی.
+      <br>
+      با بهترین اساتید کشور، هر کجا و هر زمان یاد بگیرید.
+    </p>
+
+    <div class="hero-actions">
+      <a href="courses.html" class="btn-primary" data-cm-key="hero_btn_text" data-cm-href="hero_btn_link">
+        مشاهده دوره‌ها <span class="arrow">&larr;</span>
+      </a>
+      <a href="about.html" class="btn-ghost" data-cm-key="hero_btn2_text" data-cm-href="hero_btn2_link">
+        درباره آئورا
+      </a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num" data-cm-key="hero_stat_1_num">۱۲</div>
+        <div class="label" data-cm-key="hero_stat_1_label">دوره تخصصی</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num" data-cm-key="hero_stat_2_num">۳,۴۰۰+</div>
+        <div class="label" data-cm-key="hero_stat_2_label">کارآموز</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num" data-cm-key="hero_stat_3_num">۱۰</div>
+        <div class="label" data-cm-key="hero_stat_3_label">استاد برتر</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num" data-cm-key="hero_stat_4_num">۴.۷</div>
+        <div class="label" data-cm-key="hero_stat_4_label">میانگین امتیاز</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">↓</div>
+</section>
+
+
+<!-- ═══ ویژگی‌ها ═══ -->
+<section class="section"><div class="container">
+
+  <div class="section-header">
+    <div class="section-label" data-cm-key="features_label">چرا آئورا؟</div>
+    <h2 class="section-title" data-cm-key="features_title">یک پلتفرم، همه ابزارها</h2>
+    <p class="section-subtitle" data-cm-key="features_subtitle">آموزش، پژوهش و همکاری علمی در یک فضای یکپارچه</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="f-icon">📚</div>
+      <h3 data-cm-key="f1_title">دوره‌های تخصصی</h3>
+      <p data-cm-key="f1_desc">بیش از ۱۲ دوره در حوزه‌های بیوانفارماتیک، ژنتیک، علم داده و زیست‌شناسی محاسباتی با اساتید برتر کشور.</p>
+      <a href="courses.html" class="f-link">مشاهده بازارچه دوره‌ها &larr;</a>
+    </div>
+
+    <div class="feature-card">
+      <div class="f-icon">👨‍🏫</div>
+      <h3 data-cm-key="f2_title">اساتید برتر</h3>
+      <p data-cm-key="f2_desc">از دانشگاه‌های برتر کشور بیاموزید. اساتید با تجربه آموزشی و پژوهشی بالا در کنار شما هستند.</p>
+      <a href="professors.html" class="f-link">مشاهده اساتید &larr;</a>
+    </div>
+
+    <div class="feature-card">
+      <div class="f-icon">💬</div>
+      <h3 data-cm-key="f3_title">تالار گفتگو</h3>
+      <p data-cm-key="f3_desc">پرسش و پاسخ، بحث‌های علمی و تبادل تجربه با جامعه بزرگ پژوهشگران و دانشجویان علوم زیستی.</p>
+      <a href="forum.html" class="f-link">ورود به تالار &larr;</a>
+    </div>
+
+    <div class="feature-card">
+      <div class="f-icon">🔬</div>
+      <h3 data-cm-key="f4_title">پژوهش</h3>
+      <p data-cm-key="f4_desc">حمایت از پژوهش‌های نوآورانه، دسترسی به مقالات و ارتباط با آزمایشگاه‌های همکار.</p>
+      <a href="research.html" class="f-link">مشاهده پژوهش‌ها &larr;</a>
+    </div>
+
+    <div class="feature-card">
+      <div class="f-icon">📚</div>
+      <h3 data-cm-key="f5_title">منابع آموزشی</h3>
+      <p data-cm-key="f5_desc">کتاب‌ها، مقالات، ابزارها و ویدیوهای آموزشی — همه در یکجا جمع‌آوری شده.</p>
+      <a href="resources.html" class="f-link">مشاهده منابع &larr;</a>
+    </div>
+
+    <!-- فقط ادمین -->
+    <div class="feature-card admin-only-section" style="position:relative">
+      <span class="locked-badge">🔒 فقط ادمین</span>
+      <div class="f-icon">📋</div>
+      <h3>نظرسنجی‌ساز</h3>
+      <p>ساخت پرسشنامه‌های آنلاین با بیش از ۲۵ نوع فیلد، تحلیل خودکار و خروجی CSV.</p>
+      <a href="surveys.html" class="f-link">ساخت نظرسنجی &larr;</a>
+    </div>
+
+    <div class="feature-card admin-only-section" style="position:relative">
+      <span class="locked-badge">🔒 فقط ادمین</span>
+      <div class="f-icon">📹</div>
+      <h3>جلسات مجازی</h3>
+      <p>برگزاری جلسات تعاملی با اشتراک تصویر، صفحه، چت، اتاق‌های گروهی و ضبط جلسه.</p>
+      <a href="meetings.html" class="f-link">ایجاد جلسه &larr;</a>
+    </div>
+  </div>
+</div></section>
+
+
+<!-- ═══ دوره‌های محبوب ═══ -->
+<section class="section" style="background:var(--bg-surface)"><div class="container">
+
+  <div class="section-header" style="text-align:right">
+    <div class="section-label" data-cm-key="popular_label">پرتقاضا</div>
+    <h2 class="section-title" data-cm-key="popular_title">دوره‌های محبوب آئورا</h2>
+    <p class="section-subtitle" style="text-align:right" data-cm-key="popular_subtitle">پرطرفدارترین دوره‌های ما را بشناسید</p>
+  </div>
+
+  <div class="popular-scroll" id="popularCourses"></div>
+
+  <div style="text-align:center;margin-top:2rem">
+    <a href="courses.html" class="btn-ghost">مشاهده همه دوره‌ها &larr;</a>
+  </div>
+
+</div></section>
+
+
+<!-- ═══ اساتید ═══ -->
+<section class="section"><div class="container">
+
+  <div class="section-header">
+    <div class="section-label" data-cm-key="profs_label">تیم آموزشی</div>
+    <h2 class="section-title" data-cm-key="profs_title">اساتید آئورا</h2>
+    <p class="section-subtitle" data-cm-key="profs_subtitle">از بهترین متخصصان علوم زیستی کشور بیاموزید</p>
+  </div>
+
+  <div class="prof-scroll" id="profScroll"></div>
+
+  <div style="text-align:center;margin-top:2rem">
+    <a href="professors.html" class="btn-ghost">مشاهده همه اساتید &larr;</a>
+  </div>
+
+</div></section>
+
+
+<!-- ═══ آمار ═══ -->
+<section class="section" style="background:var(--bg-surface)"><div class="container">
+
+  <div class="counter-section">
+    <div class="counter-item">
+      <div class="counter-num" data-target="3400" data-cm-key="counter_1_num">۰</div>
+      <div class="counter-label" data-cm-key="counter_1_label">کارآموز ثبت‌نام شده</div>
+    </div>
+    <div class="counter-item">
+      <div class="counter-num" data-target="12" data-cm-key="counter_2_num">۰</div>
+      <div class="counter-label" data-cm-key="counter_2_label">دوره تخصصی</div>
+    </div>
+    <div class="counter-item">
+      <div class="counter-num" data-target="127" data-cm-key="counter_3_num">۰</div>
+      <div class="counter-label" data-cm-key="counter_3_label">مقاله پژوهشی</div>
+    </div>
+    <div class="counter-item">
+      <div class="counter-num" data-target="50" data-cm-key="counter_4_num">۰</div>
+      <div class="counter-label" data-cm-key="counter_4_label">شهر مختلف</div>
+    </div>
+  </div>
+
+</div></section>
+
+
+<!-- ═══ نظرات ═══ -->
+<section class="section"><div class="container">
+
+  <div class="section-header">
+    <div class="section-label" data-cm-key="testimonials_label">تجربه کارآموزان</div>
+    <h2 class="section-title" data-cm-key="testimonials_title">دیگران درباره آئورا چه می‌گویند</h2>
+  </div>
+
+  <div class="testimonials">
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <div class="quote">«دوره بیوانفارماتیک آئورا زندگی حرفه‌ای من رو تغییر داد. محتوا عالی و اساتید فوق‌العاده بودن.»</div>
+      <div class="author">
+        <div class="ta-avatar" style="background:rgba(76,175,80,.15);color:#4caf50">ن ر</div>
+        <div><div class="ta-name">نیلوفر رضایی</div><div class="ta-role">کارآموز بیوانفارماتیک</div></div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <div class="quote">«محیط یادگیری آئورا بسیار حرفه‌ای هست. پشتیبانی عالی و محتوای به‌روز.»</div>
+      <div class="author">
+        <div class="ta-avatar" style="background:rgba(33,150,243,.15);color:#2196f3">م ح</div>
+        <div><div class="ta-name">محمد حسینی</div><div class="ta-role">دانشجوی ژنتیک</div></div>
+      </div>
+    </div>
+    <div class="testimonial">
+      <div class="stars">★★★★★</div>
+      <div class="quote">«دوره علم داده در علوم زیستی بسیار کاربردی بود. الان در آزمایشگاه از Python استفاده می‌کنم.»</div>
+      <div class="author">
+        <div class="ta-avatar" style="background:rgba(255,152,0,.15);color:#ff9800">ز ک</div>
+        <div><div class="ta-name">زهرا کریمی</div><div class="ta-role">پژوهشگر میکروبیولوژی</div></div>
+      </div>
+    </div>
+  </div>
+
+</div></section>
+
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-section">
+  <div class="container">
+    <h2 data-cm-key="cta_title">آماده شروع یادگیری هستید؟</h2>
+    <p data-cm-key="cta_subtitle">همین حالا ثبت‌نام کنید و اولین قدم را در مسیر یادگیری علوم زیستی بردارید.</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="register.html" class="btn-primary" style="padding:.8rem 2rem;font-size:.95rem" data-cm-key="cta_btn_text">
+        ثبت‌نام رایگان <span class="arrow">&larr;</span>
+      </a>
+      <a href="courses.html" class="btn-ghost" style="padding:.8rem 1.5rem;font-size:.9rem">
+        مشاهده دوره‌ها
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══ فوتر ═══ -->
+<footer class="footer"><div class="container">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">آئو<span>را</span></div>
+      <p class="footer-about">پلتفرم آموزش مدرن علوم زیستی و بیوانفارماتیک. آموزش، پژوهش و همکاری علمی در یک فضای یکپارچه.</p>
+    </div>
+    <div>
+      <h4 class="footer-title">لینک‌ها</h4>
+      <ul class="footer-links">
+        <li><a href="courses.html">بازارچه دوره‌ها</a></li>
+        <li><a href="professors.html">اساتید</a></li>
+        <li><a href="forum.html">تالار گفتگو</a></li>
+        <li><a href="resources.html">منابع</a></li>
+        <li><a href="research.html">پژوهش</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="footer-title">پشتیبانی</h4>
+      <ul class="footer-links">
+        <li><a href="about.html">درباره ما</a></li>
+        <li><a href="faq.html">سوالات متداول</a></li>
+        <li>📧 support@aoura.ir</li>
+        <li>📞 ۰۲۱-۱۲۳۴۵۶۷۸</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© ۱۴۰۵ آئورا — تمام حقوق محفوظ است</span>
+    <span>support@aoura.ir</span>
+  </div>
+</div></footer>
+
+
+<!-- ═══ اسکریپت‌ها ═══ -->
+<script src="js/ajax.js"></script>
+<script src="js/app.js"></script>
+<script src="https://unpkg.com/grapesjs-preset-webpage@1.0.2/dist/grapesjs-preset-webpage.min.js"></script>
+<script src="js/content-manager.js"></script>
+<script>
+$(document).ready(function () {
+
+  /* ── تشخیص ادمین ── */
+  var user = null;
+  try { user = JSON.parse(localStorage.getItem('aoura_user')); } catch (e) {}
+  if (user && user.role === 'admin') $('body').addClass('user-admin');
+
+
+  /* ── اعمال محتوای ذخیره‌شده ── */
+  if (typeof ContentManager !== 'undefined') {
+    ContentManager.applyToPage('index.html');
+  }
+
+
+  /* ── دوره‌های محبوب ── */
+  API.get('/courses').done(function (courses) {
+    var popular = courses.sort(function (a, b) { return b.students - a.students; }).slice(0, 6);
+    var html = '';
+    popular.forEach(function (c) {
+      var disc = c.originalPrice > c.price ? Math.round((1 - c.price / c.originalPrice) * 100) : 0;
+      var lvlClass = c.level === 'مبتدی' ? 'badge-mb' : c.level === 'متوسط' ? 'badge-md' : 'badge-adv';
+      html += '<a href="course-single.html?id=' + c.id + '" class="market-card" style="min-width:280px;flex-shrink:0;text-decoration:none">';
+      html += '<div class="card-img"><span class="course-emoji">' + (c.icon || '📚') + '</span>';
+      if (disc > 0) html += '<span class="badge-discount">-' + disc + '%</span>';
+      html += '<span class="badge-level ' + lvlClass + '">' + c.level + '</span></div>';
+      html += '<div class="card-body"><div class="card-title">' + c.title + '</div>';
+      html += '<div class="card-instructor"><span class="inst-avatar">' + c.instructor.charAt(0) + '</span> ' + c.instructor + '</div>';
+      html += '<div class="card-stats"><span>⏱ ' + c.duration + '</span><span>👥 ' + c.students + ' نفر</span><span>⭐ ' + c.rating + '</span></div>';
+      html += '<div class="card-footer"><div class="price-group">';
+      if (c.price > 0) { if (disc > 0) html += '<span class="price-original">' + c.originalPrice.toLocaleString('fa-IR') + '</span>'; html += '<span class="price-current">' + c.price.toLocaleString('fa-IR') + ' ت</span>'; }
+      else html += '<span class="price-free">رایگان</span>';
+      html += '</div><span class="btn-enroll">مشاهده</span></div></div></a>';
+    });
+    $('#popularCourses').html(html);
+  });
+
+
+  /* ── اساتید ── */
+  API.get('/professors').done(function (profs) {
+    var colors = ['#e91e63','#9c27b0','#673ab7','#3f51b5','#2196f3','#009688','#4caf50','#ff9800'];
+    var html = '';
+    profs.slice(0, 6).forEach(function (p, i) {
+      var color = colors[i % colors.length];
+      var parts = p.name.split(' ');
+      var initials = parts.length >= 2 ? parts[parts.length - 2].charAt(0) + ' ' + parts[parts.length - 1].charAt(0) : p.name.charAt(0);
+      html += '<div class="prof-preview">';
+      html += '<div class="pp-avatar" style="background:' + color + '15;color:' + color + '">' + initials + '</div>';
+      html += '<h4>' + p.name + '</h4><div class="pp-title">' + p.title + '</div>';
+      html += '<div class="pp-uni">🏛 ' + p.university + '</div>';
+      html += '<div class="pp-stats"><span><strong>' + p.courses + '</strong> دوره</span><span><strong>' + p.students.toLocaleString('fa-IR') + '</strong> کارآموز</span><span>⭐ <strong>' + p.rating + '</strong></span></div>';
+      html += '</div>';
+    });
+    $('#profScroll').html(html);
+  });
+
+
+  /* ── انیمیشن شمارنده‌ها ── */
+  function animateCounters() {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        var target = parseInt(el.getAttribute('data-target'));
+        if (!target || el.dataset.counted) return;
+        el.dataset.counted = 'true';
+        var current = 0;
+        var step = Math.max(1, Math.floor(target / 80));
+        var interval = setInterval(function () {
+          current += step;
+          if (current >= target) { current = target; clearInterval(interval); }
+          el.textContent = current.toLocaleString('fa-IR');
+          if (target > 100) el.textContent += '+';
+        }, 20);
+        observer.unobserve(el);
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.counter-num[data-target]').forEach(function (el) { observer.observe(el); });
+  }
+  animateCounters();
+
+
+  /* ── Scroll Reveal ── */
+  function initReveal() {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.section').forEach(function (s) {
+      s.style.opacity = '0';
+      s.style.transform = 'translateY(30px)';
+      s.style.transition = 'all 0.8s ease';
+      observer.observe(s);
+    });
+  }
+  initReveal();
+
+});
+</script>
+
+</body>
+</html>

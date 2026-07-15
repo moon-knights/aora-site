@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>تنظیمات گلوبال — آئورا</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --bg: #0d0d0d; --surface: #1a1a1a; --card: #111;
+            --border: #2a2a2a; --accent: #e8c547;
+            --text-primary: #f0ece4; --text-muted: #7a7570;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text-primary); font-family: 'Vazirmatn', sans-serif; min-height: 100vh; }
+        .page-wrap { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+        .page-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 2rem; }
+        .section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-bottom: 2rem; }
+        .section h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: .5rem; }
+        .logo-upload-area { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+        .logo-preview { width: 120px; height: 120px; border-radius: 12px; border: 2px dashed var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--card); }
+        .logo-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .logo-preview .placeholder { font-size: 2.5rem; opacity: .3; }
+        .upload-actions { flex: 1; }
+        .btn { padding: .6rem 1.5rem; border-radius: 8px; border: none; font-family: inherit; font-size: .85rem; cursor: pointer; font-weight: 600; transition: all .2s; }
+        .btn-primary-gold { background: var(--accent); color: #0d0d0d; }
+        .btn-primary-gold:hover { background: #d4b33e; }
+        .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-primary); margin-right: .5rem; }
+        .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+        .upload-hint { font-size: .72rem; color: var(--text-muted); margin-top: .75rem; }
+        #logoFileInput { display: none; }
+        .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-field label { display: block; font-size: .75rem; color: var(--text-muted); margin-bottom: .35rem; }
+        .form-field input, .form-field textarea { width: 100%; padding: .6rem 1rem; background: var(--card); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: inherit; font-size: .85rem; outline: none; transition: border .2s; }
+        .form-field input:focus, .form-field textarea:focus { border-color: var(--accent); }
+        .form-field textarea { min-height: 100px; resize: vertical; }
+        .form-field.full { grid-column: 1 / -1; }
+        .gjs-launch-btn { display: inline-flex; align-items: center; gap: .5rem; padding: .7rem 1.5rem; background: linear-gradient(135deg, #1a237e, #0d47a1); color: #fff; border: none; border-radius: 8px; font-family: inherit; font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .2s; }
+        .gjs-launch-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(13,71,161,.4); }
+        .gjs-modal { display: none; position: fixed; inset: 0; z-index: 9999; background: #000; }
+        .gjs-modal.active { display: block; }
+        .gjs-modal-toolbar { position: absolute; top: 0; left: 0; right: 0; height: 52px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 1.5rem; z-index: 10; }
+        .gjs-modal-toolbar h3 { font-size: .95rem; }
+        .gjs-modal-toolbar .actions { display: flex; gap: .5rem; }
+        .status-msg { padding: .5rem 1rem; border-radius: 8px; font-size: .78rem; margin-top: 1rem; display: none; }
+        .status-msg.success { display: block; background: rgba(76,175,80,.15); color: #4caf50; }
+        .status-msg.error { display: block; background: rgba(231,76,60,.15); color: #e74c3c; }
+        @media (max-width: 768px) { .settings-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="page-wrap">
+        <h1 class="page-title">تنظیمات گلوبال سایت</h1>
+        <div class="section">
+            <h2>🖼 لوگوی سایت</h2>
+            <div class="logo-upload-area">
+                <div class="logo-preview" id="logoPreview"><span class="placeholder">🖼</span></div>
+                <div class="upload-actions">
+                    <button class="btn btn-ghost" onclick="document.getElementById('logoFileInput').click()">انتخاب فایل</button>
+                    <button class="btn btn-primary-gold" id="btnUploadLogo">آپلود لوگو</button>
+                    <input type="file" id="logoFileInput" accept="image/*">
+                    <div class="upload-hint">فرمت‌های مجاز: PNG, JPG, SVG, WEBP — حداکثر 2MB</div>
+                </div>
+            </div>
+            <div class="status-msg" id="logoStatus"></div>
+        </div>
+        <div class="section">
+            <h2>⚙ تنظیمات عمومی</h2>
+            <div class="settings-grid">
+                <div class="form-field"><label>نام سایت</label><input type="text" id="siteName" placeholder="آئورا"></div>
+                <div class="form-field"><label>ایمیل پشتیبانی</label><input type="email" id="supportEmail" placeholder="support@aoura.ir" style="direction:ltr"></div>
+                <div class="form-field full"><label>CSS سراسری اضافی</label><textarea id="customCss" placeholder="/* استایل‌های سفارشی */" style="font-family:monospace;font-size:.8rem;direction:ltr"></textarea></div>
+                <div class="form-field full"><label>اسکریپت‌های Head</label><textarea id="headScripts" placeholder="<!-- اسکریپت‌ها -->" style="font-family:monospace;font-size:.8rem;direction:ltr"></textarea></div>
+            </div>
+            <button class="btn btn-primary-gold" id="btnSaveSettings" style="margin-top:1rem">ذخیره تنظیمات</button>
+            <div class="status-msg" id="settingsStatus"></div>
+        </div>
+        <div class="section">
+            <h2>🔝 هدر گلوبال</h2>
+            <button class="gjs-launch-btn" onclick="launchEditor('header')">🎨 ویرایش هدر با GrapesJS</button>
+            <div class="status-msg" id="headerStatus"></div>
+        </div>
+        <div class="section">
+            <h2>🔻 فوتر گلوبال</h2>
+            <button class="gjs-launch-btn" onclick="launchEditor('footer')">🎨 ویرایش فوتر با GrapesJS</button>
+            <div class="status-msg" id="footerStatus"></div>
+        </div>
+    </div>
+
+    <div class="gjs-modal" id="gjsModal">
+        <div class="gjs-modal-toolbar">
+            <h3 id="gjsModalTitle">ویرایشگر</h3>
+            <div class="actions">
+                <span class="status-msg" id="gjsSaveStatus" style="margin:0"></span>
+                <button class="btn btn-primary-gold" id="gjsSaveBtn" onclick="saveGjsComponent()">ذخیره</button>
+                <button class="btn btn-ghost" onclick="closeEditor()">بستن</button>
+            </div>
+        </div>
+        <div id="gjsContainer" style="height:100vh;padding-top:52px"></div>
+    </div>
+
+    <script src="https://unpkg.com/grapesjs@0.21.10/dist/grapes.min.js"></script>
+    <script src="https://unpkg.com/grapesjs-blocks-basic@1.0.1/dist/grapesjs-blocks-basic.min.js"></script>
+    <script src="js/ajax.js"></script>
+    <script>
+    (function() {
+        'use strict';
+        var currentComponent = null;
+        var gjsEditor = null;
+        var settings = {};
+
+        API.get('/settings').done(function(data) {
+            settings = data;
+            $('#siteName').val(settings.SiteName || '');
+            $('#supportEmail').val(settings.SupportEmail || '');
+            $('#customCss').val(settings.CustomCss || '');
+            $('#headScripts').val(settings.CustomHeadScripts || '');
+            if (settings.LogoUrl) {
+                $('#logoPreview').html('<img src="' + settings.LogoUrl + '?t=' + Date.now() + '" alt="logo">');
+            }
+        });
+
+        $('#logoFileInput').on('change', function() {
+            var file = this.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#logoPreview').html('<img src="' + e.target.result + '" alt="preview">');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        $('#btnUploadLogo').on('click', function() {
+            var fileInput = document.getElementById('logoFileInput');
+            if (!fileInput.files.length) { showStatus('logoStatus', 'لطفاً ابتدا یک فایل انتخاب کنید.', 'error'); return; }
+            var formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            $.ajax({
+                url: API.baseUrl + '/settings/logo', type: 'POST', data: formData,
+                processData: false, contentType: false,
+                headers: API.getAuthHeaders ? API.getAuthHeaders() : {},
+                success: function(res) { showStatus('logoStatus', 'لوگو با موفقیت آپلود شد.', 'success'); $('#logoPreview').html('<img src="' + res.path + '?t=' + Date.now() + '" alt="logo">'); },
+                error: function(xhr) { showStatus('logoStatus', xhr.responseText || 'خطا در آپلود.', 'error'); }
+            });
+        });
+
+        $('#btnSaveSettings').on('click', function() {
+            var payload = { SiteName: $('#siteName').val(), SupportEmail: $('#supportEmail').val(), CustomCss: $('#customCss').val(), CustomHeadScripts: $('#headScripts').val() };
+            API.put('/settings', payload).done(function() { showStatus('settingsStatus', 'تنظیمات ذخیره شد.', 'success'); }).fail(function() { showStatus('settingsStatus', 'خطا در ذخیره تنظیمات.', 'error'); });
+        });
+
+        window.launchEditor = function(component) {
+            currentComponent = component;
+            $('#gjsModalTitle').text(component === 'header' ? 'ویرایش هدر گلوبال' : 'ویرایش فوتر گلوبال');
+            $('#gjsModal').addClass('active');
+            if (gjsEditor) { gjsEditor.destroy(); gjsEditor = null; }
+            $('#gjsContainer').html('');
+            
+            gjsEditor = grapesjs.init({
+                container: '#gjsContainer', height: 'calc(100vh - 52px)', width: '100%',
+                storageManager: false, plugins: ['gjs-blocks-basic'],
+                deviceManager: { devices: [{ name: 'Desktop', width: '' }, { name: 'Mobile', width: '375px', widthMedia: '480px' }] }
+            });
+
+            var htmlKey = component === 'header' ? 'GlobalHeaderHtml' : 'GlobalFooterHtml';
+            var cssKey = component === 'header' ? 'GlobalHeaderCss' : 'GlobalFooterCss';
+            var stateKey = component === 'header' ? 'GlobalHeaderState' : 'GlobalFooterState';
+
+            if (settings[stateKey]) {
+                try { gjsEditor.loadProjectData(JSON.parse(settings[stateKey])); } catch(e) { if (settings[htmlKey]) gjsEditor.setComponents(settings[htmlKey]); }
+            } else if (settings[htmlKey]) {
+                gjsEditor.setComponents(settings[htmlKey]);
+                if (settings[cssKey]) gjsEditor.setStyle(settings[cssKey]);
+            }
+        };
+
+        window.saveGjsComponent = function() {
+            if (!gjsEditor || !currentComponent) return;
+            var payload = {
+                HtmlContent: gjsEditor.getHtml(),
+                CssContent: gjsEditor.getCss(),
+                GrapesJsState: JSON.stringify(gjsEditor.getProjectData())
+            };
+            API.put('/settings/' + currentComponent, payload).done(function() {
+                settings['Global' + currentComponent.charAt(0).toUpperCase() + currentComponent.slice(1) + 'Html'] = payload.HtmlContent;
+                settings['Global' + currentComponent.charAt(0).toUpperCase() + currentComponent.slice(1) + 'State'] = payload.GrapesJsState;
+                showStatus(currentComponent + 'Status', (currentComponent === 'header' ? 'هدر' : 'فوتر') + ' ذخیره شد.', 'success');
+            }).fail(function() { showStatus(currentComponent + 'Status', 'خطا در ذخیره.', 'error'); });
+        };
+
+        window.closeEditor = function() { $('#gjsModal').removeClass('active'); if (gjsEditor) { gjsEditor.destroy(); gjsEditor = null; } };
+
+        function showStatus(elementId, message, type) {
+            var $el = $('#' + elementId);
+            $el.text(message).attr('class', 'status-msg ' + type);
+            setTimeout(function() { $el.hide().attr('class', 'status-msg'); }, 4000);
+        }
+    })();
+    </script>
+</body>
+</html>

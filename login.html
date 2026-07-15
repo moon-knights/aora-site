@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ورود — آئورا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;position:relative}
+.auth-bg{position:absolute;inset:0}
+.auth-bg .orb{position:absolute;border-radius:50%;filter:blur(150px);opacity:.2}
+.auth-bg .orb-1{width:500px;height:500px;background:var(--accent);top:-20%;right:-10%}
+.auth-bg .orb-2{width:400px;height:400px;background:var(--gold);bottom:-20%;left:-10%}
+.auth-card{position:relative;z-index:1;max-width:420px;width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.5rem}
+.auth-card .logo{font-size:1.8rem;font-weight:900;color:var(--text-primary);text-align:center;margin-bottom:.25rem}
+.auth-card .logo span{color:var(--accent)}
+.auth-card .sub{text-align:center;font-size:.82rem;color:var(--text-muted);margin-bottom:2rem}
+.auth-field{margin-bottom:1rem}
+.auth-field label{display:block;font-size:.75rem;color:var(--text-muted);margin-bottom:.35rem}
+.auth-field input{width:100%;padding:.65rem 1rem;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-family:var(--font-fa);font-size:.85rem;outline:none;transition:border-color var(--ease)}
+.auth-field input:focus{border-color:var(--accent)}
+.auth-msg{text-align:center;font-size:.78rem;margin-top:1rem;min-height:1.5rem}
+.auth-footer{text-align:center;margin-top:1.5rem;font-size:.78rem;color:var(--text-muted)}
+.auth-footer a{color:var(--accent)}
+
+/* جداکننده */
+.auth-divider{display:flex;align-items:center;gap:1rem;margin:1.5rem 0;font-size:.72rem;color:var(--text-muted)}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* دکمه گوگل */
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:.7rem;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-family:var(--font-fa);font-size:.85rem;cursor:pointer;transition:all var(--ease)}
+.btn-google:hover{border-color:#4285f4;background:rgba(66,133,244,.08)}
+.btn-google .g-icon{width:20px;height:20px}
+</style>
+</head>
+<body>
+
+<div class="auth-page">
+<div class="auth-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
+
+<div class="auth-card">
+<div class="logo">آئو<span>را</span></div>
+<div class="sub">خوش آمدید — وارد حساب خود شوید</div>
+
+<!-- ورود با گوگل -->
+<button class="btn-google" id="googleLoginBtn">
+<svg class="g-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+ورود با گوگل
+</button>
+
+<div class="auth-divider">یا با ایمیل و رمز</div>
+
+<!-- فرم ورود -->
+<form id="loginForm" autocomplete="on">
+<div class="auth-field">
+<label>ایمیل</label>
+<input type="email" name="email" placeholder="email@example.com" style="direction:ltr;text-align:left" autocomplete="email" required>
+</div>
+<div class="auth-field">
+<label>رمز عبور</label>
+<input type="password" name="password" placeholder="رمز عبور" autocomplete="current-password" required>
+</div>
+<button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:.8rem;font-size:.9rem">
+ورود <span class="arrow">&larr;</span>
+</button>
+</form>
+
+<div class="auth-msg" id="loginMsg"></div>
+<div class="auth-footer">حساب ندارید؟ <a href="register.html">ثبت‌نام کنید</a></div>
+</div>
+</div>
+
+<script src="js/ajax.js"></script>
+<script src="js/app.js"></script>
+<script>
+/* ═══ ورود با گوگل ═══ */
+function handleGoogleResponse(response) {
+  // decode JWT token از گوگل
+  try {
+    var payload = JSON.parse(atob(response.credential.split('.')[1]));
+    var email = payload.email;
+    var name = payload.name || email.split('@')[0];
+
+    // بررسی اینکه کاربر قبلاً وجود داره
+    var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+    var existing = users.find(function (u) { return u.email === email; });
+
+    if (existing) {
+      // ورود
+      Auth.setCurrentUser(Auth._sanitize(existing));
+      localStorage.setItem('aoura_token', 'google_token_' + Date.now());
+      var dashMap = { admin: 'dashboard-admin.html', professor: 'dashboard-professor.html', student: 'dashboard-student.html' };
+      window.location.href = dashMap[existing.role] || 'dashboard-student.html';
+    } else {
+      // ثبت‌نام خودکار
+      var result = Auth.register({
+        fullName: name,
+        email: email,
+        password: 'google_auth_' + Date.now(),
+        role: 'student'
+      });
+      if (result.success) {
+        window.location.href = 'dashboard-student.html';
+      }
+    }
+  } catch (e) {
+    $('#loginMsg').css('color', '#e74c3c').text('خطا در ورود با گوگل.');
+  }
+}
+
+// بارگذاری Google Sign-In
+window.onload = function () {
+  if (typeof google !== 'undefined' && google.accounts) {
+    google.accounts.id.initialize({
+      client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com', // ← جایگزین کنید
+      callback: handleGoogleResponse
+    });
+    google.accounts.id.renderButton(
+      document.getElementById('googleLoginBtn'),
+      { theme: 'outline', size: 'large', text: 'signin_with', shape: 'rectangular' }
+    );
+  }
+};
+
+$('#googleLoginBtn').on('click', function () {
+  if (typeof google === 'undefined' || !google.accounts) {
+    $('#loginMsg').css('color', '#e74c3c').text('سرویس گوگل در دسترس نیست. لطفاً از فرم ورود استفاده کنید.');
+  }
+});
+</script>
+
+</body>
+</html>

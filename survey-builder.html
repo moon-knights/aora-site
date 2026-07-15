@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ساخت نظرسنجی — آرا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+<nav class="nav" id="mainNav"><div class="container">
+<a href="index.html" class="nav-logo">آ<span>را</span></a>
+<div style="display:flex;align-items:center;gap:1rem">
+<a href="surveys.html" style="font-size:.75rem;color:var(--text-muted)">بازگشت به لیست</a>
+</div>
+</div></nav>
+
+<div class="tool-page">
+<div class="container" style="padding-top:2rem">
+<div style="display:flex;gap:1rem;align-items:center;margin-bottom:2rem;flex-wrap:wrap">
+<h1 style="font-size:1.3rem;font-weight:600;color:var(--text-primary)">ساخت نظرسنجی</h1>
+<div style="flex:1"></div>
+<button id="previewBtn" class="btn-ghost" style="padding:.5rem 1rem;font-size:.78rem">👁 پیش‌نمایش</button>
+<button id="saveBtn" class="btn-primary" style="padding:.5rem 1.5rem;font-size:.78rem">💾 ذخیره و انتشار</button>
+</div>
+
+<div class="survey-builder">
+<!-- ابزارها -->
+<div class="toolbox">
+<h3>🧩 ابزارها</h3>
+<div class="toolbox-section">
+<h4>فیلدهای متنی</h4>
+<button class="field-btn" data-type="text"><span class="icon">✏️</span> متن کوتاه</button>
+<button class="field-btn" data-type="textarea"><span class="icon">📝</span> متن بلند</button>
+<button class="field-btn" data-type="email"><span class="icon">📧</span> ایمیل</button>
+<button class="field-btn" data-type="number"><span class="icon">🔢</span> عدد</button>
+</div>
+<div class="toolbox-section">
+<h4>فیلدهای انتخابی</h4>
+<button class="field-btn" data-type="radio"><span class="icon">◉</span> تک‌انتخابی</button>
+<button class="field-btn" data-type="checkbox"><span class="icon">☑️</span> چندانتخابی</button>
+<button class="field-btn" data-type="select"><span class="icon">▼</span> لیست کشویی</button>
+</div>
+<div class="toolbox-section">
+<h4>مقیاس و امتیاز</h4>
+<button class="field-btn" data-type="rating"><span class="icon">⭐</span> امتیاز ستاره</button>
+<button class="field-btn" data-type="scale"><span class="icon">📊</span> مقیاس عددی</button>
+</div>
+<div class="toolbox-section">
+<h4>متفرقه</h4>
+<button class="field-btn" data-type="date"><span class="icon">📅</span> تاریخ</button>
+<button class="field-btn" data-type="file"><span class="icon">📎</span> فایل پیوست</button>
+</div>
+</div>
+
+<!-- بوم نظرسنجی -->
+<div class="canvas-area">
+<div class="canvas-header">
+<input type="text" id="surveyTitle" placeholder="عنوان نظرسنجی..." value="">
+<textarea id="surveyDesc" rows="2" placeholder="توضیحات (اختیاری)..."></textarea>
+</div>
+<div class="canvas-body" id="questionsCanvas">
+<div class="empty-canvas" id="canvasEmpty">
+<div class="icon">📋</div>
+<p>از ابزارهای سمت راست استفاده کنید<br>سوالات را اینجا بکشید و رها کنید</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- پاپ‌آپ پیش‌نمایش -->
+<div class="modal-overlay" id="previewModal">
+<div class="modal-box" style="max-width:700px;position:relative;max-height:90vh;overflow-y:auto">
+<button class="modal-close" id="closePreview">✕</button>
+<h2>👁 پیش‌نمایش نظرسنجی</h2>
+<div id="previewContent" class="survey-viewer" style="padding-top:1rem"></div>
+</div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/survey.js"></script>
+<script src="js/access.js"></script>
+<script>
+$(document).ready(function(){
+  var questions = [];
+  var qCounter = 0;
+  var editingId = new URLSearchParams(window.location.search).get('id');
+
+  // بارگذاری نظرسنجی موجود
+  if(editingId){
+    var existing = Survey.getById(editingId);
+    if(existing){
+      $('#surveyTitle').val(existing.title);
+      $('#surveyDesc').val(existing.description);
+      questions = existing.questions;
+      qCounter = questions.length;
+      renderAllQuestions();
+    }
+  }
+
+  /* ── اضافه کردن سوال ── */
+  $('.field-btn').on('click', function(){
+    var type = $(this).data('type');
+    qCounter++;
+    var q = {
+      id: 'q_' + qCounter + '_' + Date.now(),
+      type: type,
+      text: '',
+      required: false,
+      options: (type === 'radio' || type === 'checkbox' || type === 'select') ? ['گزینه ۱', 'گزینه ۲'] : [],
+      min: type === 'scale' ? 1 : undefined,
+      max: type === 'scale' ? 10 : undefined,
+      minLabel: '',
+      maxLabel: ''
+    };
+    questions.push(q);
+    renderAllQuestions();
+  });
+
+  /* ── رندر همه سوالات ── */
+  function renderAllQuestions(){
+    var $canvas = $('#questionsCanvas');
+    $canvas.empty();
+
+    if(questions.length === 0){
+      $canvas.html('<div class="empty-canvas" id="canvasEmpty"><div class="icon">📋</div><p>از ابزارهای سمت راست استفاده کنید<br>سوالات را اینجا اضافه کنید</p></div>');
+      return;
+    }
+
+    questions.forEach(function(q, idx){
+      $canvas.append(renderQItem(q, idx));
+    });
+
+    bindEvents();
+  }
+
+  /* ── رندر یک سوال ── */
+  function renderQItem(q, idx){
+    var typeName = '';
+    Survey.fieldTypes.forEach(function(f){ if(f.type === q.type) typeName = f.name; });
+
+    var html = '<div class="q-item" data-idx="' + idx + '" draggable="true">';
+    html += '<div class="q-header">';
+    html += '<span class="q-drag">⠿</span>';
+    html += '<span class="q-num">' + (idx + 1) + '</span>';
+    html += '<input class="q-input" type="text" data-field="text" value="' + (q.text || '') + '" placeholder="متن سوال (' + typeName + ')...">';
+    html += '<span class="q-actions">';
+    html += '<button class="toggle-req ' + (q.required ? 'active' : '') + '" title="اجباری" style="' + (q.required ? 'color:var(--accent);border-color:var(--accent)' : '') + '">★</button>';
+    html += '<button class="duplicate" title="کپی">⧉</button>';
+    html += '<button class="delete" title="حذف">✕</button>';
+    html += '</span>';
+    html += '</div>';
+
+    // تنظیمات خاص هر نوع
+    if(q.type === 'radio' || q.type === 'checkbox' || q.type === 'select'){
+      html += '<div class="options-list">';
+      (q.options || []).forEach(function(opt, oi){
+        html += '<div class="option-row">';
+        html += '<span class="opt-icon">' + (q.type === 'radio' ? '○' : q.type === 'checkbox' ? '☐' : '▸') + '</span>';
+        html += '<input type="text" data-opt-idx="' + oi + '" value="' + opt + '" placeholder="گزینه...">';
+        html += '<button class="remove-opt" data-opt-idx="' + oi + '">✕</button>';
+        html += '</div>';
+      });
+      html += '<button class="add-option">+ افزودن گزینه</button>';
+      html += '</div>';
+    }
+    else if(q.type === 'scale'){
+      html += '<div style="display:flex;gap:1rem;align-items:center;margin-top:.5rem;font-size:.75rem">';
+      html += '<span>از</span><input type="number" class="q-input" data-field="min" value="' + (q.min || 1) + '" style="width:60px">';
+      html += '<span>تا</span><input type="number" class="q-input" data-field="max" value="' + (q.max || 10) + '" style="width:60px">';
+      html += '</div>';
+      html += '<div style="display:flex;gap:.5rem;margin-top:.5rem;font-size:.72rem">';
+      html += '<input class="q-input" data-field="minLabel" value="' + (q.minLabel || '') + '" placeholder="برچسب ابتدا" style="flex:1">';
+      html += '<input class="q-input" data-field="maxLabel" value="' + (q.maxLabel || '') + '" placeholder="برچسب انتها" style="flex:1">';
+      html += '</div>';
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+  /* ── رویدادها ── */
+  function bindEvents(){
+    // تغییر متن سوال
+    $(document).off('input', '.q-input[data-field="text"]').on('input', '.q-input[data-field="text"]', function(){
+      var idx = $(this).closest('.q-item').data('idx');
+      questions[idx].text = $(this).val();
+    });
+
+    // تغییر فیلدهای scale
+    $(document).off('input', '.q-input[data-field="min"],.q-input[data-field="max"],.q-input[data-field="minLabel"],.q-input[data-field="maxLabel"]')
+    .on('input', '.q-input[data-field="min"],.q-input[data-field="max"],.q-input[data-field="minLabel"],.q-input[data-field="maxLabel"]', function(){
+      var idx = $(this).closest('.q-item').data('idx');
+      var field = $(this).data('field');
+      var val = $(this).val();
+      if(field === 'min' || field === 'max') val = parseInt(val) || 1;
+      questions[idx][field] = val;
+    });
+
+    // تغییر گزینه
+    $(document).off('input', '.option-row input').on('input', '.option-row input', function(){
+      var qi = $(this).closest('.q-item').data('idx');
+      var oi = $(this).data('opt-idx');
+      questions[qi].options[oi] = $(this).val();
+    });
+
+    // حذف گزینه
+    $(document).off('click', '.remove-opt').on('click', '.remove-opt', function(){
+      var qi = $(this).closest('.q-item').data('idx');
+      var oi = $(this).data('opt-idx');
+      questions[qi].options.splice(oi, 1);
+      renderAllQuestions();
+    });
+
+    // افزودن گزینه
+    $(document).off('click', '.add-option').on('click', '.add-option', function(){
+      var qi = $(this).closest('.q-item').data('idx');
+      questions[qi].options.push('گزینه ' + (questions[qi].options.length + 1));
+      renderAllQuestions();
+    });
+
+    // toggle اجباری
+    $(document).off('click', '.toggle-req').on('click', '.toggle-req', function(){
+      var qi = $(this).closest('.q-item').data('idx');
+      questions[qi].required = !questions[qi].required;
+      renderAllQuestions();
+    });
+
+    // کپی سوال
+    $(document).off('click', '.duplicate').on('click', '.duplicate', function(){
+      var qi = $(this).closest('.q-item').data('idx');
+      var copy = JSON.parse(JSON.stringify(questions[qi]));
+      copy.id = 'q_' + (++qCounter) + '_' + Date.now();
+      questions.splice(qi + 1, 0, copy);
+      renderAllQuestions();
+    });
+
+    // حذف سوال
+    $(document).off('click', '.q-actions .delete').on('click', '.q-actions .delete', function(){
+      var qi = $(this).closest('.q-item').data('idx');
+      questions.splice(qi, 1);
+      renderAllQuestions();
+    });
+
+    // Drag & Drop
+    var dragIdx = null;
+    $(document).off('dragstart', '.q-item').on('dragstart', '.q-item', function(e){
+      dragIdx = $(this).data('idx');
+      $(this).addClass('dragging');
+      e.originalEvent.dataTransfer.effectAllowed = 'move';
+    });
+    $(document).off('dragend', '.q-item').on('dragend', '.q-item', function(){
+      $(this).removeClass('dragging');
+    });
+    $(document).off('dragover', '.q-item').on('dragover', '.q-item', function(e){
+      e.preventDefault();
+      e.originalEvent.dataTransfer.dropEffect = 'move';
+    });
+    $(document).off('drop', '.q-item').on('drop', '.q-item', function(e){
+      e.preventDefault();
+      var dropIdx = $(this).data('idx');
+      if(dragIdx !== null && dragIdx !== dropIdx){
+        var item = questions.splice(dragIdx, 1)[0];
+        questions.splice(dropIdx, 0, item);
+        renderAllQuestions();
+      }
+      dragIdx = null;
+    });
+  }
+
+  /* ── پیش‌نمایش ── */
+  $('#previewBtn').on('click', function(){
+    var html = '';
+    if($('#surveyTitle').val()) html += '<h2>' + $('#surveyTitle').val() + '</h2>';
+    if($('#surveyDesc').val()) html += '<p class="desc">' + $('#surveyDesc').val() + '</p>';
+    if(questions.length === 0){
+      html += '<p style="text-align:center;color:var(--text-muted)">سوالی اضافه نشده.</p>';
+    } else {
+      questions.forEach(function(q, i){
+        html += Survey.renderQuestionView(q, i);
+      });
+      html += '<button class="btn-primary" style="width:100%;justify-content:center;margin-top:1rem" disabled>ارسال پاسخ (پیش‌نمایش)</button>';
+    }
+    $('#previewContent').html(html);
+    $('#previewModal').addClass('visible');
+    bindPreviewInteractions();
+  });
+
+  $('#closePreview').on('click', function(){ $('#previewModal').removeClass('visible'); });
+
+  function bindPreviewInteractions(){
+    // امتیاز ستاره
+    $('.star-rating .star').off('click').on('click', function(){
+      var val = $(this).data('value');
+      var $parent = $(this).closest('.star-rating');
+      $parent.find('.star').each(function(i){
+        $(this).toggleClass('active', i < val);
+      });
+      $parent.find('input').val(val);
+    });
+    // مقیاس عددی
+    $('.scale-num').off('click').on('click', function(){
+      var $parent = $(this).closest('.scale-row');
+      $parent.find('.scale-num').removeClass('active');
+      $(this).addClass('active');
+      $parent.find('input').val($(this).data('value'));
+    });
+  }
+
+  /* ── ذخیره ── */
+  $('#saveBtn').on('click', function(){
+    var title = $('#surveyTitle').val().trim();
+    if(!title){ alert('عنوان نظرسنجی را وارد کنید.'); return; }
+    if(questions.length === 0){ alert('حداقل یک سوال اضافه کنید.'); return; }
+
+    // بررسی سوالات بدون متن
+    var emptyQ = questions.find(function(q){ return !q.text.trim(); });
+    if(emptyQ){ alert('متن همه سوالات را وارد کنید.'); return; }
+
+    var data = {
+      title: title,
+      description: $('#surveyDesc').val().trim(),
+      questions: questions
+    };
+
+    if(editingId){
+      Survey.update(editingId, data);
+      alert('نظرسنجی بروزرسانی شد!');
+    } else {
+      var survey = Survey.create(data);
+      alert('نظرسنجی با موفقیت ساخته شد!\nشناسه: ' + survey.id);
+    }
+
+    window.location.href = 'surveys.html';
+  });
+});
+</script>
+</body>
+</html>

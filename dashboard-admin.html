@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مدیریت آئورا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   پنل ادمین — CSS کامل و بدون تکرار
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── گرید اصلی ── */
+.admin-wrap{
+  display:grid;
+  grid-template-columns:250px 1fr;
+  min-height:100vh;
+  width:100%;
+  box-sizing:border-box
+}
+
+/* ── سایدبار ── */
+.admin-sidebar{
+  background:var(--bg-card);
+  border-left:1px solid var(--border);
+  position:fixed;
+  right:0;top:0;bottom:0;
+  width:250px;
+  overflow-y:auto;
+  z-index:100;
+  display:flex;
+  flex-direction:column;
+  box-sizing:border-box
+}
+.sidebar-logo{
+  padding:1.25rem;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  gap:10px
+}
+.sidebar-logo .logo-text{font-size:1.2rem;font-weight:800;color:var(--text-primary)}
+.sidebar-logo .logo-text span{color:var(--accent)}
+.sidebar-logo .admin-tag{font-size:.55rem;padding:.15rem .4rem;background:rgba(231,76,60,.15);color:#e74c3c;border-radius:8px}
+.sidebar-menu{flex:1;padding:.75rem 0}
+.sidebar-section{padding:.5rem 1.25rem .25rem;font-size:.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
+.sidebar-link{
+  display:flex;align-items:center;gap:10px;
+  padding:.6rem 1.25rem;font-size:.75rem;
+  color:var(--text-muted);cursor:pointer;
+  transition:all var(--ease);
+  border-right:3px solid transparent;
+  text-decoration:none
+}
+.sidebar-link:hover{background:var(--bg-surface);color:var(--text-primary)}
+.sidebar-link.active{background:var(--accent-glow);color:var(--accent);border-right-color:var(--accent)}
+.sidebar-link .sl-icon{font-size:.95rem;width:22px;text-align:center}
+.sidebar-link .sl-badge{margin-right:auto;font-size:.55rem;padding:.1rem .35rem;background:var(--accent-glow);color:var(--accent);border-radius:10px;font-family:var(--font-mono);direction:ltr}
+.sidebar-footer{padding:.85rem 1.25rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sidebar-footer .sf-avatar{width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--bg-deep);display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700}
+.sidebar-footer .sf-name{font-size:.72rem;color:var(--text-primary)}
+.sidebar-footer .sf-email{font-size:.6rem;color:var(--text-muted)}
+
+/* ── محتوای اصلی ── */
+.admin-main{
+  margin-right:250px;
+  min-height:100vh;
+  background:var(--bg-deep);
+  width:calc(100vw - 250px);
+  overflow-x:hidden;
+  box-sizing:border-box
+}
+.admin-topbar{
+  background:var(--bg-card);
+  border-bottom:1px solid var(--border);
+  padding:.7rem 1.5rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+  box-sizing:border-box
+}
+.admin-topbar .page-title{font-size:.95rem;font-weight:600;color:var(--text-primary)}
+.admin-content{padding:1.5rem;width:100%;box-sizing:border-box;overflow-x:hidden}
+
+/* ── آمار ── */
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:.85rem;
+  margin-bottom:1.75rem;
+  width:100%;
+  box-sizing:border-box
+}
+.stat-box{
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  padding:.9rem;
+  display:flex;align-items:center;gap:.65rem;
+  min-width:0;overflow:hidden;box-sizing:border-box;
+  transition:border-color var(--ease)
+}
+.stat-box:hover{border-color:var(--accent-dim)}
+.stat-box .sb-icon{
+  width:40px;height:40px;
+  border-radius:var(--radius-md);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;flex-shrink:0
+}
+.stat-box .sb-num{font-size:1.4rem;font-weight:700;color:var(--text-primary);font-family:var(--font-mono);direction:ltr;line-height:1}
+.stat-box .sb-label{font-size:.65rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── جدول ── */
+.data-table{
+  width:100%;border-collapse:collapse;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);overflow:hidden;
+  table-layout:auto;box-sizing:border-box
+}
+.data-table th{padding:.55rem .75rem;background:var(--bg-surface);font-size:.68rem;color:var(--text-muted);font-weight:500;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap}
+.data-table td{padding:.5rem .75rem;font-size:.72rem;color:var(--text-body);border-bottom:1px solid var(--border);vertical-align:middle}
+.data-table tr:hover td{background:var(--bg-surface)}
+.data-table tr:last-child td{border-bottom:none}
+
+/* ── پنل ── */
+.panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:1.5rem;overflow:hidden;width:100%;box-sizing:border-box}
+.panel-header{padding:.75rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:.5rem}
+.panel-header h3{font-size:.88rem;font-weight:600;color:var(--text-primary);margin:0;white-space:nowrap}
+.panel-body{padding:1rem 1.25rem;width:100%;box-sizing:border-box}
+
+/* ── نوار ابزار ── */
+.toolbar-row{
+  display:flex;gap:.75rem;align-items:center;
+  margin-bottom:1.25rem;flex-wrap:wrap;
+  width:100%;box-sizing:border-box
+}
+.toolbar-row .spacer{flex:1}
+.toolbar-row input[type="text"],
+.toolbar-row input[type="search"]{
+  padding:.42rem .75rem;
+  background:var(--bg-deep);border:1px solid var(--border);
+  border-radius:var(--radius-md);color:var(--text-primary);
+  font-family:var(--font-fa);font-size:.75rem;
+  outline:none;max-width:220px;width:100%;box-sizing:border-box
+}
+.toolbar-row input:focus{border-color:var(--accent)}
+
+/* ── کارت صفحه ── */
+.page-card{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.7rem 1rem;
+  background:var(--bg-surface);border:1px solid var(--border);
+  border-radius:var(--radius-md);margin-bottom:.5rem;
+  width:100%;box-sizing:border-box;
+  flex-wrap:nowrap;min-height:44px
+}
+.page-card:hover{border-color:var(--accent-dim)}
+.page-card .pc-icon{font-size:1.2rem;width:32px;text-align:center;flex-shrink:0}
+.page-card .pc-info{flex:1;min-width:0;overflow:hidden}
+.page-card .pc-info h4{font-size:.8rem;font-weight:500;color:var(--text-primary);margin:0 0 .1rem 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.page-card .pc-info p{font-size:.62rem;color:var(--text-muted);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.page-card .pc-actions{
+  display:flex;align-items:center;gap:.45rem;
+  flex-shrink:0;flex-wrap:nowrap
+}
+.page-card .pc-actions span{font-size:.6rem;white-space:nowrap;line-height:1}
+
+/* ── سوئیچ ── */
+.page-toggle{
+  position:relative;width:36px;height:19px;min-width:36px;
+  background:var(--bg-deep);border:1px solid var(--border);
+  border-radius:10px;cursor:pointer;
+  transition:all var(--ease);flex-shrink:0;display:inline-block;vertical-align:middle
+}
+.page-toggle.on{background:var(--accent);border-color:var(--accent)}
+.page-toggle::after{content:'';position:absolute;top:2px;right:2px;width:13px;height:13px;background:#fff;border-radius:50%;transition:right .2s}
+.page-toggle.on::after{right:19px}
+
+/* ── کارت دوره ── */
+.course-admin-card{
+  display:flex;align-items:center;gap:.85rem;
+  padding:.8rem 1rem;
+  background:var(--bg-surface);border:1px solid var(--border);
+  border-radius:var(--radius-md);margin-bottom:.5rem;
+  width:100%;box-sizing:border-box
+}
+.course-admin-card .cac-icon{width:44px;height:44px;background:var(--bg-deep);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.course-admin-card .cac-info{flex:1;min-width:0}
+.course-admin-card .cac-info h4{font-size:.78rem;font-weight:500;color:var(--text-primary);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.course-admin-card .cac-info p{font-size:.6rem;color:var(--text-muted);margin:.1rem 0 0 0}
+.course-admin-card .cac-meta{display:flex;gap:.5rem;margin-top:.2rem;font-size:.58rem;color:var(--text-muted);flex-wrap:wrap}
+.course-admin-card .cac-actions{display:flex;gap:.25rem;align-items:center;flex-shrink:0}
+
+/* ── تب‌ها ── */
+.content-tabs{
+  display:flex;gap:.15rem;border-bottom:1px solid var(--border);
+  margin-bottom:1.25rem;overflow-x:auto;scrollbar-width:none;width:100%
+}
+.content-tabs::-webkit-scrollbar{display:none}
+.ctab{padding:.5rem .75rem;font-size:.72rem;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all var(--ease);white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--font-fa)}
+.ctab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── دکمه‌ها ── */
+.tbtn{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:.25rem .5rem;
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  background:var(--bg-deep);color:var(--text-muted);
+  cursor:pointer;font-size:.62rem;font-family:var(--font-fa);
+  transition:all var(--ease);white-space:nowrap;
+  flex-shrink:0;line-height:1.4;vertical-align:middle
+}
+.tbtn:hover{border-color:var(--accent);color:var(--accent)}
+.tbtn.danger:hover{border-color:#e74c3c;color:#e74c3c}
+.tbtn.primary{background:var(--accent-glow);border-color:var(--accent);color:var(--accent)}
+
+/* ── بج ── */
+.badge{display:inline-block;padding:.1rem .4rem;border-radius:20px;font-size:.56rem;font-weight:500;white-space:nowrap;line-height:1.4}
+.badge-green{background:rgba(76,175,80,.15);color:#4caf50}
+.badge-red{background:rgba(231,76,60,.15);color:#e74c3c}
+.badge-blue{background:rgba(33,150,243,.15);color:#2196f3}
+.badge-yellow{background:rgba(255,193,7,.15);color:#ffc107}
+
+/* ── فرم‌ها ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;width:100%}
+.form-field{margin-bottom:.65rem}
+.form-field.full{grid-column:1/-1}
+.form-field label{display:block;font-size:.68rem;color:var(--text-muted);margin-bottom:.2rem}
+.form-field input,.form-field select,.form-field textarea{
+  width:100%;padding:.45rem .65rem;
+  background:var(--bg-deep);border:1px solid var(--border);
+  border-radius:var(--radius-md);color:var(--text-primary);
+  font-family:var(--font-fa);font-size:.76rem;
+  outline:none;box-sizing:border-box;transition:border-color var(--ease)
+}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--accent)}
+.form-msg{font-size:.7rem;margin-top:.5rem;min-height:1rem}
+
+/* ── مودال ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;display:none;align-items:center;justify-content:center;padding:2rem}
+.modal-bg.visible{display:flex}
+.modal-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;max-width:700px;width:100%;max-height:85vh;overflow-y:auto;position:relative;box-sizing:border-box}
+.modal-box h2{font-size:1rem;font-weight:600;color:var(--text-primary);margin:0 0 1.25rem 0}
+.modal-close{position:absolute;top:.75rem;left:.75rem;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem}
+
+/* ── ریسپانسیو ── */
+@media(max-width:1200px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:900px){
+  .admin-wrap{grid-template-columns:1fr}
+  .admin-sidebar{transform:translateX(100%);transition:transform .3s ease}
+  .admin-sidebar.open{transform:translateX(0)}
+  .admin-main{margin-right:0;width:100%}
+  .form-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .page-card{flex-wrap:wrap}
+  .page-card .pc-actions{width:100%;justify-content:flex-end;margin-top:.25rem}
+}
+@media(max-width:500px){
+  .stats-grid{grid-template-columns:1fr}
+  .course-admin-card{flex-wrap:wrap}
+  .course-admin-card .cac-actions{width:100%;justify-content:flex-end;margin-top:.25rem}
+}
+</style>
+</head>
+<body>
+
+<div class="admin-wrap">
+
+<!-- ═══ سایدبار ═══ -->
+<aside class="admin-sidebar" id="adminSidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">آئو<span>را</span></div>
+    <span class="admin-tag">ادمین</span>
+  </div>
+  <nav class="sidebar-menu">
+    <div class="sidebar-section">عمومی</div>
+    <a class="sidebar-link active" data-page="overview"><span class="sl-icon">📊</span> نمای کلی</a>
+    <div class="sidebar-section">مدیریت</div>
+    <a class="sidebar-link" data-page="courses"><span class="sl-icon">📚</span> دوره‌ها<span class="sl-badge" id="badgeCourses">0</span></a>
+    <a class="sidebar-link" data-page="users"><span class="sl-icon">👥</span> کارآموزان و اساتید<span class="sl-badge" id="badgeUsers">0</span></a>
+    <a class="sidebar-link" data-page="pages"><span class="sl-icon">📄</span> صفحات و سایت‌ساز</a>
+    <div class="sidebar-section">ابزارها</div>
+    <a class="sidebar-link" data-page="surveys"><span class="sl-icon">📋</span> نظرسنجی‌ها</a>
+    <a class="sidebar-link" data-page="meetings"><span class="sl-icon">📹</span> جلسات</a>
+    <a class="sidebar-link" data-page="forum"><span class="sl-icon">💬</span> تالار گفتگو</a>
+    <div class="sidebar-section">تنظیمات</div>
+    <a class="sidebar-link" data-page="settings"><span class="sl-icon">⚙</span> تنظیمات سایت</a>
+    <a class="sidebar-link" data-page="profile"><span class="sl-icon">👤</span> پروفایل من</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sf-avatar" id="adminAvatar">?</div>
+    <div><div class="sf-name" id="adminName">مدیر</div><div class="sf-email" id="adminEmail">—</div></div>
+  </div>
+</aside>
+
+<!-- ═══ محتوا ═══ -->
+<main class="admin-main">
+  <div class="admin-topbar">
+    <div class="page-title" id="pageTitle">نمای کلی</div>
+    <div style="display:flex;gap:.65rem;align-items:center">
+      <a href="index.html" class="tbtn primary" style="text-decoration:none" target="_blank">مشاهده سایت ↗</a>
+      <button class="tbtn" id="adminLogout" style="color:#e74c3c;border-color:#e74c3c">خروج</button>
+    </div>
+  </div>
+  <div class="admin-content" id="adminContent"></div>
+</main>
+
+</div>
+
+<!-- ═══ مودال ═══ -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- ═══ اسکریپت‌ها ═══ -->
+<script src="js/ajax.js"></script>
+<script src="js/app.js"></script>
+<script src="js/content-manager.js"></script>
+<script>
+$(document).ready(function () {
+
+  /* ── بررسی ادمین ── */
+  var admin = Auth.getCurrentUser();
+  if (!admin || admin.role !== 'admin') {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  $('#adminAvatar').text(Auth._getInitials(admin.fullName));
+  $('#adminName').text(admin.fullName);
+  $('#adminEmail').text(admin.email);
+
+  /* ── بروزرسانی بج‌ها ── */
+  function updateBadges() {
+    var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+    var courses = getCourses();
+    $('#badgeUsers').text(users.length);
+    $('#badgeCourses').text(courses.length);
+  }
+  updateBadges();
+
+  /* ── ناوبری سایدبار ── */
+  var titles = {
+    overview: 'نمای کلی', courses: 'مدیریت دوره‌ها', users: 'مدیریت کاربران',
+    pages: 'صفحات و سایت‌ساز', surveys: 'نظرسنجی‌ها', meetings: 'جلسات',
+    forum: 'تالار گفتگو', settings: 'تنظیمات', profile: 'پروفایل'
+  };
+
+  loadPage('overview');
+
+  $('.sidebar-link').off('click.admin').on('click.admin', function () {
+    var page = $(this).data('page');
+    if (!page) return;
+    $('.sidebar-link').removeClass('active');
+    $(this).addClass('active');
+    $('#pageTitle').text(titles[page] || page);
+    loadPage(page);
+  });
+
+  function loadPage(page) {
+    switch (page) {
+      case 'overview': renderOverview(); break;
+      case 'courses': renderCourses(); break;
+      case 'users': renderUsers(); break;
+      case 'pages': renderPages(); break;
+      case 'surveys': renderSurveys(); break;
+      case 'meetings': renderMeetingsMgr(); break;
+      case 'forum': renderForumMgr(); break;
+      case 'settings': renderSettings(); break;
+      case 'profile': renderProfile(); break;
+    }
+  }
+
+  /* ── ابزارها ── */
+  function roleBadge(r) {
+    return { admin: '<span class="badge badge-red">ادمین</span>', professor: '<span class="badge badge-blue">استاد</span>', student: '<span class="badge badge-green">کارآموز</span>' }[r] || r;
+  }
+
+  function sBox(icon, bg, num, label) {
+    return '<div class="stat-box">' +
+      '<div class="sb-icon" style="background:' + bg + '">' + icon + '</div>' +
+      '<div style="min-width:0">' +
+      '<div class="sb-num">' + num + '</div>' +
+      '<div class="sb-label">' + label + '</div>' +
+      '</div></div>';
+  }
+
+  function getCourses() {
+    var stored = localStorage.getItem('aora_courses');
+    if (!stored || JSON.parse(stored).length === 0) {
+      var def = (typeof API !== 'undefined' && API.getDefaultCourses) ? API.getDefaultCourses() : [];
+      localStorage.setItem('aora_courses', JSON.stringify(def));
+      return def;
+    }
+    return JSON.parse(stored);
+  }
+
+  function saveCourses(c) { localStorage.setItem('aora_courses', JSON.stringify(c)); updateBadges(); }
+
+  function openModal(html) { $('#modalContent').html(html); $('#modalBg').addClass('visible'); }
+  function closeModal() { $('#modalBg').removeClass('visible'); }
+  $('#modalClose').off('click').on('click', closeModal);
+  $('#modalBg').off('click').on('click', function (e) { if (e.target === this) closeModal(); });
+  $('#adminLogout').off('click').on('click', function () { Auth.logout(); });
+
+
+  /* ═══════════════════════════════════════
+     ۱. نمای کلی
+     ═══════════════════════════════════════ */
+  function renderOverview() {
+    var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+    var courses = getCourses();
+    var surveys = JSON.parse(localStorage.getItem('aora_surveys') || '[]');
+    var meetings = JSON.parse(localStorage.getItem('aora_meetings') || '[]');
+    var enrollments = JSON.parse(localStorage.getItem('aoura_enrollments') || '[]');
+    var students = users.filter(function (u) { return u.role === 'student'; }).length;
+    var professors = users.filter(function (u) { return u.role === 'professor'; }).length;
+
+    var h = '<div class="stats-grid">';
+    h += sBox('👥', 'rgba(33,150,243,.12)', users.length, 'کاربر');
+    h += sBox('🎓', 'rgba(76,175,80,.12)', students, 'کارآموز');
+    h += sBox('👨‍🏫', 'rgba(156,39,176,.12)', professors, 'استاد');
+    h += sBox('📚', 'rgba(255,152,0,.12)', courses.length, 'دوره');
+    h += sBox('📝', 'rgba(232,197,71,.12)', enrollments.length, 'ثبت‌نام');
+    h += sBox('📋', 'rgba(233,30,99,.12)', surveys.length, 'نظرسنجی');
+    h += sBox('📹', 'rgba(0,150,136,.12)', meetings.length, 'جلسه');
+    h += '</div>';
+
+    if (users.length > 0) {
+      h += '<div class="panel"><div class="panel-header"><h3>آخرین کاربران</h3></div>';
+      h += '<div class="panel-body" style="padding:0;overflow-x:auto">';
+      h += '<table class="data-table"><thead><tr><th>نام</th><th>ایمیل</th><th>نقش</th><th>تاریخ</th></tr></thead><tbody>';
+      users.slice(0, 5).forEach(function (u) {
+        h += '<tr>';
+        h += '<td>' + u.fullName + '</td>';
+        h += '<td style="font-family:var(--font-mono);font-size:.68rem;direction:ltr">' + u.email + '</td>';
+        h += '<td>' + roleBadge(u.role) + '</td>';
+        h += '<td>' + new Date(u.createdAt).toLocaleDateString('fa-IR') + '</td>';
+        h += '</tr>';
+      });
+      h += '</tbody></table></div></div>';
+    }
+
+    $('#adminContent').html(h);
+  }
+
+
+  /* ═══════════════════════════════════════
+     ۲. دوره‌ها
+     ═══════════════════════════════════════ */
+  function renderCourses() {
+    var courses = getCourses();
+    var h = '<div class="toolbar-row">';
+    h += '<button class="tbtn primary" id="addCourseBtn" style="padding:.4rem .85rem;font-size:.75rem">➕ دوره جدید</button>';
+    h += '<div class="spacer"></div>';
+    h += '<input type="text" id="searchCourses" placeholder="جستجو...">';
+    h += '</div>';
+    h += '<div id="coursesList">' + courseCards(courses) + '</div>';
+    $('#adminContent').html(h);
+
+    $('#addCourseBtn').off('click').on('click', function () { openCourseModal(null); });
+    $('#searchCourses').off('input').on('input', function () {
+      var q = $(this).val().toLowerCase();
+      var f = courses.filter(function (c) { return c.title.toLowerCase().indexOf(q) >= 0 || c.instructor.toLowerCase().indexOf(q) >= 0; });
+      $('#coursesList').html(courseCards(f));
+      bindCourseBtns();
+    });
+    bindCourseBtns();
+  }
+
+  function courseCards(courses) {
+    if (!courses.length) return '<div style="text-align:center;padding:3rem;color:var(--text-muted)">دوره‌ای نیست.</div>';
+    var h = '';
+    courses.forEach(function (c) {
+      h += '<div class="course-admin-card">';
+      h += '<div class="cac-icon">' + (c.icon || '📚') + '</div>';
+      h += '<div class="cac-info"><h4>' + c.title + '</h4><p>' + c.instructor + ' · ' + c.category + '</p>';
+      h += '<div class="cac-meta"><span>💰 ' + c.price.toLocaleString('fa-IR') + ' ت</span><span>👥 ' + (c.students || 0) + '</span><span>⭐ ' + (c.rating || 0) + '</span></div></div>';
+      h += '<div class="cac-actions"><button class="tbtn edit-c" data-id="' + c.id + '">ویرایش</button><button class="tbtn danger del-c" data-id="' + c.id + '">حذف</button></div>';
+      h += '</div>';
+    });
+    return h;
+  }
+
+  function bindCourseBtns() {
+    $('.edit-c').off('click').on('click', function () {
+      var id = $(this).data('id');
+      var c = getCourses().find(function (x) { return x.id === id; });
+      if (c) openCourseModal(c);
+    });
+    $('.del-c').off('click').on('click', function () {
+      var id = $(this).data('id');
+      if (!confirm('حذف شود؟')) return;
+      saveCourses(getCourses().filter(function (c) { return c.id !== id; }));
+      renderCourses();
+      showNotification('دوره حذف شد.');
+    });
+  }
+
+  function openCourseModal(course) {
+    var isEdit = !!course;
+    var cats = ['زیست‌شناسی', 'بیوانفورماتیک', 'ژنتیک', 'علم داده', 'برنامه‌نویسی', 'اکولوژی', 'آمار', 'میکروبیولوژی'];
+    var icons = ['🧬', '🧫', '🔬', '📊', '🐍', '🌿', '📈', '🧫', '📚', '🧪', '🧠'];
+    var h = '<h2>' + (isEdit ? '✏️ ویرایش دوره' : '➕ دوره جدید') + '</h2>';
+    h += '<div class="form-grid">';
+    h += '<div class="form-field full"><label>عنوان *</label><input type="text" id="mTitle" value="' + (isEdit ? course.title : '') + '"></div>';
+    h += '<div class="form-field"><label>دسته</label><select id="mCat">';
+    cats.forEach(function (c) { h += '<option value="' + c + '"' + (isEdit && course.category === c ? ' selected' : '') + '>' + c + '</option>'; });
+    h += '</select></div>';
+    h += '<div class="form-field"><label>سطح</label><select id="mLvl">';
+    ['مبتدی', 'متوسط', 'پیشرفته'].forEach(function (l) { h += '<option value="' + l + '"' + (isEdit && course.level === l ? ' selected' : '') + '>' + l + '</option>'; });
+    h += '</select></div>';
+    h += '<div class="form-field"><label>استاد</label><input type="text" id="mInst" value="' + (isEdit ? course.instructor : admin.fullName) + '"></div>';
+    h += '<div class="form-field"><label>مدت</label><input type="text" id="mDur" value="' + (isEdit ? course.duration : '') + '"></div>';
+    h += '<div class="form-field"><label>آیکون</label><select id="mIcon">';
+    icons.forEach(function (ic) { h += '<option value="' + ic + '"' + (isEdit && course.icon === ic ? ' selected' : '') + '>' + ic + '</option>'; });
+    h += '</select></div>';
+    h += '<div class="form-field"><label>قیمت *</label><input type="number" id="mPrice" value="' + (isEdit ? course.price : '') + '" style="direction:ltr"></div>';
+    h += '<div class="form-field"><label>قیمت قبل تخفیف</label><input type="number" id="mOrig" value="' + (isEdit ? (course.originalPrice || '') : '') + '" style="direction:ltr"></div>';
+    h += '<div class="form-field full"><label>توضیحات *</label><textarea id="mDesc" rows="4">' + (isEdit ? course.description : '') + '</textarea></div>';
+    h += '<div class="form-field full"><label>برچسب‌ها (کاما)</label><input type="text" id="mTags" value="' + (isEdit && course.tags ? course.tags.join(', ') : '') + '"></div>';
+    h += '</div>';
+    h += '<div style="display:flex;gap:.65rem;margin-top:1.25rem">';
+    h += '<button class="tbtn primary" id="saveCBtn" style="padding:.5rem 1.25rem;font-size:.8rem">ذخیره</button>';
+    h += '<button class="tbtn close-modal" style="padding:.5rem 1.25rem;font-size:.8rem">انصراف</button>';
+    h += '</div><div class="form-msg" id="cMsg"></div>';
+    openModal(h);
+
+    $('#saveCBtn').off('click').on('click', function () {
+      var title = $('#mTitle').val().trim();
+      var desc = $('#mDesc').val().trim();
+      var price = parseInt($('#mPrice').val()) || 0;
+      if (!title) { $('#cMsg').css('color', '#e74c3c').text('عنوان الزامی.'); return; }
+      if (!desc) { $('#cMsg').css('color', '#e74c3c').text('توضیحات الزامی.'); return; }
+      var data = {
+        id: isEdit ? course.id : 'c-' + Date.now(), title: title, description: desc,
+        instructor: $('#mInst').val().trim() || admin.fullName,
+        instructorId: isEdit ? course.instructorId : admin.id,
+        price: price, originalPrice: parseInt($('#mOrig').val()) || price,
+        level: $('#mLvl').val(), duration: $('#mDur').val() || '—',
+        category: $('#mCat').val(), icon: $('#mIcon').val() || '📚',
+        image: isEdit ? (course.image || '') : '', rating: isEdit ? course.rating : 4.5,
+        students: isEdit ? course.students : 0, featured: isEdit ? course.featured : false,
+        tags: ($('#mTags').val() || '').split(',').map(function (t) { return t.trim(); }).filter(Boolean),
+        chapters: isEdit ? (course.chapters || []) : []
+      };
+      var courses = getCourses();
+      if (isEdit) { var idx = courses.findIndex(function (c) { return c.id === course.id; }); if (idx >= 0) courses[idx] = data; }
+      else courses.unshift(data);
+      saveCourses(courses);
+      closeModal();
+      renderCourses();
+      showNotification(isEdit ? 'دوره بروزرسانی شد.' : 'دوره جدید ایجاد شد.');
+    });
+    $('.close-modal').off('click').on('click', closeModal);
+  }
+
+
+  /* ═══════════════════════════════════════
+     ۳. کاربران
+     ═══════════════════════════════════════ */
+  function renderUsers() {
+    var h = '<div class="content-tabs" id="uTabs">';
+    h += '<button class="ctab active" data-utab="students">🎓 کارآموزان</button>';
+    h += '<button class="ctab" data-utab="professors">👨‍🏫 اساتید</button>';
+    h += '<button class="ctab" data-utab="admins">🔐 مدیران</button>';
+    h += '</div>';
+    h += '<div id="uToolbar" class="toolbar-row"></div>';
+    h += '<div id="uTable"></div>';
+    $('#adminContent').html(h);
+    renderUTab('students');
+    $('#uTabs').off('click').on('click', '.ctab', function () {
+      $('#uTabs .ctab').removeClass('active');
+      $(this).addClass('active');
+      renderUTab($(this).data('utab'));
+    });
+  }
+
+  function renderUTab(tab) {
+    var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+    var filtered = users.filter(function (u) {
+      if (tab === 'students') return u.role === 'student';
+      if (tab === 'professors') return u.role === 'professor';
+      return u.role === 'admin';
+    });
+    var labels = { students: 'کارآموز', professors: 'استاد', admins: 'مدیر' };
+    var roleKey = { students: 'student', professors: 'professor', admins: 'admin' };
+    var tb = '<button class="tbtn primary add-u" data-role="' + roleKey[tab] + '" style="padding:.4rem .85rem;font-size:.75rem">➕ افزودن ' + labels[tab] + '</button>';
+    tb += '<div class="spacer"></div>';
+    tb += '<input type="text" class="u-search" placeholder="جستجو...">';
+    tb += '<span style="font-size:.72rem;color:var(--text-muted)">' + filtered.length + ' نفر</span>';
+    $('#uToolbar').html(tb);
+    renderUTable(filtered, tab);
+
+    $('.add-u').off('click').on('click', function () { openAddU($(this).data('role')); });
+    $('.u-search').off('input').on('input', function () {
+      var q = $(this).val().toLowerCase();
+      var f = filtered.filter(function (u) { return u.fullName.toLowerCase().indexOf(q) >= 0 || u.email.toLowerCase().indexOf(q) >= 0; });
+      renderUTable(f, tab);
+    });
+  }
+
+  function renderUTable(users, tab) {
+    if (!users.length) { $('#uTable').html('<div style="text-align:center;padding:3rem;color:var(--text-muted)">کاربری نیست.</div>'); return; }
+    var h = '<table class="data-table"><thead><tr><th>نام</th><th>ایمیل</th>';
+    if (tab === 'students') h += '<th>تلفن</th><th>جنسیت</th><th>کد ملی</th>';
+    else if (tab === 'professors') h += '<th>تخصص</th><th>دانشگاه</th><th>تلفن</th>';
+    else h += '<th>تلفن</th>';
+    h += '<th>تاریخ</th><th>عملیات</th></tr></thead><tbody>';
+    users.forEach(function (u) {
+      h += '<tr><td><div style="display:flex;align-items:center;gap:8px">';
+      h += '<div style="width:28px;height:28px;border-radius:50%;background:var(--accent-glow);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:600;flex-shrink:0">' + (u.fullName ? u.fullName.charAt(0) : '؟') + '</div>';
+      h += '<span>' + u.fullName + '</span></div></td>';
+      h += '<td style="font-family:var(--font-mono);font-size:.68rem;direction:ltr">' + u.email + '</td>';
+      if (tab === 'students') { h += '<td style="direction:ltr">' + (u.phone || '—') + '</td><td>' + (u.gender === 'male' ? 'مرد' : u.gender === 'female' ? 'زن' : '—') + '</td><td style="font-family:var(--font-mono);font-size:.68rem;direction:ltr">' + (u.nationalCode || '—') + '</td>'; }
+      else if (tab === 'professors') { h += '<td>' + (u.specialty || '—') + '</td><td>' + (u.university || '—') + '</td><td style="direction:ltr">' + (u.phone || '—') + '</td>'; }
+      else { h += '<td style="direction:ltr">' + (u.phone || '—') + '</td>'; }
+      h += '<td>' + new Date(u.createdAt).toLocaleDateString('fa-IR') + '</td><td>';
+      h += '<button class="tbtn edit-u" data-id="' + u.id + '">ویرایش</button>';
+      if (u.id !== admin.id) h += '<button class="tbtn danger del-u" data-id="' + u.id + '">حذف</button>';
+      h += '</td></tr>';
+    });
+    h += '</tbody></table>';
+    $('#uTable').html(h);
+
+    $('.edit-u').off('click').on('click', function () {
+      var id = $(this).data('id');
+      var u = JSON.parse(localStorage.getItem('aoura_users') || '[]').find(function (x) { return x.id === id; });
+      if (u) openEditU(u, tab);
+    });
+    $('.del-u').off('click').on('click', function () {
+      var id = $(this).data('id');
+      if (!confirm('حذف شود؟')) return;
+      var all = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+      var u = all.find(function (x) { return x.id === id; });
+      all = all.filter(function (x) { return x.id !== id; });
+      localStorage.setItem('aoura_users', JSON.stringify(all));
+      renderUTab(u && u.role === 'professor' ? 'professors' : u && u.role === 'admin' ? 'admins' : 'students');
+      updateBadges();
+      showNotification('کاربر حذف شد.');
+    });
+  }
+
+  function openAddU(role) {
+    var lbl = role === 'professor' ? 'استاد' : role === 'admin' ? 'مدیر' : 'کارآموز';
+    var h = '<h2>➕ افزودن ' + lbl + '</h2>';
+    h += '<div class="form-grid">';
+    h += '<div class="form-field"><label>نام *</label><input type="text" id="nuName"></div>';
+    h += '<div class="form-field"><label>ایمیل *</label><input type="email" id="nuEmail" style="direction:ltr"></div>';
+    h += '<div class="form-field"><label>رمز *</label><input type="password" id="nuPass" placeholder="حداقل ۶"></div>';
+    h += '<div class="form-field"><label>تلفن</label><input type="text" id="nuPhone" style="direction:ltr"></div>';
+    if (role === 'student') {
+      h += '<div class="form-field"><label>جنسیت</label><select id="nuGen"><option value="">—</option><option value="male">مرد</option><option value="female">زن</option></select></div>';
+      h += '<div class="form-field"><label>نام پدر</label><input type="text" id="nuFather"></div>';
+      h += '<div class="form-field"><label>کد ملی</label><input type="text" id="nuNat" maxlength="10" style="direction:ltr"></div>';
+    }
+    if (role === 'professor') {
+      h += '<div class="form-field"><label>تخصص</label><input type="text" id="nuSpec"></div>';
+      h += '<div class="form-field"><label>دانشگاه</label><input type="text" id="nuUni"></div>';
+    }
+    h += '<div class="form-field full"><label>بیو</label><textarea id="nuBio" rows="2"></textarea></div>';
+    h += '</div>';
+    h += '<div style="display:flex;gap:.65rem;margin-top:1.25rem"><button class="tbtn primary" id="saveNU" style="padding:.5rem 1.25rem">ایجاد</button><button class="tbtn close-modal" style="padding:.5rem 1.25rem">انصراف</button></div>';
+    h += '<div class="form-msg" id="nuMsg"></div>';
+    openModal(h);
+
+    $('#saveNU').off('click').on('click', function () {
+      var name = $('#nuName').val().trim(), email = $('#nuEmail').val().trim(), pass = $('#nuPass').val();
+      if (!name) { $('#nuMsg').css('color', '#e74c3c').text('نام الزامی.'); return; }
+      if (!email) { $('#nuMsg').css('color', '#e74c3c').text('ایمیل الزامی.'); return; }
+      if (!pass || pass.length < 6) { $('#nuMsg').css('color', '#e74c3c').text('رمز حداقل ۶.'); return; }
+      var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+      if (users.find(function (u) { return u.email.toLowerCase() === email.toLowerCase(); })) { $('#nuMsg').css('color', '#e74c3c').text('ایمیل تکراری.'); return; }
+      var nu = { id: 'u_' + Date.now(), fullName: name, email: email.toLowerCase(), password: pass, role: role, phone: $('#nuPhone').val().trim() || '', gender: '', fatherName: '', nationalCode: '', bio: $('#nuBio').val().trim() || '', avatar: '', university: '', specialty: '', createdAt: new Date().toISOString(), lastLoginAt: null, isActive: true };
+      if (role === 'student') { nu.gender = $('#nuGen').val() || ''; nu.fatherName = $('#nuFather').val().trim() || ''; nu.nationalCode = $('#nuNat').val().trim() || ''; }
+      if (role === 'professor') { nu.specialty = $('#nuSpec').val().trim() || ''; nu.university = $('#nuUni').val().trim() || ''; }
+      users.push(nu);
+      localStorage.setItem('aoura_users', JSON.stringify(users));
+      closeModal();
+      renderUTab(role === 'professor' ? 'professors' : role === 'admin' ? 'admins' : 'students');
+      updateBadges();
+      showNotification(lbl + ' اضافه شد.');
+    });
+    $('.close-modal').off('click').on('click', closeModal);
+  }
+
+  function openEditU(user, tab) {
+    var h = '<h2>✏️ ویرایش: ' + user.fullName + '</h2>';
+    h += '<div class="form-grid">';
+    h += '<div class="form-field"><label>نام</label><input type="text" id="euName" value="' + user.fullName + '"></div>';
+    h += '<div class="form-field"><label>ایمیل</label><input type="email" id="euEmail" value="' + user.email + '" style="direction:ltr"></div>';
+    h += '<div class="form-field"><label>تلفن</label><input type="text" id="euPhone" value="' + (user.phone || '') + '" style="direction:ltr"></div>';
+    h += '<div class="form-field"><label>نقش</label><select id="euRole">';
+    [{ v: 'student', l: 'کارآموز' }, { v: 'professor', l: 'استاد' }, { v: 'admin', l: 'مدیر' }].forEach(function (r) {
+      h += '<option value="' + r.v + '"' + (user.role === r.v ? ' selected' : '') + '>' + r.l + '</option>';
+    });
+    h += '</select></div>';
+    if (user.role === 'student') {
+      h += '<div class="form-field"><label>جنسیت</label><select id="euGen"><option value="">—</option><option value="male"' + (user.gender === 'male' ? ' selected' : '') + '>مرد</option><option value="female"' + (user.gender === 'female' ? ' selected' : '') + '>زن</option></select></div>';
+      h += '<div class="form-field"><label>نام پدر</label><input type="text" id="euFather" value="' + (user.fatherName || '') + '"></div>';
+      h += '<div class="form-field"><label>کد ملی</label><input type="text" id="euNat" value="' + (user.nationalCode || '') + '" maxlength="10" style="direction:ltr"></div>';
+    }
+    if (user.role === 'professor') {
+      h += '<div class="form-field"><label>تخصص</label><input type="text" id="euSpec" value="' + (user.specialty || '') + '"></div>';
+      h += '<div class="form-field"><label>دانشگاه</label><input type="text" id="euUni" value="' + (user.university || '') + '"></div>';
+    }
+    h += '<div class="form-field full"><label>بیو</label><textarea id="euBio" rows="2">' + (user.bio || '') + '</textarea></div>';
+    h += '<div class="form-field"><label>رمز جدید (خالی=بدون تغییر)</label><input type="password" id="euPass"></div>';
+    h += '</div>';
+    h += '<div style="display:flex;gap:.65rem;margin-top:1.25rem"><button class="tbtn primary" id="saveEU" style="padding:.5rem 1.25rem">ذخیره</button><button class="tbtn close-modal" style="padding:.5rem 1.25rem">انصراف</button></div>';
+    h += '<div class="form-msg" id="euMsg"></div>';
+    openModal(h);
+
+    $('#saveEU').off('click').on('click', function () {
+      var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+      var idx = users.findIndex(function (u) { return u.id === user.id; });
+      if (idx < 0) return;
+      var name = $('#euName').val().trim(), email = $('#euEmail').val().trim().toLowerCase();
+      if (!name) { $('#euMsg').css('color', '#e74c3c').text('نام الزامی.'); return; }
+      if (!email) { $('#euMsg').css('color', '#e74c3c').text('ایمیل الزامی.'); return; }
+      if (users.find(function (u) { return u.email === email && u.id !== user.id; })) { $('#euMsg').css('color', '#e74c3c').text('ایمیل تکراری.'); return; }
+      users[idx].fullName = name; users[idx].email = email;
+      users[idx].phone = $('#euPhone').val().trim(); users[idx].role = $('#euRole').val();
+      users[idx].bio = $('#euBio').val().trim();
+      if (user.role === 'student') { users[idx].gender = $('#euGen').val() || ''; users[idx].fatherName = $('#euFather').val().trim() || ''; users[idx].nationalCode = $('#euNat').val().trim() || ''; }
+      if (user.role === 'professor') { users[idx].specialty = $('#euSpec').val().trim() || ''; users[idx].university = $('#euUni').val().trim() || ''; }
+      var np = $('#euPass').val(); if (np && np.length >= 6) users[idx].password = np;
+      localStorage.setItem('aoura_users', JSON.stringify(users));
+      closeModal();
+      var nr = users[idx].role;
+      renderUTab(nr === 'professor' ? 'professors' : nr === 'admin' ? 'admins' : 'students');
+      updateBadges();
+      showNotification(name + ' بروزرسانی شد.');
+    });
+    $('.close-modal').off('click').on('click', closeModal);
+  }
+
+
+  /* ═══════════════════════════════════════
+     ۴. صفحات + سایت‌ساز + تعمیر
+     ═══════════════════════════════════════ */
+    /* ═══════════════════════════════════════
+     ۴. صفحات + سایت‌ساز + ویرایش محتوا + تعمیر
+     ═══════════════════════════════════════ */
+  function renderPages() {
+    var sitePages = JSON.parse(localStorage.getItem('aoura_site_pages') || 'null') || getDefaultPages();
+    var customPages = JSON.parse(localStorage.getItem('aoura_custom_pages') || '[]');
+    var settings = JSON.parse(localStorage.getItem('aoura_settings') || '{}');
+
+    var h = '';
+
+    // هشدار تعمیر
+    if (settings.maintenanceMode) {
+      h += '<div style="background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);border-radius:var(--radius-md);padding:.75rem 1rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:.65rem">';
+      h += '<span style="font-size:1.2rem">🚨</span>';
+      h += '<div style="flex:1;min-width:0"><strong style="color:#e74c3c;font-size:.8rem">حالت تعمیر فعال</strong>';
+      h += '<p style="font-size:.65rem;color:var(--text-muted);margin:.1rem 0 0 0">سایت برای عموم بسته است.</p></div>';
+      h += '<button class="tbtn" id="offMaint" style="border-color:#e74c3c;color:#e74c3c;flex-shrink:0">غیرفعال‌سازی</button>';
+      h += '</div>';
+    }
+
+    // نوار ابزار
+    h += '<div class="toolbar-row">';
+    h += '<a href="admin-page-builder.html" target="_blank" class="tbtn primary" style="text-decoration:none;padding:.4rem .75rem;font-size:.72rem">🎨 سایت‌ساز (صفحه جدید)</a>';
+    h += '<div class="spacer"></div>';
+    if (!settings.maintenanceMode) h += '<button class="tbtn danger" id="onMaint" style="padding:.35rem .65rem;font-size:.7rem">🔧 حالت تعمیر</button>';
+    h += '</div>';
+
+    // صفحات سفارشی
+    if (customPages.length > 0) {
+      h += '<div class="panel"><div class="panel-header"><h3>🎨 صفحات سفارشی</h3></div><div class="panel-body">';
+      customPages.forEach(function (p, i) {
+        var st = p.status === 'published' ? '<span class="badge badge-green">منتشر</span>' : '<span class="badge badge-yellow">پیش‌نویس</span>';
+        h += '<div class="page-card">';
+        h += '<span class="pc-icon">' + (p.icon || '📄') + '</span>';
+        h += '<div class="pc-info"><h4>' + p.title + '</h4>';
+        h += '<p>' + p.slug + '.html · ' + (p.components ? p.components.length : 0) + ' المان · ' + st + '</p></div>';
+        h += '<div class="pc-actions">';
+        h += '<a href="admin-page-builder.html?id=' + p.id + '" class="tbtn primary" style="text-decoration:none">ویرایش</a>';
+        h += '<button class="tbtn toggle-cp" data-idx="' + i + '">' + (p.status === 'published' ? 'مخفی' : 'انتشار') + '</button>';
+        h += '<button class="tbtn danger del-cp" data-idx="' + i + '">حذف</button>';
+        h += '</div></div>';
+      });
+      h += '</div></div>';
+    }
+
+    // صفحات اصلی — با دکمه ویرایش محتوا
+    h += '<div class="panel"><div class="panel-header"><h3>📄 صفحات اصلی سایت</h3>';
+    h += '<span style="font-size:.62rem;color:var(--text-muted)">با ✏️ محتوای هر صفحه را ویرایش کنید</span></div>';
+    h += '<div class="panel-body">';
+
+    sitePages.forEach(function (p, i) {
+      var statusLabel = p.active
+        ? '<span style="font-size:.6rem;color:#4caf50;white-space:nowrap">فعال</span>'
+        : '<span style="font-size:.6rem;color:#e74c3c;white-space:nowrap">غیرفعال</span>';
+
+      // آیا این صفحه قابل ویرایش محتواست؟
+      var editable = typeof ContentManager !== 'undefined' && ContentManager.pageDefinitions[p.file];
+      var editBtn = editable
+        ? '<button class="tbtn edit-page-content" data-file="' + p.file + '" style="border-color:var(--accent);color:var(--accent)">✏️ ویرایش محتوا</button>'
+        : '';
+
+      h += '<div class="page-card">';
+      h += '<span class="pc-icon">' + p.icon + '</span>';
+      h += '<div class="pc-info"><h4>' + p.title + '</h4>';
+      h += '<p>' + p.file + ' — ' + p.desc + '</p></div>';
+      h += '<div class="pc-actions">';
+      h += editBtn;
+      h += statusLabel;
+      h += '<div class="page-toggle ' + (p.active ? 'on' : '') + '" data-idx="' + i + '"></div>';
+      h += '</div></div>';
+    });
+
+    h += '</div></div>';
+
+    // ریست محتوا
+    h += '<div class="panel"><div class="panel-header"><h3>🔄 بازنشانی محتوا</h3></div><div class="panel-body">';
+    h += '<p style="font-size:.72rem;color:var(--text-muted);margin-bottom:.75rem">برگرداندن محتوای صفحات به حالت پیش‌فرض</p>';
+    h += '<div style="display:flex;gap:.4rem;flex-wrap:wrap">';
+    h += '<button class="tbtn danger" id="resetAllContent">بازنشانی همه صفحات</button>';
+    h += '</div></div></div>';
+
+    $('#adminContent').html(h);
+
+    // ── رویدادها ──
+
+    // toggle صفحات
+    $('.page-toggle').off('click').on('click', function () {
+      var i = $(this).data('idx');
+      sitePages[i].active = !sitePages[i].active;
+      $(this).toggleClass('on');
+      var $label = $(this).closest('.page-card').find('.pc-actions span');
+      if (sitePages[i].active) $label.text('فعال').css('color', '#4caf50');
+      else $label.text('غیرفعال').css('color', '#e74c3c');
+      localStorage.setItem('aoura_site_pages', JSON.stringify(sitePages));
+      showNotification('وضعیت «' + sitePages[i].title + '» تغییر کرد.');
+    });
+
+    // ویرایش محتوای صفحه
+    $('.edit-page-content').off('click').on('click', function () {
+      var file = $(this).data('file');
+      openContentEditor(file);
+    });
+
+    // toggle سفارشی
+    $('.toggle-cp').off('click').on('click', function () {
+      var i = $(this).data('idx');
+      customPages[i].status = customPages[i].status === 'published' ? 'draft' : 'published';
+      localStorage.setItem('aoura_custom_pages', JSON.stringify(customPages));
+      renderPages();
+    });
+
+    // حذف سفارشی
+    $('.del-cp').off('click').on('click', function () {
+      var i = $(this).data('idx');
+      if (!confirm('حذف «' + customPages[i].title + '»؟')) return;
+      customPages.splice(i, 1);
+      localStorage.setItem('aoura_custom_pages', JSON.stringify(customPages));
+      renderPages();
+      showNotification('صفحه حذف شد.');
+    });
+
+    // تعمیر
+    $('#onMaint').off('click').on('click', function () {
+      if (!confirm('سایت بسته می‌شود. ادامه؟')) return;
+      settings.maintenanceMode = true;
+      localStorage.setItem('aoura_settings', JSON.stringify(settings));
+      renderPages();
+      showNotification('حالت تعمیر فعال شد.');
+    });
+    $('#offMaint').off('click').on('click', function () {
+      settings.maintenanceMode = false;
+      localStorage.setItem('aoura_settings', JSON.stringify(settings));
+      renderPages();
+      showNotification('سایت باز شد.');
+    });
+
+    // بازنشانی محتوا
+    $('#resetAllContent').off('click').on('click', function () {
+      if (!confirm('همه تغییرات محتوای صفحات به حالت پیش‌فرض برمی‌گردد. ادامه؟')) return;
+      if (typeof ContentManager !== 'undefined') ContentManager.resetAll();
+      renderPages();
+      showNotification('محتوای صفحات بازنشانی شد.');
+    });
+  }
+
+
+  /* ═══════════════════════════════════════
+     مودال ویرایش محتوای صفحه
+     ═══════════════════════════════════════ */
+  function openContentEditor(pageFile) {
+    if (typeof ContentManager === 'undefined') {
+      showNotification('خطا: content-manager.js لود نشده.', 'error');
+      return;
+    }
+
+    var def = ContentManager.pageDefinitions[pageFile];
+    if (!def) {
+      showNotification('این صفحه قابل ویرایش نیست.', 'error');
+      return;
+    }
+
+    var saved = ContentManager.getPageContent(pageFile);
+
+    var h = '<h2>✏️ ویرایش محتوا: ' + def.title + '</h2>';
+
+    h += '<div style="background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-md);padding:.6rem .85rem;margin-bottom:1.25rem;font-size:.68rem;color:var(--text-muted);display:flex;align-items:center;gap:.5rem">';
+    h += '<span>' + def.icon + '</span>';
+    h += '<span>فایل: <code style="font-family:var(--font-mono);direction:ltr;color:var(--accent)">' + pageFile + '</code></span>';
+    h += '</div>';
+
+    h += '<div style="max-height:55vh;overflow-y:auto;padding-right:.5rem">';
+
+    def.sections.forEach(function (section) {
+      var value = saved[section.key] !== undefined ? saved[section.key] : '';
+      var placeholder = section.default;
+      var hasCustom = value !== '';
+
+      h += '<div class="form-field" style="margin-bottom:.85rem">';
+      h += '<label style="display:flex;align-items:center;gap:.35rem">' + section.label;
+      if (hasCustom) h += ' <span style="font-size:.55rem;color:var(--accent)">(سفارشی)</span>';
+      h += '</label>';
+
+      if (section.type === 'textarea') {
+        h += '<textarea class="cm-input" data-key="' + section.key + '" rows="3" placeholder="' + placeholder.replace(/"/g, '&quot;') + '">' + (value || '') + '</textarea>';
+      } else {
+        h += '<input type="text" class="cm-input" data-key="' + section.key + '" value="' + (value || '').replace(/"/g, '&quot;') + '" placeholder="' + placeholder.replace(/"/g, '&quot;') + '">';
+      }
+
+      h += '<div style="font-size:.6rem;color:var(--text-muted);margin-top:.15rem">پیش‌فرض: ' + placeholder.substring(0, 60) + (placeholder.length > 60 ? '...' : '') + '</div>';
+      h += '</div>';
+    });
+
+    h += '</div>';
+
+    h += '<div style="display:flex;gap:.5rem;margin-top:1.25rem;flex-wrap:wrap">';
+    h += '<button class="tbtn primary" id="saveContentBtn" style="padding:.5rem 1.25rem;font-size:.8rem">💾 ذخیره تغییرات</button>';
+    h += '<button class="tbtn" id="previewContentBtn" style="padding:.5rem 1rem;font-size:.78rem">👁 پیش‌نمایش</button>';
+    h += '<button class="tbtn danger" id="resetPageContentBtn" style="padding:.5rem 1rem;font-size:.78rem">🔄 بازنشانی</button>';
+    h += '<button class="tbtn close-modal" style="padding:.5rem 1rem;font-size:.78rem">بستن</button>';
+    h += '</div>';
+    h += '<div class="form-msg" id="contentMsg"></div>';
+
+    openModal(h);
+
+    // ذخیره
+    $('#saveContentBtn').off('click').on('click', function () {
+      var data = {};
+      $('.cm-input').each(function () {
+        var key = $(this).data('key');
+        var val = $(this).val().trim();
+        data[key] = val;
+      });
+      ContentManager.savePageContent(pageFile, data);
+      $('#contentMsg').css('color', 'var(--accent)').text('محتوا ذخیره شد.');
+      showNotification('محتوای «' + def.title + '» ذخیره شد.');
+    });
+
+    // پیش‌نمایش
+    $('#previewContentBtn').off('click').on('click', function () {
+      window.open(pageFile, '_blank');
+    });
+
+    // بازنشانی
+    $('#resetPageContentBtn').off('click').on('click', function () {
+      if (!confirm('تغییرات این صفحه به حالت پیش‌فرض برمی‌گردد. ادامه؟')) return;
+      ContentManager.resetPage(pageFile);
+      closeModal();
+      showNotification('محتوای «' + def.title + '» بازنشانی شد.');
+    });
+
+    $('.close-modal').off('click').on('click', closeModal);
+  }
+
+  function getDefaultPages() {
+    return [
+      { file: 'index.html', title: 'صفحه اصلی', icon: '🏠', desc: 'لندینگ', active: true, custom: false },
+      { file: 'courses.html', title: 'بازارچه دوره‌ها', icon: '📚', desc: 'دوره‌ها', active: true, custom: false },
+      { file: 'professors.html', title: 'اساتید', icon: '👨‍🏫', desc: 'لیست اساتید', active: true, custom: false },
+      { file: 'students.html', title: 'کارآموزان', icon: '🎓', desc: 'لیست کارآموزان', active: true, custom: false },
+      { file: 'forum.html', title: 'تالار گفتگو', icon: '💬', desc: 'انجمن', active: true, custom: false },
+      { file: 'resources.html', title: 'منابع', icon: '📚', desc: 'منابع آموزشی', active: true, custom: false },
+      { file: 'research.html', title: 'پژوهش', icon: '🔬', desc: 'پژوهش‌ها', active: true, custom: false },
+      { file: 'about.html', title: 'درباره ما', icon: 'ℹ️', desc: 'معرفی', active: true, custom: false }
+    ];
+  }
+
+
+  /* ═══════════════════════════════════════
+     ۵. نظرسنجی‌ها
+     ═══════════════════════════════════════ */
+  function renderSurveys() {
+    var surveys = (typeof Survey !== 'undefined') ? Survey.getAll() : JSON.parse(localStorage.getItem('aora_surveys') || '[]');
+    var h = '<div class="toolbar-row"><a href="survey-builder.html" class="tbtn primary" style="text-decoration:none;padding:.4rem .75rem;font-size:.72rem">➕ نظرسنجی جدید</a></div>';
+    if (!surveys.length) { h += '<div style="text-align:center;padding:3rem;color:var(--text-muted)">نظرسنجی‌ای نیست.</div>'; }
+    else {
+      h += '<table class="data-table"><thead><tr><th>عنوان</th><th>سوالات</th><th>وضعیت</th><th>تاریخ</th><th>عملیات</th></tr></thead><tbody>';
+      surveys.forEach(function (s) {
+        h += '<tr><td>' + s.title + '</td><td>' + s.questions.length + '</td>';
+        h += '<td><span class="badge ' + (s.status === 'active' ? 'badge-green' : 'badge-red') + '">' + (s.status === 'active' ? 'فعال' : 'بسته') + '</span></td>';
+        h += '<td>' + new Date(s.createdAt).toLocaleDateString('fa-IR') + '</td>';
+        h += '<td><a href="survey-results.html?id=' + s.id + '" class="tbtn" style="text-decoration:none">نتایج</a>';
+        h += '<button class="tbtn danger" onclick="delSurvey(\'' + s.id + '\')">حذف</button></td></tr>';
+      });
+      h += '</tbody></table>';
+    }
+    $('#adminContent').html(h);
+  }
+  window.delSurvey = function (id) {
+    if (!confirm('حذف شود؟')) return;
+    if (typeof Survey !== 'undefined') Survey.delete(id);
+    else { var s = JSON.parse(localStorage.getItem('aora_surveys') || '[]').filter(function (x) { return x.id !== id; }); localStorage.setItem('aora_surveys', JSON.stringify(s)); }
+    renderSurveys(); showNotification('حذف شد.');
+  };
+
+
+  /* ═══════════════════════════════════════
+     ۶. جلسات
+     ═══════════════════════════════════════ */
+  function renderMeetingsMgr() {
+    var meetings = (typeof Meeting !== 'undefined') ? Meeting.getAll() : JSON.parse(localStorage.getItem('aora_meetings') || '[]');
+    var h = '<div class="toolbar-row"><a href="meetings.html" class="tbtn primary" style="text-decoration:none;padding:.4rem .75rem;font-size:.72rem">➕ جلسه جدید</a></div>';
+    if (!meetings.length) { h += '<div style="text-align:center;padding:3rem;color:var(--text-muted)">جلسه‌ای نیست.</div>'; }
+    else {
+      h += '<table class="data-table"><thead><tr><th>عنوان</th><th>کد</th><th>میزبان</th><th>تاریخ</th><th>عملیات</th></tr></thead><tbody>';
+      meetings.forEach(function (m) {
+        h += '<tr><td>' + m.title + '</td><td style="font-family:var(--font-mono);direction:ltr">' + m.code + '</td><td>' + m.host + '</td>';
+        h += '<td>' + new Date(m.createdAt).toLocaleDateString('fa-IR') + '</td>';
+        h += '<td><a href="meeting-lobby.html?id=' + m.id + '" class="tbtn" style="text-decoration:none">ورود</a>';
+        h += '<button class="tbtn danger" onclick="delMeeting(\'' + m.id + '\')">حذف</button></td></tr>';
+      });
+      h += '</tbody></table>';
+    }
+    $('#adminContent').html(h);
+  }
+  window.delMeeting = function (id) {
+    if (!confirm('حذف شود؟')) return;
+    if (typeof Meeting !== 'undefined') Meeting.delete(id);
+    else { var m = JSON.parse(localStorage.getItem('aora_meetings') || '[]').filter(function (x) { return x.id !== id; }); localStorage.setItem('aora_meetings', JSON.stringify(m)); }
+    renderMeetingsMgr(); showNotification('حذف شد.');
+  };
+
+
+  /* ═══════════════════════════════════════
+     ۷. تالار
+     ═══════════════════════════════════════ */
+  function renderForumMgr() {
+    var posts = JSON.parse(localStorage.getItem('aora_forum') || '[]');
+    if (!posts.length) { $('#adminContent').html('<div style="text-align:center;padding:3rem;color:var(--text-muted)">پستی نیست.</div>'); return; }
+    var h = '<table class="data-table"><thead><tr><th>عنوان</th><th>نویسنده</th><th>دسته</th><th>عملیات</th></tr></thead><tbody>';
+    posts.forEach(function (p) {
+      h += '<tr><td>' + p.title + '</td><td>' + p.author + '</td><td>' + p.category + '</td>';
+      h += '<td><button class="tbtn danger" onclick="delForum(\'' + p.id + '\')">حذف</button></td></tr>';
+    });
+    h += '</tbody></table>';
+    $('#adminContent').html(h);
+  }
+  window.delForum = function (id) {
+    if (!confirm('حذف شود؟')) return;
+    var posts = JSON.parse(localStorage.getItem('aora_forum') || '[]').filter(function (p) { return p.id !== id; });
+    localStorage.setItem('aora_forum', JSON.stringify(posts));
+    renderForumMgr(); showNotification('حذف شد.');
+  };
+
+
+  /* ═══════════════════════════════════════
+     ۸. تنظیمات
+     ═══════════════════════════════════════ */
+  function renderSettings() {
+
+    
+    var s = JSON.parse(localStorage.getItem('aoura_settings') || '{}');
+    var defaults = { siteName: 'آئورا', siteDesc: 'پلتفرم آموزش علوم زیستی', supportEmail: 'support@aoura.ir', supportPhone: '۰۲۱-۱۲۳۴۵۶۷۸', registrationOpen: true, maintenanceMode: false };
+    
+     $('#clrU').off('click').on('click', function () { if (!confirm('حذف کاربران؟')) return; localStorage.removeItem('aoura_users'); updateBadges(); showNotification('کاربران پاک شدند.'); });
+    $('#clrE').off('click').on('click', function () { if (!confirm('حذف ثبت‌نام‌ها؟')) return; localStorage.removeItem('aoura_enrollments'); showNotification('پاک شد.'); });
+    $('#clrF').off('click').on('click', function () { if (!confirm('حذف تالار؟')) return; localStorage.removeItem('aora_forum'); showNotification('پاک شد.'); });
+    $('#clrA').off('click').on('click', function () { if (!confirm('⚠️ همه داده‌ها حذف می‌شوند؟')) return; localStorage.clear(); showNotification('پاک شد. بارگذاری...'); setTimeout(function () { location.reload(); }, 1500); });
+    
+    for (var k in defaults) { if (s[k] === undefined) s[k] = defaults[k]; }
+    var h = '<div class="panel"><div class="panel-header"><h3>⚙ تنظیمات عمومی</h3></div><div class="panel-body">';
+    h += '<div class="form-grid">';
+    h += '<div class="form-field"><label>نام سایت</label><input type="text" id="setN" value="' + s.siteName + '"></div>';
+    h += '<div class="form-field"><label>توضیحات</label><input type="text" id="setD" value="' + s.siteDesc + '"></div>';
+    h += '<div class="form-field"><label>ایمیل پشتیبانی</label><input type="email" id="setE" value="' + s.supportEmail + '" style="direction:ltr"></div>';
+    h += '<div class="form-field"><label>تلفن</label><input type="text" id="setP" value="' + s.supportPhone + '" style="direction:ltr"></div>';
+    h += '<div class="form-field"><label>ثبت‌نام</label><select id="setReg"><option value="true"' + (s.registrationOpen ? ' selected' : '') + '>باز</option><option value="false"' + (!s.registrationOpen ? ' selected' : '') + '>بسته</option></select></div>';
+    h += '<div class="form-field"><label>تعمیر</label><select id="setM"><option value="false"' + (!s.maintenanceMode ? ' selected' : '') + '>غیرفعال</option><option value="true"' + (s.maintenanceMode ? ' selected' : '') + '>فعال</option></select></div>';
+    h += '</div>';
+    h += '<button class="tbtn primary" id="saveSet" style="padding:.5rem 1.25rem;margin-top:.75rem">ذخیره</button>';
+    h += '<div class="form-msg" id="setMsg"></div></div></div>';
+
+    h += '<div class="panel"><div class="panel-header"><h3>🗑 پاکسازی</h3></div><div class="panel-body">';
+    h += '<div style="display:flex;gap:.4rem;flex-wrap:wrap">';
+    h += '<button class="tbtn danger" id="clrU">کاربران</button>';
+    h += '<button class="tbtn danger" id="clrE">ثبت‌نام‌ها</button>';
+    h += '<button class="tbtn danger" id="clrF">تالار</button>';
+    h += '<button class="tbtn danger" id="clrA">همه</button>';
+    h += '</div><p style="font-size:.68rem;color:var(--text-muted);margin-top:.5rem">⚠️ غیرقابل بازگشت</p>';
+    h += '</div></div>';
+
+    $('#adminContent').html(h);
+
+    $('#saveSet').off('click').on('click', function () {
+      var ns = { siteName: $('#setN').val().trim(), siteDesc: $('#setD').val().trim(), supportEmail: $('#setE').val().trim(), supportPhone: $('#setP').val().trim(), registrationOpen: $('#setReg').val() === 'true', maintenanceMode: $('#setM').val() === 'true' };
+      localStorage.setItem('aoura_settings', JSON.stringify(ns));
+      $('#setMsg').css('color', 'var(--accent)').text('ذخیره شد.');
+      showNotification('تنظیمات ذخیره شد.');
+    });
+    $('#clrU').off('click').on('click', function () { if (!confirm('حذف کاربران؟')) return; localStorage.removeItem('aoura_users'); updateBadges(); showNotification('کاربران پاک شدند.'); });
+    $('#clrE').off('click').on('click', function () { if (!confirm('حذف ثبت‌نام‌ها؟')) return; localStorage.removeItem('aoura_enrollments'); showNotification('پاک شد.'); });
+    $('#clrF').off('click').on('click', function () { if (!confirm('حذف تالار؟')) return; localStorage.removeItem('aora_forum'); showNotification('پاک شد.'); });
+    $('#clrA').off('click').on('click', function () { if (!confirm('⚠️ همه داده‌ها حذف می‌شوند؟')) return; localStorage.clear(); showNotification('پاک شد. بارگذاری...'); setTimeout(function () { location.reload(); }, 1500); });
+  }
+
+
+  /* ═══════════════════════════════════════
+     ۹. پروفایل
+     ═══════════════════════════════════════ */
+  function renderProfile() {
+    var h = '<div style="max-width:500px"><div class="panel"><div class="panel-header"><h3>👤 پروفایل</h3></div><div class="panel-body">';
+    h += '<div class="form-field"><label>نام</label><input type="text" id="admN" value="' + admin.fullName + '"></div>';
+    h += '<div class="form-field"><label>ایمیل</label><input type="email" value="' + admin.email + '" disabled style="opacity:.5"></div>';
+    h += '<div class="form-field"><label>بیو</label><textarea id="admB" rows="3">' + (admin.bio || '') + '</textarea></div>';
+    h += '<button class="tbtn primary" id="saveAdm" style="padding:.5rem 1.25rem">ذخیره</button>';
+    h += '<div class="form-msg" id="admMsg"></div>';
+    h += '</div></div></div>';
+    $('#adminContent').html(h);
+
+    $('#saveAdm').off('click').on('click', function () {
+      Auth.updateProfile({ fullName: $('#admN').val().trim(), bio: $('#admB').val().trim() });
+      $('#adminName').text($('#admN').val().trim());
+      $('#adminAvatar').text(Auth._getInitials($('#admN').val().trim()));
+      $('#admMsg').css('color', 'var(--accent)').text('ذخیره شد.');
+      showNotification('پروفایل بروزرسانی شد.');
+    });
+  }
+
+});
+</script>
+</body>
+</html>
