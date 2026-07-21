@@ -1,0 +1,94 @@
+# ═══════════════════════════════════════════
+# آئورا — Caddyfile
+# ═══════════════════════════════════════════
+# این فایل باید جایگزین Caddyfile فعلی سرور بشه
+# بعد از تغییر: caddy reload
+# ═══════════════════════════════════════════
+
+aora.ir {
+    root * /path/to/your/site/root
+
+    # ═══ 1. ریدایرکت 301: .html → URL تمیز ═══
+    # (قبل از file_server اجرا میشه)
+
+    @indexHtml path /index.html
+    redir @indexHtml / 301
+
+    @courses     path /courses.html
+    redir @courses /courses 301
+
+    @forum       path /forum.html
+    redir @forum /forum 301
+
+    @about       path /about.html
+    redir @about /about 301
+
+    @cart        path /cart.html
+    redir @cart /cart 301
+
+    @resources   path /resources.html
+    redir @resources /resources 301
+
+    @professors  path /professors.html
+    redir @professors /professors 301
+
+    @research    path /research.html
+    redir @research /research 301
+
+    @faq         path /faq.html
+    redir @faq /faq 301
+
+    @register    path /register.html
+    redir @register /register 301
+
+    @login       path /login.html
+    redir @login /login 301
+
+    @students    path /students.html
+    redir @students /students 301
+
+    @surveys     path /surveys.html
+    redir @surveys /surveys 301
+
+    @surveyBuilder path /survey-builder.html
+    redir @surveyBuilder /survey-builder 301
+
+    @meetings    path /meetings.html
+    redir @meetings /meetings 301
+
+    @meetingRoom path /meeting-room.html
+    redir @meetingRoom /meeting-room 301
+
+    @globalsetting path /globalsetting.html
+    redir @globalsetting /globalsetting 301
+
+    @dashStudent path /dashboard-student.html
+    redir @dashStudent /dashboard-student 301
+
+    @dashProf    path /dashboard-professor.html
+    redir @dashProf /dashboard-professor 301
+
+    @dashAdmin   path /dashboard-admin.html
+    redir @dashAdmin /dashboard-admin 301
+
+    @pageBuilder path /admin-page-builder.html
+    redir @pageBuilder /admin-page-builder 301
+
+    @courseSingle path /course-single.html
+    redir @courseSingle /course 301
+
+    @surveyResults path /survey-results.html
+    redir @surveyResults /survey-results 301
+
+    @surveyView  path /survey-view.html
+    redir @surveyView /survey-view 301
+
+    @meetingLobby path /meeting-lobby.html
+    redir @meetingLobby /meeting-lobby 301
+
+    # ═══ 2. سرو فایل‌های تمیز ═══
+    # وقتی کاربر /courses میزنه، Caddy اول courses.html رو پیدا میکنه
+    try_files {path} {path}.html {path}/index.html
+
+    file_server
+}
