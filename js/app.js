@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════
-   آئورا — app.js v4 (تمیز و بدون conflict)
+   آئورا — app.js v5 (Google Auth یکپارچه)
    ═══════════════════════════════════════════════════════════════════ */
 $(document).ready(function () {
 
@@ -193,6 +193,206 @@ $(document).ready(function () {
 
 
   /* ═══════════════════════════════════════════
+     Google Sign-In (یکپارچه)
+     ═══════════════════════════════════════════ */
+  var GoogleAuth = {
+    // ⚠️ این مقدار باید با Client ID واقعی شما جایگزین شود
+    // از Google Cloud Console → APIs & Services → Credentials بسازید
+    CLIENT_ID: '790544741196-85heqn7s4l7rp6722mtcq20bhg7or7mq.apps.googleusercontent.com',
+
+    initialized: false,
+
+    init: function () {
+      if (this.initialized) return;
+      if (typeof google === 'undefined' || !google.accounts) {
+        console.warn('[GoogleAuth] Google Identity Services بارگذاری نشد.');
+        this._showFallback();
+        return;
+      }
+
+      if (this.CLIENT_ID.indexOf('YOUR_GOOGLE_CLIENT_ID') === 0) {
+        console.warn('[GoogleAuth] Client ID تنظیم نشده! در حالت دمو کار می‌کند.');
+        this._initDemoMode();
+        return;
+      }
+
+      this._initReal();
+      this.initialized = true;
+    },
+
+    /* حالت واقعی — با Google API */
+    _initReal: function () {
+      var self = this;
+      google.accounts.id.initialize({
+        client_id: self.CLIENT_ID,
+        callback: function (response) { self._handleCredential(response); },
+        auto_select: false,
+        cancel_on_tap_outside: true
+      });
+
+      // رندر دکمه گوگل در هر دو صفحه
+      var $btns = $('.btn-google');
+      $btns.each(function () {
+        var $btn = $(this);
+        $btn.empty(); // حذف محتوای سفارشی
+        google.accounts.id.renderButton(this, {
+          theme: 'outline',
+          size: 'large',
+          text: $btn.attr('data-google-text') || 'continue_with',
+          shape: 'rectangular',
+          width: $btn.outerWidth(),
+          logo_alignment: 'center'
+        });
+        $btn.css({ border: 'none', background: 'none', padding: '0' });
+      });
+    },
+
+    /* حالت دمو — وقتی Client ID تنظیم نشده */
+    _initDemoMode: function () {
+      var self = this;
+      $('.btn-google').each(function () {
+        var $btn = $(this);
+        $btn.off('click.googleDemo').on('click.googleDemo', function (e) {
+          e.preventDefault();
+          self._showDemoModal();
+        });
+      });
+    },
+
+    /* مودال دمو برای تست بدون Google API */
+    _showDemoModal: function () {
+      var self = this;
+      if ($('#googleDemoModal').length) { $('#googleDemoModal').fadeIn(200); return; }
+
+      var modal = $(
+        '<div id="googleDemoModal" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem">' +
+          '<div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;max-width:400px;width:100%;direction:rtl">' +
+            '<div style="text-align:center;margin-bottom:1.5rem">' +
+              '<div style="font-size:2rem;margin-bottom:.5rem">🔐</div>' +
+              '<h3 style="margin:0 0 .25rem;color:var(--text-primary)">ورود با گوگل (دمو)</h3>' +
+              '<p style="font-size:.78rem;color:var(--text-muted);margin:0">ایمیل گوگل خود را وارد کنید</p>' +
+            '</div>' +
+            '<div class="auth-field">' +
+              '<input type="email" id="demoGoogleEmail" placeholder="your-email@gmail.com" style="width:100%;padding:.65rem 1rem;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-size:.85rem;direction:ltr;text-align:left;outline:none" autocomplete="email">' +
+            '</div>' +
+            '<button id="demoGoogleSubmit" class="btn-primary" style="width:100%;justify-content:center;padding:.7rem;font-size:.85rem;margin-top:.5rem">ادامه</button>' +
+            '<p id="demoGoogleMsg" style="text-align:center;font-size:.75rem;margin-top:.75rem;min-height:1.2rem;color:var(--text-muted)"></p>' +
+            '<button id="demoGoogleClose" style="display:block;margin:0 auto;background:none;border:none;color:var(--text-muted);font-size:.75rem;cursor:pointer;font-family:var(--font-fa);margin-top:.5rem">انصراف</button>' +
+          '</div>' +
+        '</div>'
+      );
+
+      $('body').append(modal);
+      modal.hide().fadeIn(200);
+
+      // بستن
+      modal.find('#demoGoogleClose').on('click', function () { modal.fadeOut(200, function () { modal.remove(); }); });
+      modal.on('click', function (e) { if (e.target === this) modal.fadeOut(200, function () { modal.remove(); }); });
+
+      // ارسال
+      modal.find('#demoGoogleSubmit').on('click', function () {
+        var email = modal.find('#demoGoogleEmail').val().trim();
+        var $msg = modal.find('#demoGoogleMsg');
+
+        if (!email || email.indexOf('@') < 1) {
+          $msg.css('color', '#e74c3c').text('ایمیل معتبر وارد کنید.');
+          return;
+        }
+        // فقط gmail یا googlemail
+        if (!/@(gmail|googlemail)\.com$/i.test(email)) {
+          $msg.css('color', '#e74c3c').text('لطفاً از ایمیل گوگل (gmail) استفاده کنید.');
+          return;
+        }
+
+        $msg.css('color', 'var(--accent)').text('در حال پردازش...');
+        self._processGoogleUser({
+          email: email,
+          name: email.split('@')[0].replace(/[._]/g, ' '),
+          picture: ''
+        });
+      });
+
+      // Enter
+      modal.find('#demoGoogleEmail').on('keypress', function (e) {
+        if (e.which === 13) modal.find('#demoGoogleSubmit').click();
+      });
+    },
+
+    /* هندل credential واقعی از گوگل */
+    _handleCredential: function (response) {
+      try {
+        var payload = JSON.parse(atob(response.credential.split('.')[1]));
+        this._processGoogleUser({
+          email: payload.email,
+          name: payload.name || payload.email.split('@')[0],
+          picture: payload.picture || ''
+        });
+      } catch (e) {
+        console.error('[GoogleAuth] خطا در decode:', e);
+        showNotification('خطا در ورود با گوگل. لطفاً دوباره تلاش کنید.', 'error');
+      }
+    },
+
+    /* پردازش نهایی کاربر گوگل — مشترک بین واقعی و دمو */
+    _processGoogleUser: function (googleUser) {
+      var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+      var existing = users.find(function (u) {
+        return u.email.toLowerCase() === googleUser.email.toLowerCase();
+      });
+
+      if (existing) {
+        // ── ورود ──
+        existing.lastLoginAt = new Date().toISOString();
+        existing.avatar = existing.avatar || googleUser.picture;
+        var idx = users.findIndex(function (u) { return u.id === existing.id; });
+        if (idx >= 0) users[idx] = existing;
+        localStorage.setItem('aoura_users', JSON.stringify(users));
+
+        Auth.setCurrentUser(Auth._stripPassword(existing));
+        localStorage.setItem('aoura_token', 'google_' + Date.now());
+        showNotification('خوش آمدید ' + existing.fullName.split(' ')[0] + '! 👋');
+        setTimeout(function () {
+          var m = { admin: 'dashboard-admin.html', professor: 'dashboard-professor.html', student: 'dashboard-student.html' };
+          window.location.href = m[existing.role] || 'dashboard-student.html';
+        }, 800);
+      } else {
+        // ── ثبت‌نام خودکار ──
+        var result = Auth.register({
+          fullName: googleUser.name,
+          email: googleUser.email,
+          password: 'google_' + Date.now(),
+          role: 'student',
+          avatar: googleUser.picture
+        });
+        if (result.success) {
+          showNotification('ثبت‌نام با گوگل موفق! خوش آمدید 🎉');
+          setTimeout(function () { window.location.href = 'dashboard-student.html'; }, 800);
+        } else {
+          showNotification(result.message, 'error');
+        }
+      }
+
+      // بستن مودال دمو اگر بازه
+      $('#googleDemoModal').fadeOut(200, function () { $(this).remove(); });
+    },
+
+    /* نمایش پیام خطا اگر Google API در دسترس نیست */
+    _showFallback: function () {
+      $('.btn-google').each(function () {
+        var $btn = $(this);
+        $btn.on('click', function () {
+          showNotification('سرویس گوگل در دسترس نیست. لطفاً از فرم ورود/ثبت‌نام استفاده کنید.', 'error');
+        });
+      });
+    }
+  };
+
+  window.GoogleAuth = GoogleAuth;
+  // مقداردهی اولیه بعد از بارگذاری کامل صفحه
+  $(window).on('load', function () { setTimeout(function () { GoogleAuth.init(); }, 500); });
+
+
+  /* ═══════════════════════════════════════════
      فرم ثبت‌نام
      ═══════════════════════════════════════════ */
   $('#registerForm').on('submit', function (e) {
@@ -290,6 +490,20 @@ $(document).ready(function () {
     isEnrolled: function (cid) { var u = Auth.getCurrentUser(); if (!u) return false; return this._getAll().some(function (e) { return e.courseId === cid && e.userId === u.id; }); },
     enroll: function (cid, cname, amount) { var u = Auth.getCurrentUser(); if (!u) return false; var all = this._getAll(); if (all.some(function (e) { return e.courseId === cid && e.userId === u.id; })) return false; all.push({ courseId: cid, courseName: cname, userId: u.id, userName: u.fullName, enrolledAt: new Date().toISOString(), amount: amount || 0, progress: 0, completedLessons: [] }); localStorage.setItem(this.STORAGE_KEY, JSON.stringify(all)); Cart.removeItem(cid); return true; },
     getMyEnrollments: function () { var u = Auth.getCurrentUser(); if (!u) return []; return this._getAll().filter(function (e) { return e.userId === u.id; }); },
+    updateProgress: function (cid, lessonId, totalLessons) {
+      var u = Auth.getCurrentUser();
+      if (!u) return null;
+      var all = this._getAll();
+      var e = all.find(function (x) { return x.courseId === cid && x.userId === u.id; });
+      if (!e) return null;
+      e.completedLessons = e.completedLessons || [];
+      if (e.completedLessons.indexOf(lessonId) < 0) e.completedLessons.push(lessonId);
+      if (totalLessons > 0) {
+        e.progress = Math.min(100, Math.round((e.completedLessons.length / totalLessons) * 100));
+      }
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(all));
+      return e;
+    },
     _getAll: function () { return JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]'); }
   };
   window.Payment = Payment;

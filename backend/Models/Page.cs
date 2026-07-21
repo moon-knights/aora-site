@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Aoura.Models
+namespace Aora.Models
 {
     public class Page
     {
@@ -38,7 +38,7 @@ namespace Aoura.Models
         public int SortOrder { get; set; } = 0;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
-        
+
         [MaxLength(100)]
         public string? CreatedBy { get; set; }
     }

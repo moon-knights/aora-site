@@ -40,11 +40,14 @@ namespace Aora.Models
         public bool IsFeatured { get; set; }
         public bool IsPublished { get; set; } = true;
 
-        [MaxLength(500)]
-        public string Tags { get; set; } = string.Empty; // JSON array
+        // JSON array of strings, e.g. ["پایتون","بیوانفورماتیک"]
+        [Column(TypeName = "nvarchar(max)")]
+        public string Tags { get; set; } = "[]";
 
-        [MaxLength(2000)]
-        public string Chapters { get; set; } = string.Empty; // JSON array
+        // JSON array of chapters:
+        // [{ "title": "...", "lessons": [{ "title": "...", "duration": 12, "isFree": true }] }]
+        [Column(TypeName = "nvarchar(max)")]
+        public string Chapters { get; set; } = "[]";
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

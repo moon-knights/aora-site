@@ -1,11 +1,11 @@
-using Aoura.Models;
+using Aora.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Aoura.Data
+namespace Aora.Data
 {
-    public class AouraDbContext : DbContext
+    public class AoraDbContext : DbContext
     {
-        public AouraDbContext(DbContextOptions<AouraDbContext> options) : base(options) { }
+        public AoraDbContext(DbContextOptions<AoraDbContext> options) : base(options) { }
 
         public DbSet<User> Users => Set<User>();
         public DbSet<Course> Courses => Set<Course>();
@@ -38,11 +38,11 @@ namespace Aoura.Data
             {
                 Id = 1,
                 FullName = "مدیر آئورا",
-                Email = "aoura@admin.ir",
+                Email = "aora@admin.ir",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
                 Role = "admin",
                 IsActive = true,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             });
 
             // Seed default settings
@@ -50,7 +50,7 @@ namespace Aoura.Data
             {
                 Id = 1,
                 SiteName = "آئورا",
-                UpdatedAt = DateTime.UtcNow
+                UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             });
         }
     }

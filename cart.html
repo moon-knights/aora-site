@@ -8,6 +8,24 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+.cart-wrap{padding-top:100px;min-height:100vh}
+.cart-item{display:flex;align-items:center;gap:1rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:1rem;margin-bottom:.85rem}
+.cart-item .ci-icon{font-size:2rem;flex-shrink:0}
+.cart-item .ci-body{flex:1;min-width:0}
+.cart-item .ci-title{font-size:.9rem;font-weight:600;color:var(--text-primary);margin-bottom:.25rem}
+.cart-item .ci-meta{font-size:.72rem;color:var(--text-muted)}
+.cart-item .ci-price{font-size:.9rem;font-weight:700;color:var(--accent);font-family:var(--font-mono);white-space:nowrap}
+.cart-item .ci-remove{background:none;border:1px solid var(--border);color:var(--text-muted);border-radius:var(--radius-sm);padding:.4rem .7rem;cursor:pointer;font-size:.7rem;font-family:var(--font-fa);transition:all var(--ease)}
+.cart-item .ci-remove:hover{border-color:#e74c3c;color:#e74c3c}
+.cart-empty{text-align:center;padding:4rem 1.5rem}
+.cart-empty .icon{font-size:3rem;opacity:.3;margin-bottom:1rem}
+.cart-summary-row{display:flex;justify-content:space-between;font-size:.85rem;color:var(--text-muted);padding:.5rem 0}
+.cart-summary-row.total{font-size:1.05rem;font-weight:700;color:var(--text-primary);border-top:1px solid var(--border);margin-top:.5rem;padding-top:1rem}
+.cart-checkout-btn{width:100%;padding:.9rem;background:var(--accent);color:var(--bg-deep);border:none;border-radius:var(--radius-md);font-size:.9rem;font-weight:700;cursor:pointer;font-family:var(--font-fa);margin-top:1rem;transition:all var(--ease)}
+.cart-checkout-btn:hover{box-shadow:0 8px 24px rgba(232,197,71,.3)}
+.cart-checkout-btn:disabled{opacity:.5;cursor:not-allowed}
+</style>
 </head>
 <body>
 
@@ -15,9 +33,10 @@
 <a href="index.html" class="nav-logo">آئو<span>را</span></a>
 <ul class="nav-links"><li><a href="index.html">خانه</a></li><li><a href="courses.html">بازارچه</a></li></ul>
 <div class="nav-actions"><a href="cart.html" class="nav-cart active">🛒 <span id="cartCount">0</span></a><div id="authArea"></div></div>
+<button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 </div></nav>
 
-<div style="padding-top:100px;min-height:100vh"><div class="container" style="max-width:900px">
+<div class="cart-wrap"><div class="container" style="max-width:900px">
 <h1 style="font-size:1.5rem;font-weight:700;color:var(--text-primary);margin-bottom:2rem">🛒 سبد خرید</h1>
 <div id="cartItems"></div>
 <div id="cartSummary" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;margin-top:1.5rem;display:none"></div>
@@ -25,8 +44,87 @@
 
 <footer class="footer"><div class="container"><div class="footer-bottom"><span>© ۱۴۰۵ آئورا</span></div></div></footer>
 
+<script src="js/content-manager.js"></script>
 <script src="js/ajax.js"></script>
 <script src="js/app.js"></script>
-<script>$(document).ready(function(){ renderCartPage && renderCartPage(); });</script>
+<script src="js/access.js"></script>
+<script>
+$(document).ready(function () {
+
+  function renderCartPage() {
+    if (!Auth.isLoggedIn()) {
+      $('#cartItems').html(
+        '<div class="cart-empty"><div class="icon">🔒</div>' +
+        '<h3 style="color:var(--text-muted);margin-bottom:.5rem">برای مشاهده سبد خرید ابتدا وارد شوید</h3>' +
+        '<a href="login.html?redirect=' + encodeURIComponent('cart.html') + '" class="btn-primary">ورود به حساب کاربری</a></div>'
+      );
+      return;
+    }
+
+    var ids = Cart.getItems();
+
+    if (!ids.length) {
+      $('#cartItems').html(
+        '<div class="cart-empty"><div class="icon">🛒</div>' +
+        '<h3 style="color:var(--text-muted);margin-bottom:.5rem">سبد خرید شما خالی است</h3>' +
+        '<a href="courses.html" class="btn-primary">مشاهده بازارچه دوره‌ها</a></div>'
+      );
+      $('#cartSummary').hide();
+      return;
+    }
+
+    API.get('/courses').done(function (courses) {
+      var items = ids.map(function (id) {
+        return (courses || []).find(function (c) { return String(c.id) === String(id); });
+      }).filter(Boolean);
+
+      var html = '';
+      items.forEach(function (c) {
+        html += '<div class="cart-item">';
+        html += '  <div class="ci-icon">' + (c.icon || '📚') + '</div>';
+        html += '  <div class="ci-body"><div class="ci-title">' + c.title + '</div>';
+        html += '    <div class="ci-meta">' + c.instructor + ' · ' + c.duration + '</div></div>';
+        html += '  <div class="ci-price">' + (c.price > 0 ? c.price.toLocaleString('fa-IR') + ' ت' : 'رایگان') + '</div>';
+        html += '  <button class="ci-remove" data-id="' + c.id + '">حذف</button>';
+        html += '</div>';
+      });
+      $('#cartItems').html(html);
+
+      var total = items.reduce(function (s, c) { return s + (c.price || 0); }, 0);
+      var sHtml = '';
+      sHtml += '<div class="cart-summary-row"><span>تعداد دوره‌ها</span><span>' + items.length + '</span></div>';
+      sHtml += '<div class="cart-summary-row total"><span>مبلغ قابل پرداخت</span><span>' + (total > 0 ? total.toLocaleString('fa-IR') + ' تومان' : 'رایگان') + '</span></div>';
+      sHtml += '<button class="cart-checkout-btn" id="checkoutBtn">' + (total > 0 ? '💳 پرداخت و ثبت‌نام' : '✓ ثبت‌نام رایگان') + '</button>';
+      $('#cartSummary').html(sHtml).show();
+
+      $('.ci-remove').on('click', function () {
+        Cart.removeItem($(this).data('id'));
+        renderCartPage();
+      });
+
+      $('#checkoutBtn').on('click', function () {
+        var $btn = $(this).prop('disabled', true).text('در حال پردازش…');
+
+        // ═══ نکته: این یک تسویه‌حساب آزمایشی/دمو است ═══
+        // در نسخه واقعی (وقتی بک‌اند به سرور با دیتابیس واقعی وصل است)،
+        // باید به‌جای Payment.enroll مستقیم، ابتدا به POST /api/payment/request
+        // درخواست زد و کاربر به درگاه زرین‌پال هدایت شود؛ سپس بعد از بازگشت از
+        // درگاه، PaymentController.VerifyPayment ثبت‌نام واقعی را انجام می‌دهد.
+        items.forEach(function (c) {
+          Payment.enroll(c.id, c.title, c.price);
+        });
+
+        setTimeout(function () {
+          if (typeof showNotification === 'function') showNotification('ثبت‌نام با موفقیت انجام شد 🎉');
+          window.location.href = 'dashboard-student.html';
+        }, 500);
+      });
+    });
+  }
+
+  renderCartPage();
+});
+</script>
+<script>$(document).ready(function(){$("#mobileMenuBtn").on("click",function(){$(".nav-links").toggleClass("open")});});</script>
 </body>
 </html>

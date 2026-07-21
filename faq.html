@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>سوالات متداول — آئورا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+.faq-wrap{padding-top:100px;min-height:100vh}
+.faq-hero{text-align:center;padding:2rem 0 3rem}
+.faq-hero h1{font-size:1.7rem;font-weight:800;color:var(--text-primary);margin-bottom:.5rem}
+.faq-hero p{font-size:.85rem;color:var(--text-muted)}
+.faq-item{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);margin-bottom:.75rem;overflow:hidden}
+.faq-q{padding:1.1rem 1.3rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-size:.88rem;font-weight:600;color:var(--text-primary)}
+.faq-q .chevron{transition:transform var(--ease);color:var(--text-muted)}
+.faq-item.open .chevron{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height var(--ease)}
+.faq-item.open .faq-a{max-height:300px}
+.faq-a p{padding:0 1.3rem 1.1rem;font-size:.82rem;color:var(--text-muted);line-height:2}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav"><div class="container">
+<a href="index.html" class="nav-logo">آئو<span>را</span></a>
+<ul class="nav-links">
+  <li><a href="index.html">خانه</a></li>
+  <li><a href="courses.html">بازارچه دوره‌ها</a></li>
+  <li><a href="professors.html">اساتید</a></li>
+  <li><a href="forum.html">تالار گفتگو</a></li>
+  <li><a href="resources.html">منابع</a></li>
+  <li><a href="research.html">پژوهش</a></li>
+  <li><a href="about.html">درباره ما</a></li>
+</ul>
+<div class="nav-actions">
+  <a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+  <div id="authArea"></div>
+<button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+</div>
+</div></nav>
+
+<div class="faq-wrap"><div class="container" style="max-width:760px">
+  <div class="faq-hero">
+    <h1>سوالات متداول</h1>
+    <p>پاسخ سوالاتی که بیشتر کاربران آئورا می‌پرسند</p>
+  </div>
+  <div id="faqList"></div>
+</div></div>
+
+<footer class="footer"><div class="container">
+<div class="footer-grid">
+  <div>
+    <div class="footer-logo">آئو<span>را</span></div>
+    <p class="footer-about">پلتفرم آموزش مدرن علوم زیستی و بیوانفارماتیک</p>
+  </div>
+  <div>
+    <h4 class="footer-title">لینک‌ها</h4>
+    <ul class="footer-links">
+      <li><a href="courses.html">بازارچه دوره‌ها</a></li>
+      <li><a href="professors.html">اساتید</a></li>
+      <li><a href="forum.html">تالار گفتگو</a></li>
+    </ul>
+  </div>
+  <div>
+    <h4 class="footer-title">پشتیبانی</h4>
+    <ul class="footer-links">
+      <li><a href="about.html">درباره ما</a></li>
+      <li><a href="faq.html">سوالات</a></li>
+    </ul>
+  </div>
+</div>
+<div class="footer-bottom">
+  <span>© ۱۴۰۵ آئورا</span>
+  <span>support@aoura.ir</span>
+</div>
+</div></footer>
+
+<script src="js/content-manager.js"></script>
+<script src="js/ajax.js"></script>
+<script src="js/app.js"></script>
+<script>
+$(document).ready(function () {
+  var faqs = [
+    { q: 'چطور در یک دوره ثبت‌نام کنم؟', a: 'وارد بازارچه دوره‌ها شوید، دوره مورد نظر را انتخاب کنید و روی «افزودن به سبد خرید» بزنید. سپس از سبد خرید، پرداخت را نهایی کنید تا بلافاصله به محتوای دوره دسترسی داشته باشید.' },
+    { q: 'آیا می‌توانم پیش از خرید، محتوای دوره را ببینم؟', a: 'در صفحه اختصاصی هر دوره، سرفصل‌ها و تعداد جلسات هر فصل به‌صورت کامل قابل مشاهده است تا پیش از ثبت‌نام تصمیم بگیرید.' },
+    { q: 'روش‌های پرداخت چیست؟', a: 'در حال حاضر پرداخت از طریق درگاه بانکی متصل به سایت انجام می‌شود. اطلاعات کارت شما در سرورهای آئورا ذخیره نمی‌شود.' },
+    { q: 'اگر از دوره راضی نبودم چه کنم؟', a: 'برای درخواست بازگشت وجه یا هرگونه مشکل در محتوا، از طریق ایمیل پشتیبانی (support@aoura.ir) با ما در تماس باشید.' },
+    { q: 'آیا بعد از اتمام دوره گواهینامه دریافت می‌کنم؟', a: 'بله، پس از تکمیل تمام جلسات یک دوره، گواهینامه پایان دوره از طریق پنل دانشجویی برای شما صادر می‌شود.' },
+    { q: 'چطور استاد یک دوره در آئورا شوم؟', a: 'از طریق فرم «همکاری با ما» در صفحه درباره ما درخواست خود را ثبت کنید؛ تیم آئورا پس از بررسی رزومه با شما تماس می‌گیرد.' }
+  ];
+
+  var html = '';
+  faqs.forEach(function (f, i) {
+    html += '<div class="faq-item"><div class="faq-q"><span>' + f.q + '</span><span class="chevron">▾</span></div>';
+    html += '<div class="faq-a"><p>' + f.a + '</p></div></div>';
+  });
+  $('#faqList').html(html);
+
+  $('.faq-q').on('click', function () {
+    $(this).closest('.faq-item').toggleClass('open');
+  });
+});
+</script>
+<script>$(document).ready(function(){$("#mobileMenuBtn").on("click",function(){$(".nav-links").toggleClass("open")});});</script>
+</body>
+</html>

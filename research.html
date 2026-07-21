@@ -83,6 +83,7 @@
 <div class="nav-actions">
   <a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a>
   <div id="authArea"></div>
+<button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 </div>
 </div></nav>
 
@@ -338,5 +339,6 @@ $(document).ready(function () {
 
 });
 </script>
+<script>$(document).ready(function(){$("#mobileMenuBtn").on("click",function(){$(".nav-links").toggleClass("open")});});</script>
 </body>
 </html>

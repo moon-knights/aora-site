@@ -8,31 +8,6 @@ var API = (function () {
 
   // ... (توابع setToken, getToken و ... که قبلاً درست بودن) ...
 
-  function demoHandler(method, endpoint, data) {
-    
-    // >>> این بلوک باید دقیقاً اینجا (داخل demoHandler) باشه، نه بیرون <<<
-    var adminOnlyEndpoints = [
-      { pattern: /^\/surveys/, name: 'نظرسنجی‌ساز' },
-      { pattern: /^\/meetings/, name: 'جلسات مجازی' },
-      { pattern: /^\/admin/, name: 'پنل مدیریت' }
-    ];
-
-    for (var i = 0; i < adminOnlyEndpoints.length; i++) {
-      var rule = adminOnlyEndpoints[i];
-      if (rule.pattern.test(endpoint)) {
-        var currentUser = null;
-        try {
-          var raw = localStorage.getItem('aoura_user');
-          if (raw && raw !== 'undefined') currentUser = JSON.parse(raw);
-        } catch (e) {}
-
-        if (!currentUser || currentUser.role !== 'admin') {
-          return { success: false, message: 'دسترسی به ' + rule.name + ' فقط برای مدیر سایت مجاز است.' };
-        }
-      }
-    }
-  }
-
   /* ── ذخیره توکن ── */
   function setToken(token) {
     config.token = token;
@@ -171,7 +146,7 @@ var API = (function () {
 
     /* ── احراز هویت ── */
     if (endpoint === '/auth/register' && method === 'POST') {
-      var users = JSON.parse(localStorage.getItem('aora_users') || '[]');
+      var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
       var exists = users.find(function (u) { return u.email === data.email; });
       if (exists) return { success: false, message: 'این ایمیل قبلاً ثبت شده.' };
       var user = {
@@ -186,14 +161,14 @@ var API = (function () {
         createdAt: new Date().toISOString()
       };
       users.push(user);
-      localStorage.setItem('aora_users', JSON.stringify(users));
+      localStorage.setItem('aoura_users', JSON.stringify(users));
       var token = 'demo_token_' + Date.now();
       setToken(token);
       return { success: true, data: { user: user, token: token } };
     }
 
     if (endpoint === '/auth/login' && method === 'POST') {
-      var users = JSON.parse(localStorage.getItem('aora_users') || '[]');
+      var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
       var user = users.find(function (u) {
         return u.email === data.email && u.password === data.password;
       });
@@ -204,7 +179,7 @@ var API = (function () {
     }
 
     if (endpoint === '/auth/me' && method === 'GET') {
-      var current = JSON.parse(localStorage.getItem('aora_user') || 'null');
+      var current = JSON.parse(localStorage.getItem('aoura_user') || 'null');
       if (!current) return { success: false, message: 'وارد نشده‌اید.' };
       return { success: true, data: current };
     }
@@ -245,12 +220,43 @@ var API = (function () {
 
     /* ── اساتید ── */
     if (endpoint === '/professors' && method === 'GET') {
-      return { success: true, data: getDefaultProfessors() };
+      var defaultProfs = getDefaultProfessors();
+      var allUsers = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+      var allCourses = JSON.parse(localStorage.getItem('aora_courses') || '[]');
+
+      // اساتیدی که ادمین از پنل مدیریت کاربران اضافه کرده (role === 'professor')
+      var registeredProfs = allUsers.filter(function (u) { return u.role === 'professor'; }).map(function (u) {
+        var theirCourses = allCourses.filter(function (c) {
+          return c.instructorId === u.id || c.instructor === u.fullName;
+        });
+        var totalStudents = theirCourses.reduce(function (s, c) { return s + (c.students || 0); }, 0);
+        return {
+          id: u.id,
+          name: u.fullName,
+          title: u.specialty || 'استاد',
+          university: u.university || '',
+          specialty: u.specialty || '',
+          courses: theirCourses.length,
+          students: totalStudents,
+          rating: 0,
+          publications: 0,
+          hIndex: 0,
+          email: u.email,
+          bio: u.bio || '',
+          avatar: u.avatar || ''
+        };
+      });
+
+      // جلوگیری از نمایش تکراری در صورتی که یک استاد دمو با همون ایمیل واقعاً ثبت‌نام کرده باشد
+      var registeredEmails = registeredProfs.map(function (p) { return p.email; });
+      var merged = defaultProfs.filter(function (p) { return registeredEmails.indexOf(p.email) < 0; }).concat(registeredProfs);
+
+      return { success: true, data: merged };
     }
 
     /* ── کارآموزان ── */
     if (endpoint === '/students' && method === 'GET') {
-      var users = JSON.parse(localStorage.getItem('aora_users') || '[]');
+      var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
       var students = users.filter(function (u) { return u.role === 'student'; });
       return { success: true, data: students };
     }
@@ -267,7 +273,7 @@ var API = (function () {
 
     if (endpoint === '/forum' && method === 'POST') {
       var posts = JSON.parse(localStorage.getItem('aora_forum') || '[]');
-      var user = JSON.parse(localStorage.getItem('aora_user') || '{}');
+      var user = JSON.parse(localStorage.getItem('aoura_user') || '{}');
       var post = {
         id: 'fp_' + Date.now(),
         title: data.title,
@@ -317,20 +323,20 @@ var API = (function () {
 
     /* ── سبد خرید ── */
     if (endpoint === '/cart' && method === 'GET') {
-      return { success: true, data: JSON.parse(localStorage.getItem('aora_cart') || '[]') };
+      return { success: true, data: JSON.parse(localStorage.getItem('aoura_cart') || '[]') };
     }
 
     if (endpoint === '/cart/add' && method === 'POST') {
-      var cart = JSON.parse(localStorage.getItem('aora_cart') || '[]');
+      var cart = JSON.parse(localStorage.getItem('aoura_cart') || '[]');
       if (cart.indexOf(data.courseId) < 0) cart.push(data.courseId);
-      localStorage.setItem('aora_cart', JSON.stringify(cart));
+      localStorage.setItem('aoura_cart', JSON.stringify(cart));
       return { success: true, data: cart };
     }
 
     if (endpoint === '/cart/remove' && method === 'POST') {
-      var cart = JSON.parse(localStorage.getItem('aora_cart') || '[]');
+      var cart = JSON.parse(localStorage.getItem('aoura_cart') || '[]');
       cart = cart.filter(function (id) { return id !== data.courseId; });
-      localStorage.setItem('aora_cart', JSON.stringify(cart));
+      localStorage.setItem('aoura_cart', JSON.stringify(cart));
       return { success: true, data: cart };
     }
 
@@ -351,7 +357,7 @@ var API = (function () {
 
     /* ── ادمین ── */
     if (endpoint === '/admin/stats' && method === 'GET') {
-      var users = JSON.parse(localStorage.getItem('aora_users') || '[]');
+      var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
       var courses = JSON.parse(localStorage.getItem('aora_courses') || '[]');
       var surveys = JSON.parse(localStorage.getItem('aora_surveys') || '[]');
       var meetings = JSON.parse(localStorage.getItem('aora_meetings') || '[]');
@@ -370,14 +376,14 @@ var API = (function () {
     }
 
     if (endpoint === '/admin/users' && method === 'GET') {
-      return { success: true, data: JSON.parse(localStorage.getItem('aora_users') || '[]') };
+      return { success: true, data: JSON.parse(localStorage.getItem('aoura_users') || '[]') };
     }
 
     if (endpoint.match(/^\/admin\/users\/.+/) && method === 'DELETE') {
       var uid = endpoint.split('/')[3];
-      var users = JSON.parse(localStorage.getItem('aora_users') || '[]');
+      var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
       users = users.filter(function (u) { return u.id !== uid; });
-      localStorage.setItem('aora_users', JSON.stringify(users));
+      localStorage.setItem('aoura_users', JSON.stringify(users));
       return { success: true, data: null };
     }
 

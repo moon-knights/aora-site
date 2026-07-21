@@ -24,14 +24,27 @@ namespace Aora.Controllers
                 .OrderByDescending(p => p.CreatedAt)
                 .Select(p => new
                 {
-                    p.Id, p.Title, p.Content, p.Category,
+                    p.Id,
+                    p.Title,
+                    p.Content,
+                    p.Category,
                     author = p.Author!.FullName,
                     authorRole = p.Author.Role,
-                    p.Likes, p.Views, p.CreatedAt,
+                    p.Likes,
+                    p.Views,
+                    p.CreatedAt,
                     replies = p.Replies.Select(r => new
                     {
-                        r.Id, r.Content,
-                        author, data = posts });
+                        r.Id,
+                        r.Content,
+                        author = r.Author!.FullName,
+                        authorRole = r.Author.Role,
+                        r.CreatedAt
+                    })
+                })
+                .ToListAsync();
+
+            return Ok(new { success = true, data = posts });
         }
 
         [Authorize]

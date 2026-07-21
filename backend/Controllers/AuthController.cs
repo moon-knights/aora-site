@@ -9,7 +9,7 @@ using System.Security.Claims;
 namespace Aora.Controllers
 {
     [ApiController]
-    [Route SigningCredentials(key, SecurityAlgorithms.HmacSha25("api/[controller]")]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly AuthService _auth;

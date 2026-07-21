@@ -32,6 +32,7 @@
 <a href="index.html" class="nav-logo">آئو<span>را</span></a>
 <ul class="nav-links"><li><a href="index.html">خانه</a></li><li><a href="courses.html">بازارچه</a></li><li><a href="resources.html" class="active">منابع</a></li><li><a href="forum.html">تالار گفتگو</a></li><li><a href="about.html">درباره ما</a></li></ul>
 <div class="nav-actions"><a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a><div id="authArea"></div></div>
+<button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 </div></nav>
 
 <div class="resources-page">
@@ -94,5 +95,6 @@ $(document).ready(function(){
   }
 });
 </script>
+<script>$(document).ready(function(){$("#mobileMenuBtn").on("click",function(){$(".nav-links").toggleClass("open")});});</script>
 </body>
 </html>

@@ -85,6 +85,7 @@
 <li><a href="resources.html">منابع</a></li>
 </ul>
 <div class="nav-actions"><a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a><div id="authArea"></div></div>
+<button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 </div></nav>
 
 <div class="dash-page">
@@ -153,9 +154,19 @@ $(document).ready(function () {
 
   var allCourses = [];
 
+  // اگر از لینک «ادامه یادگیری» با ?course=ID وارد شده باشیم، مستقیم برو به تب محتوای دوره
+  var params = new URLSearchParams(window.location.search);
+  var jumpToCourse = params.get('course');
+
   API.get('/courses').done(function (courses) {
     allCourses = courses;
-    renderTab('mycourses');
+    if (jumpToCourse) {
+      $('.dash-tab').removeClass('active');
+      $('.dash-tab[data-tab="coursecontent"]').addClass('active').data('course', jumpToCourse);
+      renderTab('coursecontent');
+    } else {
+      renderTab('mycourses');
+    }
   });
 
   $('.dash-tab').on('click', function () {
@@ -295,6 +306,8 @@ $(document).ready(function () {
       html += '</div>';
     });
 
+    var totalLessonsForCourse = lessonNum;
+
     html += '</div>';
     $c.html(html);
 
@@ -310,7 +323,7 @@ $(document).ready(function () {
       var courseId = $(this).data('course');
 
       // علامت‌گذاری به‌عنوان تکمیل‌شده
-      Payment.updateProgress(courseId, lessonId);
+      Payment.updateProgress(courseId, lessonId, totalLessonsForCourse);
       $(this).find('.ls-status').text('✅').addClass('done');
 
       // بروزرسانی آمار
@@ -397,5 +410,6 @@ $(document).ready(function () {
 
 });
 </script>
+<script>$(document).ready(function(){$("#mobileMenuBtn").on("click",function(){$(".nav-links").toggleClass("open")});});</script>
 </body>
 </html>

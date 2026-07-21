@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Aoura.Models
+namespace Aora.Models
 {
     public class SiteSettings
     {
@@ -14,12 +14,12 @@ namespace Aoura.Models
         public string? LogoUrl { get; set; }
 
         [MaxLength(500)]
-        public string? LogoPath { get; set; }  // مسیر فایل آپلود شده
+        public string? LogoPath { get; set; }
 
         [MaxLength(200)]
         public string? SiteName { get; set; }
 
-        // ═══ هدر گلوبال (طراحی‌شده با GrapesJS) ═══
+        // ═══ هدر گلوبال ═══
         [Column(TypeName = "nvarchar(max)")]
         public string? GlobalHeaderHtml { get; set; }
 
@@ -29,7 +29,7 @@ namespace Aoura.Models
         [Column(TypeName = "nvarchar(max)")]
         public string? GlobalHeaderState { get; set; }
 
-        // ═══ فوتر گلوبال (طراحی‌شده با GrapesJS) ═══
+        // ═══ فوتر گلوبال ═══
         [Column(TypeName = "nvarchar(max)")]
         public string? GlobalFooterHtml { get; set; }
 
@@ -44,13 +44,15 @@ namespace Aoura.Models
         public string? FaviconUrl { get; set; }
 
         [MaxLength(1000)]
-        public string? CustomCss { get; set; }  // CSS سراسری اضافی
+        public string? CustomCss { get; set; }
 
         [MaxLength(2000)]
-        public string? CustomHeadScripts { get; set; }  // اسکریپت‌های head (Analytics, etc.)
+        public string? CustomHeadScripts { get; set; }
 
         [MaxLength(200)]
         public string? SupportEmail { get; set; }
+
+        public bool MaintenanceMode { get; set; } = false;
 
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }

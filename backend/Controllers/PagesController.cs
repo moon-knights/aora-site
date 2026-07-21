@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Aoura.Data;
-using Aoura.Models;
+using Aora.Data;
+using Aora.Models;
 
-namespace Aoura.Controllers
+namespace Aora.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
