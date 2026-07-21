@@ -1,0 +1,39 @@
+# ═══════════════════════════════════════════
+# آئورا — URL Rewriting (Apache)
+# ═══════════════════════════════════════════
+
+RewriteEngine On
+
+# جلوگیری از loop
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|map|json|xml|txt)$
+
+# صفحات اصلی (بدون پارامتر)
+RewriteRule ^$ /index.html [L]
+RewriteRule ^courses/?$ /courses.html [L]
+RewriteRule ^forum/?$ /forum.html [L]
+RewriteRule ^about/?$ /about.html [L]
+RewriteRule ^cart/?$ /cart.html [L]
+RewriteRule ^resources/?$ /resources.html [L]
+RewriteRule ^professors/?$ /professors.html [L]
+RewriteRule ^research/?$ /research.html [L]
+RewriteRule ^faq/?$ /faq.html [L]
+RewriteRule ^register/?$ /register.html [L]
+RewriteRule ^login/?$ /login.html [L]
+RewriteRule ^students/?$ /students.html [L]
+RewriteRule ^surveys/?$ /surveys.html [L]
+RewriteRule ^survey-builder/?$ /survey-builder.html [L]
+RewriteRule ^meetings/?$ /meetings.html [L]
+RewriteRule ^meeting-room/?$ /meeting-room.html [L]
+RewriteRule ^globalsetting/?$ /globalsetting.html [L]
+RewriteRule ^dashboard-student/?$ /dashboard-student.html [L]
+RewriteRule ^dashboard-professor/?$ /dashboard-professor.html [L]
+RewriteRule ^dashboard-admin/?$ /dashboard-admin.html [L]
+RewriteRule ^admin-page-builder/?$ /admin-page-builder.html [L]
+
+# صفحات با پارامتر (query string حفظ میشه)
+RewriteRule ^course/?$ /course-single.html [L,QSA]
+RewriteRule ^survey-results/?$ /survey-results.html [L,QSA]
+RewriteRule ^survey-view/?$ /survey-view.html [L,QSA]
+RewriteRule ^meeting-lobby/?$ /meeting-lobby.html [L,QSA]

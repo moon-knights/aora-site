@@ -90,17 +90,17 @@
 <!-- ناوبری -->
 <nav class="nav" id="mainNav" style="border-bottom:1px solid rgba(76,175,80,.15)">
 <div class="container">
-<a href="index.html" class="nav-logo">آئو<span>را</span>
+<a href="/" class="nav-logo">آئو<span>را</span>
 <span style="font-size:.6rem;color:#4caf50;background:rgba(76,175,80,.15);padding:.1rem .4rem;border-radius:10px;margin-right:.5rem">استاد</span>
 </a>
 <ul class="nav-links">
-<li><a href="index.html">خانه</a></li>
-<li><a href="courses.html">بازارچه دوره‌ها</a></li>
-<li><a href="forum.html">تالار گفتگو</a></li>
-<li><a href="resources.html">منابع</a></li>
+<li><a href="/">خانه</a></li>
+<li><a href="/courses">بازارچه دوره‌ها</a></li>
+<li><a href="/forum">تالار گفتگو</a></li>
+<li><a href="/resources">منابع</a></li>
 </ul>
 <div class="nav-actions">
-<a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+<a href="/cart" class="nav-cart">🛒 <span id="cartCount">0</span></a>
 <div id="authArea"></div>
 <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 </div>
@@ -172,11 +172,11 @@ $(document).ready(function () {
   /* ═══ بررسی ورود و نقش ═══ */
   var user = Auth.getCurrentUser();
   if (!user) {
-    window.location.href = 'login.html?redirect=dashboard-professor.html';
+    window.location.href = 'login?redirect=dashboard-professor';
     return;
   }
   if (user.role !== 'professor' && user.role !== 'admin') {
-    window.location.href = 'index.html';
+    window.location.href = '/';
     return;
   }
 
@@ -270,7 +270,7 @@ $(document).ready(function () {
       html += '    </div>';
       html += '  </div>';
       html += '  <div class="pc-actions">';
-      html += '    <a href="course-single.html?id=' + c.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">مشاهده</a>';
+      html += '    <a href="/course?id=' + c.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">مشاهده</a>';
       html += '    <button class="btn-ghost edit-course" data-id="' + c.id + '" style="padding:.4rem .8rem;font-size:.72rem">ویرایش</button>';
       html += '  </div>';
       html += '</div>';

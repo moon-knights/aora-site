@@ -30,9 +30,9 @@
 <body>
 
 <nav class="nav" id="mainNav"><div class="container">
-<a href="index.html" class="nav-logo">آئو<span>را</span></a>
-<ul class="nav-links"><li><a href="index.html">خانه</a></li><li><a href="courses.html">بازارچه</a></li></ul>
-<div class="nav-actions"><a href="cart.html" class="nav-cart active">🛒 <span id="cartCount">0</span></a><div id="authArea"></div></div>
+<a href="/" class="nav-logo">آئو<span>را</span></a>
+<ul class="nav-links"><li><a href="/">خانه</a></li><li><a href="/courses">بازارچه</a></li></ul>
+<div class="nav-actions"><a href="/cart" class="nav-cart active">🛒 <span id="cartCount">0</span></a><div id="authArea"></div></div>
 <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 </div></nav>
 
@@ -56,7 +56,7 @@ $(document).ready(function () {
       $('#cartItems').html(
         '<div class="cart-empty"><div class="icon">🔒</div>' +
         '<h3 style="color:var(--text-muted);margin-bottom:.5rem">برای مشاهده سبد خرید ابتدا وارد شوید</h3>' +
-        '<a href="login.html?redirect=' + encodeURIComponent('cart.html') + '" class="btn-primary">ورود به حساب کاربری</a></div>'
+        '<a href="login?redirect=' + encodeURIComponent('cart') + '" class="btn-primary">ورود به حساب کاربری</a></div>'
       );
       return;
     }
@@ -67,7 +67,7 @@ $(document).ready(function () {
       $('#cartItems').html(
         '<div class="cart-empty"><div class="icon">🛒</div>' +
         '<h3 style="color:var(--text-muted);margin-bottom:.5rem">سبد خرید شما خالی است</h3>' +
-        '<a href="courses.html" class="btn-primary">مشاهده بازارچه دوره‌ها</a></div>'
+        '<a href="/courses" class="btn-primary">مشاهده بازارچه دوره‌ها</a></div>'
       );
       $('#cartSummary').hide();
       return;
@@ -116,7 +116,7 @@ $(document).ready(function () {
 
         setTimeout(function () {
           if (typeof showNotification === 'function') showNotification('ثبت‌نام با موفقیت انجام شد 🎉');
-          window.location.href = 'dashboard-student.html';
+          window.location.href = 'dashboard-student';
         }, 500);
       });
     });

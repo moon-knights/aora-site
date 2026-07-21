@@ -12,9 +12,9 @@
 <body>
 
 <nav class="nav" id="mainNav"><div class="container">
-<a href="index.html" class="nav-logo">آ<span>را</span></a>
+<a href="/" class="nav-logo">آ<span>را</span></a>
 <div style="display:flex;align-items:center;gap:1rem">
-<a href="index.html" style="font-size:.75rem;color:var(--text-muted)">بازگشت</a>
+<a href="/" style="font-size:.75rem;color:var(--text-muted)">بازگشت</a>
 </div>
 </div></nav>
 
@@ -37,7 +37,7 @@
 </div>
 
 <div style="display:flex;gap:1rem;align-items:center;margin-bottom:2rem;flex-wrap:wrap">
-<a href="survey-builder.html" class="btn-primary">➕ نظرسنجی جدید</a>
+<a href="/survey-builder" class="btn-primary">➕ نظرسنجی جدید</a>
 <div style="flex:1"></div>
 <input type="text" id="searchSurveys" placeholder="جستجو..." style="max-width:250px;padding:.5rem 1rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-family:var(--font-fa);font-size:.78rem;outline:none">
 </div>
@@ -48,7 +48,7 @@
 <div style="font-size:3rem;margin-bottom:1rem;opacity:.3">📋</div>
 <h3 style="font-size:1rem;color:var(--text-muted);margin-bottom:.5rem">هنوز نظرسنجی نساخته‌اید</h3>
 <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:1.5rem">اولین نظرسنجی خود را بسازید و با مخاطبانتان به اشتراک بگذارید</p>
-<a href="survey-builder.html" class="btn-primary">شروع ساخت نظرسنجی</a>
+<a href="/survey-builder" class="btn-primary">شروع ساخت نظرسنجی</a>
 </div>
 </div>
 </div>
@@ -108,8 +108,8 @@ $(document).ready(function(){
       html += '<span class="status-badge ' + (s.status === 'active' ? 'live' : 'ended') + '">' + (s.status === 'active' ? 'فعال' : 'بسته') + '</span>';
       html += '</div>';
       html += '<div style="display:flex;gap:.5rem;margin-top:1rem">';
-      html += '<a href="survey-view.html?id=' + s.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">مشاهده</a>';
-      html += '<a href="survey-results.html?id=' + s.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">نتایج</a>';
+      html += '<a href="/survey-view?id=' + s.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">مشاهده</a>';
+      html += '<a href="/survey-results?id=' + s.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">نتایج</a>';
       html += '<button onclick="copySurveyLink(\'' + s.id + '\')" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">کپی لینک</button>';
       html += '<button onclick="deleteThisSurvey(\'' + s.id + '\')" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem;color:#e74c3c;border-color:#e74c3c">حذف</button>';
       html += '</div>';
@@ -120,7 +120,7 @@ $(document).ready(function(){
   }
 
   window.copySurveyLink = function(id){
-    var url = window.location.origin + window.location.pathname.replace('surveys.html','') + 'survey-view.html?id=' + id;
+    var url = window.location.origin + window.location.pathname.replace('surveys','') + 'survey-view?id=' + id;
     if(navigator.clipboard){
       navigator.clipboard.writeText(url);
       alert('لینک کپی شد: ' + url);

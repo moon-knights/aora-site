@@ -12,9 +12,9 @@
 <body>
 
 <nav class="nav" id="mainNav"><div class="container">
-<a href="index.html" class="nav-logo">آ<span>را</span></a>
+<a href="/" class="nav-logo">آ<span>را</span></a>
 <div style="display:flex;align-items:center;gap:1rem">
-<a href="surveys.html" style="font-size:.75rem;color:var(--text-muted)">بازگشت به لیست</a>
+<a href="/surveys" style="font-size:.75rem;color:var(--text-muted)">بازگشت به لیست</a>
 </div>
 </div></nav>
 
@@ -46,7 +46,7 @@ $(document).ready(function(){
   var h = '<h1 style="font-size:1.3rem;font-weight:600;color:var(--text-primary);margin-bottom:.25rem">📊 ' + survey.title + '</h1>';
   if(survey.description) h += '<p style="font-size:.82rem;color:var(--text-muted)">' + survey.description + '</p>';
   h += '<div style="display:flex;gap:1rem;margin-top:1rem">';
-  h += '<a href="survey-view.html?id=' + survey.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">مشاهده نظرسنجی</a>';
+  h += '<a href="/survey-view?id=' + survey.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">مشاهده نظرسنجی</a>';
   h += '<button onclick="exportCSV()" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">📥 خروجی CSV</button>';
   h += '</div>';
   $('#resultsHeader').html(h);

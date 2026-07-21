@@ -77,14 +77,14 @@
 <body>
 
 <nav class="nav" id="mainNav"><div class="container">
-<a href="index.html" class="nav-logo">آئو<span>را</span></a>
+<a href="/" class="nav-logo">آئو<span>را</span></a>
 <ul class="nav-links">
-<li><a href="index.html">خانه</a></li>
-<li><a href="courses.html">بازارچه دوره‌ها</a></li>
-<li><a href="forum.html">تالار گفتگو</a></li>
-<li><a href="resources.html">منابع</a></li>
+<li><a href="/">خانه</a></li>
+<li><a href="/courses">بازارچه دوره‌ها</a></li>
+<li><a href="/forum">تالار گفتگو</a></li>
+<li><a href="/resources">منابع</a></li>
 </ul>
-<div class="nav-actions"><a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a><div id="authArea"></div></div>
+<div class="nav-actions"><a href="/cart" class="nav-cart">🛒 <span id="cartCount">0</span></a><div id="authArea"></div></div>
 <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 </div></nav>
 
@@ -130,7 +130,7 @@
 $(document).ready(function () {
 
   var user = Auth.getCurrentUser();
-  if (!user) { window.location.href = 'login.html?redirect=dashboard-student.html'; return; }
+  if (!user) { window.location.href = 'login?redirect=dashboard-student'; return; }
 
   var initials = Auth._getInitials(user.fullName);
   $('#stuAvatar').text(initials);
@@ -194,7 +194,7 @@ $(document).ready(function () {
         '<div class="icon">📚</div>' +
         '<h3>هنوز در دوره‌ای ثبت‌نام نکرده‌اید</h3>' +
         '<p>از بازارچه دوره‌ها، دوره مورد علاقه‌تان را انتخاب کنید</p>' +
-        '<a href="courses.html" class="btn-primary">مشاهده بازارچه دوره‌ها</a>' +
+        '<a href="/courses" class="btn-primary">مشاهده بازارچه دوره‌ها</a>' +
         '</div>'
       );
       return;
@@ -247,7 +247,7 @@ $(document).ready(function () {
     }
 
     if (enrollments.length === 0) {
-      $c.html('<div class="empty-box"><div class="icon">📖</div><h3>ابتدا در یک دوره ثبت‌نام کنید</h3><a href="courses.html" class="btn-primary">بازارچه دوره‌ها</a></div>');
+      $c.html('<div class="empty-box"><div class="icon">📖</div><h3>ابتدا در یک دوره ثبت‌نام کنید</h3><a href="/courses" class="btn-primary">بازارچه دوره‌ها</a></div>');
       return;
     }
 

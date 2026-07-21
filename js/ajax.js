@@ -84,7 +84,7 @@ var API = (function () {
           msg = 'نشست شما منقضی شده. لطفاً دوباره وارد شوید.';
           clearToken();
           if (!options.noRedirect) {
-            window.location.href = 'login.html';
+            window.location.href = '/login';
           }
         } else if (xhr.status === 403) {
           msg = 'شما اجازه دسترسی به این بخش را ندارید.';
@@ -346,7 +346,7 @@ var API = (function () {
         success: true,
         data: {
           authority: 'DEMO_' + Date.now(),
-          paymentUrl: 'payment-callback.html?Status=OK&Authority=DEMO_' + Date.now()
+          paymentUrl: 'payment-callback?Status=OK&Authority=DEMO_' + Date.now()
         }
       };
     }

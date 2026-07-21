@@ -13,25 +13,25 @@ var Access = (function () {
 
   /* ── صفحات محافظت‌شده ── */
   var protectedPages = {
-    'surveys.html':            ['admin'],
-    'survey-builder.html':     ['admin'],
-    'survey-results.html':     ['admin'],
-    'survey-view.html':        ['admin'],
-    'meetings.html':           ['admin'],
-    'meeting-lobby.html':      ['admin'],
-    'meeting-room.html':       ['admin'],
-    'dashboard-admin.html':    ['admin'],
-    'admin-page-builder.html': ['admin'],
-    'dashboard-professor.html': ['professor', 'admin'],
-    'dashboard-student.html':   ['student', 'professor', 'admin'],
-    'cart.html':    ['student', 'professor', 'admin'],
-    'payment.html': ['student', 'professor', 'admin']
+    '/surveys':            ['admin'],
+    '/survey-builder':     ['admin'],
+    '/survey-results':     ['admin'],
+    '/survey-view':        ['admin'],
+    '/meetings':           ['admin'],
+    '/meeting-lobby':      ['admin'],
+    '/meeting-room':       ['admin'],
+    '/dashboard-admin':    ['admin'],
+    '/admin-page-builder': ['admin'],
+    '/dashboard-professor': ['professor', 'admin'],
+    '/dashboard-student':   ['student', 'professor', 'admin'],
+    '/cart':    ['student', 'professor', 'admin'],
+    'payment': ['student', 'professor', 'admin']
   };
 
   /* ── صفحاتی که access.js نباید روشون اجرا بشه ── */
   var skipPages = [
-    'dashboard-admin.html',
-    'admin-page-builder.html'
+    '/dashboard-admin',
+    '/admin-page-builder'
   ];
 
   /* ── بررسی حالت تعمیر ── */
@@ -69,7 +69,7 @@ var Access = (function () {
   function getCurrentPage() {
     var path = window.location.pathname;
     var parts = path.split('/');
-    return parts[parts.length - 1] || 'index.html';
+    return parts[parts.length - 1] || '/';
   }
 
   /* ── بررسی اصلی ── */
@@ -101,7 +101,7 @@ var Access = (function () {
         allowed: false,
         reason: 'not_logged_in',
         message: 'برای دسترسی به این صفحه باید وارد شوید.',
-        redirect: 'login.html?redirect=' + encodeURIComponent(page)
+        redirect: 'login?redirect=' + encodeURIComponent(page)
       };
     }
 
@@ -121,7 +121,7 @@ var Access = (function () {
   function enforce() {
     var result = checkAccess();
     if (!result.allowed) {
-      showAccessDenied(result.message, result.redirect || 'index.html', result.reason);
+      showAccessDenied(result.message, result.redirect || '/', result.reason);
       return false;
     }
     return true;
@@ -139,7 +139,7 @@ var Access = (function () {
     if (reason !== 'maintenance') {
       btns += '<a href="' + redirectUrl + '" style="display:inline-flex;align-items:center;gap:8px;padding:.7rem 1.5rem;background:#e8c547;color:#080808;border:none;border-radius:10px;font-family:Vazirmatn,sans-serif;font-size:.85rem;font-weight:600;cursor:pointer;text-decoration:none">بازگشت ←</a>';
     }
-    btns += '<a href="login.html" style="display:inline-flex;align-items:center;gap:8px;padding:.7rem 1.5rem;background:transparent;color:#f0ece4;border:1px solid rgba(255,255,255,.1);border-radius:10px;font-family:Vazirmatn,sans-serif;font-size:.85rem;cursor:pointer;text-decoration:none">ورود ادمین</a>';
+    btns += '<a href="/login" style="display:inline-flex;align-items:center;gap:8px;padding:.7rem 1.5rem;background:transparent;color:#f0ece4;border:1px solid rgba(255,255,255,.1);border-radius:10px;font-family:Vazirmatn,sans-serif;font-size:.85rem;cursor:pointer;text-decoration:none">ورود ادمین</a>';
 
     document.body.innerHTML =
       '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;direction:rtl;text-align:center">' +
@@ -157,10 +157,10 @@ var Access = (function () {
 
   function getDashboard(role) {
     switch (role) {
-      case 'admin':     return 'dashboard-admin.html';
-      case 'professor': return 'dashboard-professor.html';
-      case 'student':   return 'dashboard-student.html';
-      default:          return 'index.html';
+      case 'admin':     return '/dashboard-admin';
+      case 'professor': return '/dashboard-professor';
+      case 'student':   return '/dashboard-student';
+      default:          return '/';
     }
   }
 
@@ -176,8 +176,8 @@ var Access = (function () {
 
 /* ── اجرا (فقط صفحات عمومی و محافظت‌شده معمولی) ── */
 $(document).ready(function () {
-  var page = window.location.pathname.split('/').pop() || 'index.html';
-  var skipPages = ['dashboard-admin.html', 'admin-page-builder.html'];
+  var page = window.location.pathname.split('/').pop() || '/';
+  var skipPages = ['/dashboard-admin', '/admin-page-builder'];
   if (skipPages.indexOf(page) < 0) {
     Access.enforce();
   }

@@ -304,7 +304,7 @@
   <div class="admin-topbar">
     <div class="page-title" id="pageTitle">نمای کلی</div>
     <div style="display:flex;gap:.65rem;align-items:center">
-      <a href="index.html" class="tbtn primary" style="text-decoration:none" target="_blank">مشاهده سایت ↗</a>
+      <a href="/" class="tbtn primary" style="text-decoration:none" target="_blank">مشاهده سایت ↗</a>
       <button class="tbtn" id="adminLogout" style="color:#e74c3c;border-color:#e74c3c">خروج</button>
     </div>
   </div>
@@ -331,7 +331,7 @@ $(document).ready(function () {
   /* ── بررسی ادمین ── */
   var admin = Auth.getCurrentUser();
   if (!admin || admin.role !== 'admin') {
-    window.location.href = 'login.html';
+    window.location.href = 'login';
     return;
   }
 
@@ -770,7 +770,7 @@ $(document).ready(function () {
 
     // نوار ابزار
     h += '<div class="toolbar-row">';
-    h += '<a href="admin-page-builder.html" target="_blank" class="tbtn primary" style="text-decoration:none;padding:.4rem .75rem;font-size:.72rem">🎨 سایت‌ساز (صفحه جدید)</a>';
+    h += '<a href="admin-page-builder" target="_blank" class="tbtn primary" style="text-decoration:none;padding:.4rem .75rem;font-size:.72rem">🎨 سایت‌ساز (صفحه جدید)</a>';
     h += '<div class="spacer"></div>';
     if (!settings.maintenanceMode) h += '<button class="tbtn danger" id="onMaint" style="padding:.35rem .65rem;font-size:.7rem">🔧 حالت تعمیر</button>';
     h += '</div>';
@@ -785,7 +785,7 @@ $(document).ready(function () {
         h += '<div class="pc-info"><h4>' + p.title + '</h4>';
         h += '<p>' + p.slug + '.html · ' + (p.components ? p.components.length : 0) + ' المان · ' + st + '</p></div>';
         h += '<div class="pc-actions">';
-        h += '<a href="admin-page-builder.html?id=' + p.id + '" class="tbtn primary" style="text-decoration:none">ویرایش</a>';
+        h += '<a href="admin-page-builder?id=' + p.id + '" class="tbtn primary" style="text-decoration:none">ویرایش</a>';
         h += '<button class="tbtn toggle-cp" data-idx="' + i + '">' + (p.status === 'published' ? 'مخفی' : 'انتشار') + '</button>';
         h += '<button class="tbtn danger del-cp" data-idx="' + i + '">حذف</button>';
         h += '</div></div>';
@@ -983,14 +983,14 @@ $(document).ready(function () {
 
   function getDefaultPages() {
     return [
-      { file: 'index.html', title: 'صفحه اصلی', icon: '🏠', desc: 'لندینگ', active: true, custom: false },
-      { file: 'courses.html', title: 'بازارچه دوره‌ها', icon: '📚', desc: 'دوره‌ها', active: true, custom: false },
+      { file: '/', title: 'صفحه اصلی', icon: '🏠', desc: 'لندینگ', active: true, custom: false },
+      { file: 'courses', title: 'بازارچه دوره‌ها', icon: '📚', desc: 'دوره‌ها', active: true, custom: false },
       { file: 'professors.html', title: 'اساتید', icon: '👨‍🏫', desc: 'لیست اساتید', active: true, custom: false },
       { file: 'students.html', title: 'کارآموزان', icon: '🎓', desc: 'لیست کارآموزان', active: true, custom: false },
-      { file: 'forum.html', title: 'تالار گفتگو', icon: '💬', desc: 'انجمن', active: true, custom: false },
+      { file: 'forum', title: 'تالار گفتگو', icon: '💬', desc: 'انجمن', active: true, custom: false },
       { file: 'resources.html', title: 'منابع', icon: '📚', desc: 'منابع آموزشی', active: true, custom: false },
       { file: 'research.html', title: 'پژوهش', icon: '🔬', desc: 'پژوهش‌ها', active: true, custom: false },
-      { file: 'about.html', title: 'درباره ما', icon: 'ℹ️', desc: 'معرفی', active: true, custom: false }
+      { file: 'about', title: 'درباره ما', icon: 'ℹ️', desc: 'معرفی', active: true, custom: false }
     ];
   }
 
@@ -1000,7 +1000,7 @@ $(document).ready(function () {
      ═══════════════════════════════════════ */
   function renderSurveys() {
     var surveys = (typeof Survey !== 'undefined') ? Survey.getAll() : JSON.parse(localStorage.getItem('aora_surveys') || '[]');
-    var h = '<div class="toolbar-row"><a href="survey-builder.html" class="tbtn primary" style="text-decoration:none;padding:.4rem .75rem;font-size:.72rem">➕ نظرسنجی جدید</a></div>';
+    var h = '<div class="toolbar-row"><a href="survey-builder" class="tbtn primary" style="text-decoration:none;padding:.4rem .75rem;font-size:.72rem">➕ نظرسنجی جدید</a></div>';
     if (!surveys.length) { h += '<div style="text-align:center;padding:3rem;color:var(--text-muted)">نظرسنجی‌ای نیست.</div>'; }
     else {
       h += '<table class="data-table"><thead><tr><th>عنوان</th><th>سوالات</th><th>وضعیت</th><th>تاریخ</th><th>عملیات</th></tr></thead><tbody>';
@@ -1008,7 +1008,7 @@ $(document).ready(function () {
         h += '<tr><td>' + s.title + '</td><td>' + s.questions.length + '</td>';
         h += '<td><span class="badge ' + (s.status === 'active' ? 'badge-green' : 'badge-red') + '">' + (s.status === 'active' ? 'فعال' : 'بسته') + '</span></td>';
         h += '<td>' + new Date(s.createdAt).toLocaleDateString('fa-IR') + '</td>';
-        h += '<td><a href="survey-results.html?id=' + s.id + '" class="tbtn" style="text-decoration:none">نتایج</a>';
+        h += '<td><a href="survey-results?id=' + s.id + '" class="tbtn" style="text-decoration:none">نتایج</a>';
         h += '<button class="tbtn danger" onclick="delSurvey(\'' + s.id + '\')">حذف</button></td></tr>';
       });
       h += '</tbody></table>';
@@ -1028,14 +1028,14 @@ $(document).ready(function () {
      ═══════════════════════════════════════ */
   function renderMeetingsMgr() {
     var meetings = (typeof Meeting !== 'undefined') ? Meeting.getAll() : JSON.parse(localStorage.getItem('aora_meetings') || '[]');
-    var h = '<div class="toolbar-row"><a href="meetings.html" class="tbtn primary" style="text-decoration:none;padding:.4rem .75rem;font-size:.72rem">➕ جلسه جدید</a></div>';
+    var h = '<div class="toolbar-row"><a href="meetings" class="tbtn primary" style="text-decoration:none;padding:.4rem .75rem;font-size:.72rem">➕ جلسه جدید</a></div>';
     if (!meetings.length) { h += '<div style="text-align:center;padding:3rem;color:var(--text-muted)">جلسه‌ای نیست.</div>'; }
     else {
       h += '<table class="data-table"><thead><tr><th>عنوان</th><th>کد</th><th>میزبان</th><th>تاریخ</th><th>عملیات</th></tr></thead><tbody>';
       meetings.forEach(function (m) {
         h += '<tr><td>' + m.title + '</td><td style="font-family:var(--font-mono);direction:ltr">' + m.code + '</td><td>' + m.host + '</td>';
         h += '<td>' + new Date(m.createdAt).toLocaleDateString('fa-IR') + '</td>';
-        h += '<td><a href="meeting-lobby.html?id=' + m.id + '" class="tbtn" style="text-decoration:none">ورود</a>';
+        h += '<td><a href="meeting-lobby?id=' + m.id + '" class="tbtn" style="text-decoration:none">ورود</a>';
         h += '<button class="tbtn danger" onclick="delMeeting(\'' + m.id + '\')">حذف</button></td></tr>';
       });
       h += '</tbody></table>';

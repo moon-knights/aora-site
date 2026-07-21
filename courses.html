@@ -76,18 +76,18 @@
 
 <!-- ═══ ناوبری ═══ -->
 <nav class="nav" id="mainNav"><div class="container">
-<a href="index.html" class="nav-logo">آئو<span>را</span></a>
+<a href="/" class="nav-logo">آئو<span>را</span></a>
 <ul class="nav-links">
-  <li><a href="index.html">خانه</a></li>
-  <li><a href="courses.html" class="active">بازارچه دوره‌ها</a></li>
-  <li><a href="professors.html">اساتید</a></li>
-  <li><a href="forum.html">تالار گفتگو</a></li>
-  <li><a href="resources.html">منابع</a></li>
-  <li><a href="research.html">پژوهش</a></li>
-  <li><a href="about.html">درباره ما</a></li>
+  <li><a href="/">خانه</a></li>
+  <li><a href="/courses" class="active">بازارچه دوره‌ها</a></li>
+  <li><a href="/professors">اساتید</a></li>
+  <li><a href="/forum">تالار گفتگو</a></li>
+  <li><a href="/resources">منابع</a></li>
+  <li><a href="/research">پژوهش</a></li>
+  <li><a href="/about">درباره ما</a></li>
 </ul>
 <div class="nav-actions">
-  <a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+  <a href="/cart" class="nav-cart">🛒 <span id="cartCount">0</span></a>
   <div id="authArea"></div>
 <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 </div>
@@ -174,16 +174,16 @@
   <div>
     <h4 class="footer-title">لینک‌ها</h4>
     <ul class="footer-links">
-      <li><a href="courses.html">بازارچه دوره‌ها</a></li>
-      <li><a href="professors.html">اساتید</a></li>
-      <li><a href="forum.html">تالار گفتگو</a></li>
+      <li><a href="/courses">بازارچه دوره‌ها</a></li>
+      <li><a href="/professors">اساتید</a></li>
+      <li><a href="/forum">تالار گفتگو</a></li>
     </ul>
   </div>
   <div>
     <h4 class="footer-title">پشتیبانی</h4>
     <ul class="footer-links">
-      <li><a href="about.html">درباره ما</a></li>
-      <li><a href="faq.html">سوالات</a></li>
+      <li><a href="/about">درباره ما</a></li>
+      <li><a href="/faq">سوالات</a></li>
     </ul>
   </div>
 </div>
@@ -207,10 +207,10 @@ $(document).ready(function () {
 
   /* ── اعمال محتوای ذخیره‌شده ادمین ── */
   if (typeof ContentManager !== 'undefined') {
-    ContentManager.applyToPage('courses.html');
+    ContentManager.applyToPage('courses');
 
     // placeholder جستجو
-    var searchPh = ContentManager.getValue('courses.html', 'search_placeholder');
+    var searchPh = ContentManager.getValue('courses', 'search_placeholder');
     $('#marketSearch').attr('placeholder', searchPh);
   }
 
@@ -280,7 +280,7 @@ $(document).ready(function () {
   function renderFeatured(courses) {
     var html = '';
     courses.forEach(function (c) {
-      html += '<a href="course-single.html?id=' + c.id + '" class="featured-card" style="text-decoration:none">';
+      html += '<a href="/course?id=' + c.id + '" class="featured-card" style="text-decoration:none">';
       html += '<div class="f-icon">' + (c.icon || '📚') + '</div>';
       html += '<div class="f-info"><h3>' + c.title + '</h3><p>' + c.instructor + '</p>';
       html += '<div class="f-meta"><span>⭐ ' + c.rating + '</span><span>👥 ' + c.students + ' نفر</span><span>💰 ' + c.price.toLocaleString('fa-IR') + ' ت</span></div>';
@@ -294,12 +294,12 @@ $(document).ready(function () {
   function renderGrid(courses) {
     // پیام خالی بودن از ContentManager
     var emptyMsg = (typeof ContentManager !== 'undefined')
-      ? ContentManager.getValue('courses.html', 'empty_msg')
+      ? ContentManager.getValue('courses', 'empty_msg')
       : 'هنوز دوره‌ای ثبت نشده است';
 
-    var noResultIcon  = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('courses.html', 'no_result_icon')  : '🔍';
-    var noResultTitle = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('courses.html', 'no_result_title') : 'دوره‌ای یافت نشد';
-    var noResultText  = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('courses.html', 'no_result_text')  : 'فیلترها را تغییر دهید یا عبارت دیگری جستجو کنید';
+    var noResultIcon  = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('courses', 'no_result_icon')  : '🔍';
+    var noResultTitle = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('courses', 'no_result_title') : 'دوره‌ای یافت نشد';
+    var noResultText  = (typeof ContentManager !== 'undefined') ? ContentManager.getValue('courses', 'no_result_text')  : 'فیلترها را تغییر دهید یا عبارت دیگری جستجو کنید';
 
     if (courses.length === 0) {
       $('#marketGrid').html(
@@ -320,12 +320,12 @@ $(document).ready(function () {
       var enrolled = typeof Payment !== 'undefined' && Payment.isEnrolled(c.id);
 
       html += '<div class="market-card">';
-      html += '<a href="course-single.html?id=' + c.id + '" class="card-img" style="text-decoration:none">';
+      html += '<a href="/course?id=' + c.id + '" class="card-img" style="text-decoration:none">';
       html += '<span class="course-emoji">' + (c.icon || '📚') + '</span>';
       if (disc > 0) html += '<span class="badge-discount">-' + disc + '%</span>';
       html += '<span class="badge-level ' + lvlClass + '">' + c.level + '</span></a>';
       html += '<div class="card-body">';
-      html += '<a href="course-single.html?id=' + c.id + '" class="card-title" style="text-decoration:none">' + c.title + '</a>';
+      html += '<a href="/course?id=' + c.id + '" class="card-title" style="text-decoration:none">' + c.title + '</a>';
       html += '<div class="card-instructor"><span class="inst-avatar">' + c.instructor.charAt(0) + '</span>' + c.instructor + '</div>';
       html += '<div class="card-stats"><span>⏱ ' + c.duration + '</span><span>👥 ' + c.students + ' نفر</span><span>⭐ ' + c.rating + '</span></div>';
       html += '<div class="card-tags">';
@@ -339,8 +339,8 @@ $(document).ready(function () {
         html += '<span class="price-free">رایگان</span>';
       }
       html += '</div>';
-      if (enrolled) html += '<a href="dashboard-student.html?course=' + c.id + '" class="btn-enroll">ادامه یادگیری</a>';
-      else if (inCart) html += '<a href="cart.html" class="btn-enroll" style="background:var(--bg-surface);border:1px solid var(--accent);color:var(--accent)">در سبد</a>';
+      if (enrolled) html += '<a href="dashboard-student?course=' + c.id + '" class="btn-enroll">ادامه یادگیری</a>';
+      else if (inCart) html += '<a href="/cart" class="btn-enroll" style="background:var(--bg-surface);border:1px solid var(--accent);color:var(--accent)">در سبد</a>';
       else html += '<button class="btn-enroll add-cart" data-id="' + c.id + '">ثبت‌نام</button>';
       html += '</div></div></div>';
     });

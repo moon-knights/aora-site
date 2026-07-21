@@ -12,16 +12,16 @@ var ContentManager = (function () {
      ═══════════════════════════════════════ */
   var pageDefinitions = {
 
-    'index.html': {
+    '/': {
       title: 'صفحه اصلی',
       icon: '🏠',
       sections: [
         { key: 'hero_title',       label: 'عنوان اصلی',         type: 'text',     default: 'آئورا، مسیر یادگیری علوم زیستی' },
         { key: 'hero_subtitle',    label: 'زیرعنوان',            type: 'textarea', default: 'با بهترین اساتید و دوره‌های تخصصی، مسیر حرفه‌ای خود را بسازید' },
         { key: 'hero_btn_text',    label: 'متن دکمه اصلی',      type: 'text',     default: 'شروع یادگیری' },
-        { key: 'hero_btn_link',    label: 'لینک دکمه اصلی',     type: 'text',     default: 'courses.html' },
+        { key: 'hero_btn_link',    label: 'لینک دکمه اصلی',     type: 'text',     default: '/courses' },
         { key: 'hero_btn2_text',   label: 'متن دکمه دوم',       type: 'text',     default: 'درباره ما' },
-        { key: 'hero_btn2_link',   label: 'لینک دکمه دوم',      type: 'text',     default: 'about.html' },
+        { key: 'hero_btn2_link',   label: 'لینک دکمه دوم',      type: 'text',     default: '/about' },
         { key: 'stats_1_num',      label: 'آمار ۱ — عدد',       type: 'text',     default: '+۱,۲۰۰' },
         { key: 'stats_1_label',    label: 'آمار ۱ — عنوان',     type: 'text',     default: 'کارآموز' },
         { key: 'stats_2_num',      label: 'آمار ۲ — عدد',       type: 'text',     default: '+۴۵' },
@@ -43,7 +43,7 @@ var ContentManager = (function () {
       ]
     },
 
-    'courses.html': {
+    '/courses': {
       title: 'بازارچه دوره‌ها',
       icon: '📚',
       sections: [
@@ -54,7 +54,7 @@ var ContentManager = (function () {
       ]
     },
 
-    'professors.html': {
+    '/professors': {
       title: 'اساتید',
       icon: '👨‍🏫',
       sections: [
@@ -64,7 +64,7 @@ var ContentManager = (function () {
       ]
     },
 
-    'students.html': {
+    '/students': {
       title: 'کارآموزان',
       icon: '🎓',
       sections: [
@@ -74,7 +74,7 @@ var ContentManager = (function () {
       ]
     },
 
-    'forum.html': {
+    '/forum': {
       title: 'تالار گفتگو',
       icon: '💬',
       sections: [
@@ -85,7 +85,7 @@ var ContentManager = (function () {
       ]
     },
 
-    'resources.html': {
+    '/resources': {
       title: 'منابع',
       icon: '📚',
       sections: [
@@ -95,7 +95,7 @@ var ContentManager = (function () {
       ]
     },
 
-    'research.html': {
+    '/research': {
       title: 'پژوهش',
       icon: '🔬',
       sections: [
@@ -105,7 +105,7 @@ var ContentManager = (function () {
       ]
     },
 
-    'about.html': {
+    '/about': {
       title: 'درباره ما',
       icon: 'ℹ️',
       sections: [

@@ -9,7 +9,7 @@ $(document).ready(function () {
     else $('#mainNav').removeClass('scrolled');
   });
 
-  var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  var currentPage = window.location.pathname.split('/').pop() || '/';
   $('.nav-links a').each(function () {
     if ($(this).attr('href') === currentPage) $(this).addClass('active');
   });
@@ -115,7 +115,7 @@ $(document).ready(function () {
       localStorage.removeItem('aoura_token');
       $('body').removeClass('user-admin user-professor user-student');
       this.updateUI();
-      window.location.href = 'index.html';
+      window.location.href = '/';
     },
 
     updateProfile: function (updates) {
@@ -136,9 +136,9 @@ $(document).ready(function () {
 
       if (user) {
         var initials = this._getInitials(user.fullName);
-        var dashLink = user.role === 'admin' ? 'dashboard-admin.html' :
-                       user.role === 'professor' ? 'dashboard-professor.html' :
-                       'dashboard-student.html';
+        var dashLink = user.role === 'admin' ? '/dashboard-admin' :
+                       user.role === 'professor' ? '/dashboard-professor' :
+                       '/dashboard-student';
 
         $area.html(
           '<div class="user-menu">' +
@@ -149,7 +149,7 @@ $(document).ready(function () {
           '<div class="user-dropdown" id="userDropdown">' +
           '<a href="' + dashLink + '">📊 داشبورد من</a>' +
           '<a href="' + dashLink + '#profile">👤 پروفایل</a>' +
-          (user.role === 'admin' ? '<a href="surveys.html">📋 نظرسنجی‌ساز</a><a href="meetings.html">📹 جلسات</a>' : '') +
+          (user.role === 'admin' ? '<a href="/surveys">📋 نظرسنجی‌ساز</a><a href="/meetings">📹 جلسات</a>' : '') +
           '<hr style="border:none;border-top:1px solid var(--border);margin:.35rem 0">' +
           '<a href="#" id="logoutBtn" style="color:#e74c3c">🚪 خروج</a>' +
           '</div></div>'
@@ -165,8 +165,8 @@ $(document).ready(function () {
         $('#logoutBtn').off('click.aora').on('click.aora', function (e) { e.preventDefault(); Auth.logout(); });
       } else {
         $area.html(
-          '<a href="login.html" class="btn-ghost" style="padding:.4rem .8rem;font-size:.75rem">ورود</a>' +
-          '<a href="register.html" class="btn-primary" style="padding:.4rem .8rem;font-size:.75rem">ثبت‌نام</a>'
+          '<a href="/login" class="btn-ghost" style="padding:.4rem .8rem;font-size:.75rem">ورود</a>' +
+          '<a href="/register" class="btn-primary" style="padding:.4rem .8rem;font-size:.75rem">ثبت‌نام</a>'
         );
       }
     },
@@ -352,8 +352,8 @@ $(document).ready(function () {
         localStorage.setItem('aoura_token', 'google_' + Date.now());
         showNotification('خوش آمدید ' + existing.fullName.split(' ')[0] + '! 👋');
         setTimeout(function () {
-          var m = { admin: 'dashboard-admin.html', professor: 'dashboard-professor.html', student: 'dashboard-student.html' };
-          window.location.href = m[existing.role] || 'dashboard-student.html';
+          var m = { admin: '/dashboard-admin', professor: '/dashboard-professor', student: '/dashboard-student' };
+          window.location.href = m[existing.role] || '/dashboard-student';
         }, 800);
       } else {
         // ── ثبت‌نام خودکار ──
@@ -366,7 +366,7 @@ $(document).ready(function () {
         });
         if (result.success) {
           showNotification('ثبت‌نام با گوگل موفق! خوش آمدید 🎉');
-          setTimeout(function () { window.location.href = 'dashboard-student.html'; }, 800);
+          setTimeout(function () { window.location.href = '/dashboard-student'; }, 800);
         } else {
           showNotification(result.message, 'error');
         }
@@ -427,7 +427,7 @@ $(document).ready(function () {
       $msg.css('color','var(--accent)').text('ثبت‌نام موفق! در حال انتقال...');
       setTimeout(function () {
         var redirect = new URLSearchParams(window.location.search).get('redirect');
-        window.location.href = redirect ? decodeURIComponent(redirect) : 'dashboard-student.html';
+        window.location.href = redirect ? decodeURIComponent(redirect) : '/dashboard-student';
       }, 800);
     } else {
       $msg.css('color','#e74c3c').text(result.message);
@@ -454,8 +454,8 @@ $(document).ready(function () {
         var redirect = new URLSearchParams(window.location.search).get('redirect');
         if (redirect) { window.location.href = decodeURIComponent(redirect); }
         else {
-          var m = { admin: 'dashboard-admin.html', professor: 'dashboard-professor.html', student: 'dashboard-student.html' };
-          window.location.href = m[result.user.role] || 'dashboard-student.html';
+          var m = { admin: '/dashboard-admin', professor: '/dashboard-professor', student: '/dashboard-student' };
+          window.location.href = m[result.user.role] || '/dashboard-student';
         }
       }, 800);
     } else {

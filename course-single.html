@@ -65,18 +65,18 @@
 
 <!-- ═══ ناوبری ═══ -->
 <nav class="nav" id="mainNav"><div class="container">
-<a href="index.html" class="nav-logo">آئو<span>را</span></a>
+<a href="/" class="nav-logo">آئو<span>را</span></a>
 <ul class="nav-links">
-  <li><a href="index.html">خانه</a></li>
-  <li><a href="courses.html" class="active">بازارچه دوره‌ها</a></li>
-  <li><a href="professors.html">اساتید</a></li>
-  <li><a href="forum.html">تالار گفتگو</a></li>
-  <li><a href="resources.html">منابع</a></li>
-  <li><a href="research.html">پژوهش</a></li>
-  <li><a href="about.html">درباره ما</a></li>
+  <li><a href="/">خانه</a></li>
+  <li><a href="/courses" class="active">بازارچه دوره‌ها</a></li>
+  <li><a href="/professors">اساتید</a></li>
+  <li><a href="/forum">تالار گفتگو</a></li>
+  <li><a href="/resources">منابع</a></li>
+  <li><a href="/research">پژوهش</a></li>
+  <li><a href="/about">درباره ما</a></li>
 </ul>
 <div class="nav-actions">
-  <a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+  <a href="/cart" class="nav-cart">🛒 <span id="cartCount">0</span></a>
   <div id="authArea"></div>
 <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 </div>
@@ -98,16 +98,16 @@
   <div>
     <h4 class="footer-title">لینک‌ها</h4>
     <ul class="footer-links">
-      <li><a href="courses.html">بازارچه دوره‌ها</a></li>
-      <li><a href="professors.html">اساتید</a></li>
-      <li><a href="forum.html">تالار گفتگو</a></li>
+      <li><a href="/courses">بازارچه دوره‌ها</a></li>
+      <li><a href="/professors">اساتید</a></li>
+      <li><a href="/forum">تالار گفتگو</a></li>
     </ul>
   </div>
   <div>
     <h4 class="footer-title">پشتیبانی</h4>
     <ul class="footer-links">
-      <li><a href="about.html">درباره ما</a></li>
-      <li><a href="faq.html">سوالات</a></li>
+      <li><a href="/about">درباره ما</a></li>
+      <li><a href="/faq">سوالات</a></li>
     </ul>
   </div>
 </div>
@@ -130,7 +130,7 @@ $(document).ready(function () {
     $('#csWrap .container').html(
       '<div class="cs-notfound"><div style="font-size:3rem;opacity:.3;margin-bottom:1rem">🔍</div>' +
       '<h3 style="color:var(--text-muted);margin-bottom:.5rem">شناسه دوره مشخص نشده است</h3>' +
-      '<a href="courses.html" class="btn-primary">بازگشت به بازارچه دوره‌ها</a></div>'
+      '<a href="/courses" class="btn-primary">بازگشت به بازارچه دوره‌ها</a></div>'
     );
     return;
   }
@@ -142,7 +142,7 @@ $(document).ready(function () {
       $('#csWrap .container').html(
         '<div class="cs-notfound"><div style="font-size:3rem;opacity:.3;margin-bottom:1rem">😕</div>' +
         '<h3 style="color:var(--text-muted);margin-bottom:.5rem">این دوره یافت نشد</h3>' +
-        '<a href="courses.html" class="btn-primary">بازگشت به بازارچه دوره‌ها</a></div>'
+        '<a href="/courses" class="btn-primary">بازگشت به بازارچه دوره‌ها</a></div>'
       );
       return;
     }
@@ -164,7 +164,7 @@ $(document).ready(function () {
     var html = '';
 
     // ── هیرو ──
-    html += '<div class="cs-hero"><div class="container"><div class="cs-crumb"><a href="courses.html">بازارچه دوره‌ها</a> / ' + c.title + '</div>';
+    html += '<div class="cs-hero"><div class="container"><div class="cs-crumb"><a href="/courses">بازارچه دوره‌ها</a> / ' + c.title + '</div>';
     html += '<div class="cs-hero-grid">';
     html += '  <div><div class="cs-icon">' + (c.icon || '📚') + '</div>';
     html += '  <h1 class="cs-title">' + c.title + '</h1>';
@@ -195,9 +195,9 @@ $(document).ready(function () {
     html += '    </div>';
 
     if (enrolled) {
-      html += '<a href="dashboard-student.html?course=' + c.id + '" class="cs-buy-btn" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box">✓ ادامه یادگیری</a>';
+      html += '<a href="dashboard-student?course=' + c.id + '" class="cs-buy-btn" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box">✓ ادامه یادگیری</a>';
     } else if (inCart) {
-      html += '<a href="cart.html" class="cs-buy-btn secondary" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box">در سبد خرید — مشاهده سبد</a>';
+      html += '<a href="/cart" class="cs-buy-btn secondary" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box">در سبد خرید — مشاهده سبد</a>';
     } else {
       html += '<button class="cs-buy-btn" id="csAddCart" data-id="' + c.id + '">' + (c.price > 0 ? 'افزودن به سبد خرید' : 'ثبت‌نام رایگان') + '</button>';
     }
@@ -230,7 +230,7 @@ $(document).ready(function () {
     if (related.length) {
       html += '<div class="cs-section"><h2>دوره‌های مرتبط</h2><div class="related-scroll">';
       related.forEach(function (r) {
-        html += '<a href="course-single.html?id=' + r.id + '" class="related-card">';
+        html += '<a href="/course?id=' + r.id + '" class="related-card">';
         html += '  <div class="r-icon">' + (r.icon || '📚') + '</div>';
         html += '  <div class="r-title">' + r.title + '</div>';
         html += '  <div class="r-price">' + (r.price > 0 ? r.price.toLocaleString('fa-IR') + ' ت' : 'رایگان') + '</div>';
@@ -248,7 +248,7 @@ $(document).ready(function () {
 
     $('#csAddCart').on('click', function () {
       if (typeof Auth === 'undefined' || !Auth.isLoggedIn()) {
-        window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.href = 'login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
         return;
       }
       if (typeof Cart !== 'undefined' && Cart.addItem(c.id)) {

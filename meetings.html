@@ -12,8 +12,8 @@
 <body>
 
 <nav class="nav" id="mainNav"><div class="container">
-<a href="index.html" class="nav-logo">آ<span>را</span></a>
-<a href="index.html" style="font-size:.75rem;color:var(--text-muted)">بازگشت</a>
+<a href="/" class="nav-logo">آ<span>را</span></a>
+<a href="/" style="font-size:.75rem;color:var(--text-muted)">بازگشت</a>
 </div></nav>
 
 <div class="tool-page">
@@ -71,7 +71,7 @@ $(document).ready(function(){
     var title = $('#newMeetingTitle').val().trim() || 'جلسه جدید';
     var host = $('#newMeetingHost').val().trim() || 'میزبان';
     var meeting = Meeting.create({ title: title, host: host });
-    window.location.href = 'meeting-lobby.html?id=' + meeting.id + '&name=' + encodeURIComponent(host);
+    window.location.href = 'meeting-lobby?id=' + meeting.id + '&name=' + encodeURIComponent(host);
   });
 
   $('#joinMeeting').on('click', function(){
@@ -85,7 +85,7 @@ $(document).ready(function(){
       alert('جلسه‌ای با این کد یافت نشد.');
       return;
     }
-    window.location.href = 'meeting-lobby.html?id=' + meeting.id + '&name=' + encodeURIComponent(name);
+    window.location.href = 'meeting-lobby?id=' + meeting.id + '&name=' + encodeURIComponent(name);
   });
 
   function renderMeetings(){
@@ -114,7 +114,7 @@ $(document).ready(function(){
       html += '<span class="status-badge ' + statusClass + '">' + statusText + '</span>';
       html += '</div>';
       html += '<div style="display:flex;gap:.5rem;margin-top:1rem">';
-      html += '<a href="meeting-lobby.html?id=' + m.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">ورود</a>';
+      html += '<a href="/meeting-lobby?id=' + m.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">ورود</a>';
       html += '<button onclick="copyCode(\'' + m.code + '\')" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">کپی کد</button>';
       html += '<button onclick="deleteMeeting(\'' + m.id + '\')" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem;color:#e74c3c;border-color:#e74c3c">حذف</button>';
       html += '</div></div>';

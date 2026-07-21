@@ -95,17 +95,17 @@
 
 <!-- ═══ ناوبری ═══ -->
 <nav class="nav" id="mainNav"><div class="container">
-<a href="index.html" class="nav-logo">آئو<span>را</span></a>
+<a href="/" class="nav-logo">آئو<span>را</span></a>
 <ul class="nav-links">
-  <li><a href="index.html" class="active">خانه</a></li>
-  <li><a href="courses.html">بازارچه دوره‌ها</a></li>
-  <li><a href="forum.html">تالار گفتگو</a></li>
-  <li><a href="resources.html">منابع</a></li>
-  <li><a href="research.html">پژوهش</a></li>
-  <li><a href="about.html">درباره ما</a></li>
+  <li><a href="/" class="active">خانه</a></li>
+  <li><a href="/courses">بازارچه دوره‌ها</a></li>
+  <li><a href="/forum">تالار گفتگو</a></li>
+  <li><a href="/resources">منابع</a></li>
+  <li><a href="/research">پژوهش</a></li>
+  <li><a href="/about">درباره ما</a></li>
 </ul>
 <div class="nav-actions">
-  <a href="cart.html" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+  <a href="/cart" class="nav-cart">🛒 <span id="cartCount">0</span></a>
   <div id="authArea"></div>
 </div>
 <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
@@ -125,10 +125,10 @@
     <h1>یادگیری علوم زیستی<br>با <span>آئورا</span></h1>
     <p>بهترین دوره‌های آموزشی، اساتید برتر و جامعه‌ی پویای پژوهشی — همه در یک پلتفرم</p>
     <div class="hero-btns">
-      <a href="register.html" class="btn-primary" style="padding:.85rem 2.5rem;font-size:.95rem">
+      <a href="/register" class="btn-primary" style="padding:.85rem 2.5rem;font-size:.95rem">
         ثبت‌نام رایگان <span class="arrow">&larr;</span>
       </a>
-      <a href="courses.html" class="btn-ghost" style="padding:.85rem 2rem;font-size:.9rem">
+      <a href="/courses" class="btn-ghost" style="padding:.85rem 2rem;font-size:.9rem">
         مشاهده دوره‌ها
       </a>
     </div>
@@ -205,7 +205,7 @@
     <!-- با JS پر میشه -->
   </div>
   <div style="text-align:center;margin-top:2.5rem">
-    <a href="courses.html" class="btn-ghost" style="padding:.7rem 2rem">مشاهده همه دوره‌ها</a>
+    <a href="/courses" class="btn-ghost" style="padding:.7rem 2rem">مشاهده همه دوره‌ها</a>
   </div>
 </div>
 </section>
@@ -277,10 +277,10 @@
   <h2>آماده شروع هستید؟</h2>
   <p>همین الان ثبت‌نام کنید و اولین قدم را بردارید</p>
   <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-    <a href="register.html" class="btn-primary" style="padding:.85rem 2.5rem;font-size:.95rem">
+    <a href="/register" class="btn-primary" style="padding:.85rem 2.5rem;font-size:.95rem">
       ثبت‌نام رایگان <span class="arrow">&larr;</span>
     </a>
-    <a href="courses.html" class="btn-ghost" style="padding:.85rem 2rem;font-size:.9rem">
+    <a href="/courses" class="btn-ghost" style="padding:.85rem 2rem;font-size:.9rem">
       مشاهده دوره‌ها
     </a>
   </div>
@@ -298,19 +298,19 @@
   <div>
     <h4 class="footer-title">لینک‌ها</h4>
     <ul class="footer-links">
-      <li><a href="index.html">خانه</a></li>
-      <li><a href="courses.html">بازارچه دوره‌ها</a></li>
-      <li><a href="forum.html">تالار گفتگو</a></li>
-      <li><a href="about.html">درباره ما</a></li>
+      <li><a href="/">خانه</a></li>
+      <li><a href="/courses">بازارچه دوره‌ها</a></li>
+      <li><a href="/forum">تالار گفتگو</a></li>
+      <li><a href="/about">درباره ما</a></li>
     </ul>
   </div>
   <div>
     <h4 class="footer-title">دوره‌ها</h4>
     <ul class="footer-links">
-      <li><a href="courses.html">زیست‌شناسی</a></li>
-      <li><a href="courses.html">ژنتیک</a></li>
-      <li><a href="courses.html">بیوشیمی</a></li>
-      <li><a href="courses.html">میکروبیولوژی</a></li>
+      <li><a href="/courses">زیست‌شناسی</a></li>
+      <li><a href="/courses">ژنتیک</a></li>
+      <li><a href="/courses">بیوشیمی</a></li>
+      <li><a href="/courses">میکروبیولوژی</a></li>
     </ul>
   </div>
   <div>
@@ -368,7 +368,7 @@ $(document).ready(function () {
       : '<span class="course-price">' + formatPrice(c.price) + '</span>';
 
     $grid.append(
-      '<a href="course-single.html?id=' + c.id + '" class="course-card">' +
+      '<a href="/course?id=' + c.id + '" class="course-card">' +
         '<div class="course-thumb"><div class="thumb-bg" style="background:' + color + '"></div><span class="thumb-icon">' + icon + '</span></div>' +
         '<div class="course-info">' +
           '<h3>' + c.title + '</h3>' +
