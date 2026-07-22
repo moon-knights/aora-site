@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ساخت دوره جدید — آئورا</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<style>
+/* ═══ ویزارد ═══ */
+.wizard-page{min-height:100vh;padding-top:100px;padding-bottom:3rem}
+.wizard-header{text-align:center;margin-bottom:2.5rem}
+.wizard-header h1{font-size:1.6rem;font-weight:800;color:var(--text-primary);margin-bottom:.5rem}
+.wizard-header p{font-size:.85rem;color:var(--text-muted)}
+
+/* مراحل */
+.steps-bar{display:flex;justify-content:center;gap:0;margin-bottom:2.5rem;position:relative}
+.step-item{display:flex;align-items:center;gap:.5rem;padding:.6rem 1.2rem;position:relative;cursor:pointer;transition:all var(--ease)}
+.step-item .step-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;border:2px solid var(--border);color:var(--text-muted);transition:all var(--ease);flex-shrink:0}
+.step-item .step-label{font-size:.78rem;color:var(--text-muted);font-weight:500;white-space:nowrap}
+.step-item.active .step-num{background:var(--accent);border-color:var(--accent);color:#000}
+.step-item.active .step-label{color:var(--accent);font-weight:700}
+.step-item.done .step-num{background:#2ecc71;border-color:#2ecc71;color:#fff}
+.step-item.done .step-label{color:#2ecc71}
+.step-line{width:40px;height:2px;background:var(--border);align-self:center;flex-shrink:0}
+.step-line.done{background:#2ecc71}
+
+/* فرم‌ها */
+.wizard-body{max-width:800px;margin:0 auto}
+.wizard-step{display:none}
+.wizard-step.active{display:block}
+.form-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem}
+.form-section h3{font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.form-row.full{grid-template-columns:1fr}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:.78rem;font-weight:600;color:var(--text-muted);margin-bottom:.4rem}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:.7rem 1rem;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-primary);font-size:.85rem;font-family:inherit;transition:all var(--ease)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,197,71,.1)}
+.form-group textarea{resize:vertical;min-height:100px}
+.form-group .hint{font-size:.7rem;color:var(--text-muted);margin-top:.3rem}
+
+/* آپلود تصویر */
+.upload-area{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:2rem;text-align:center;cursor:pointer;transition:all var(--ease);position:relative;overflow:hidden}
+.upload-area:hover{border-color:var(--accent)}
+.upload-area.has-image{padding:0;border-style:solid}
+.upload-area.has-image img{width:100%;height:200px;object-fit:cover;border-radius:var(--radius-lg)}
+.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-area .upload-icon{font-size:2rem;margin-bottom:.5rem}
+.upload-area .upload-text{font-size:.8rem;color:var(--text-muted)}
+
+/* سرفصل‌ها */
+.chapters-list{display:flex;flex-direction:column;gap:1rem}
+.chapter-item{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden}
+.chapter-header{display:flex;align-items:center;gap:.5rem;padding:.8rem 1rem;cursor:pointer;transition:all var(--ease)}
+.chapter-header:hover{background:var(--bg-card)}
+.chapter-header .chapter-drag{color:var(--text-muted);cursor:grab;font-size:1rem}
+.chapter-header .chapter-title{flex:1;font-size:.85rem;font-weight:600;color:var(--text-primary)}
+.chapter-header .chapter-count{font-size:.7rem;color:var(--text-muted);background:var(--bg-card);padding:.2rem .6rem;border-radius:20px}
+.chapter-header .chapter-actions{display:flex;gap:.3rem}
+.chapter-header .chapter-actions button{background:none;border:none;color:var(--text-muted);cursor:pointer;padding:.3rem;border-radius:var(--radius-sm);transition:all var(--ease);font-size:.85rem}
+.chapter-header .chapter-actions button:hover{color:var(--accent);background:var(--accent-dim)}
+.chapter-body{padding:0 1rem 1rem;display:none}
+.chapter-body.open{display:block}
+.lessons-list{display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem}
+.lesson-item{display:flex;align-items:center;gap:.5rem;padding:.6rem .8rem;background:var(--bg-card);border-radius:var(--radius-sm);border:1px solid var(--border)}
+.lesson-item .lesson-num{font-size:.7rem;color:var(--accent);font-weight:700;width:20px;text-align:center}
+.lesson-item .lesson-title{flex:1;font-size:.8rem;color:var(--text-primary)}
+.lesson-item .lesson-duration{font-size:.7rem;color:var(--text-muted)}
+.lesson-item .lesson-video{font-size:.7rem;color:#2ecc71}
+.lesson-item .lesson-actions{display:flex;gap:.2rem}
+.lesson-item .lesson-actions button{background:none;border:none;color:var(--text-muted);cursor:pointer;padding:.2rem;border-radius:var(--radius-sm);font-size:.75rem}
+.lesson-item .lesson-actions button:hover{color:var(--accent)}
+.add-lesson-btn{display:flex;align-items:center;gap:.3rem;padding:.5rem .8rem;background:none;border:1px dashed var(--border);border-radius:var(--radius-sm);color:var(--text-muted);font-size:.78rem;cursor:pointer;width:100%;transition:all var(--ease);margin-top:.5rem}
+.add-lesson-btn:hover{border-color:var(--accent);color:var(--accent)}
+.add-chapter-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.8rem;background:none;border:2px dashed var(--border);border-radius:var(--radius-md);color:var(--text-muted);font-size:.85rem;cursor:pointer;width:100%;transition:all var(--ease);margin-top:1rem}
+.add-chapter-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* قیمت */
+.price-toggle{display:flex;gap:0;background:var(--bg-surface);border-radius:var(--radius-md);border:1px solid var(--border);overflow:hidden;margin-bottom:1rem}
+.price-toggle button{flex:1;padding:.7rem;border:none;background:none;font-size:.85rem;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all var(--ease);font-family:inherit}
+.price-toggle button.active{background:var(--accent);color:#000}
+.price-input-wrap{position:relative;margin-top:.5rem}
+.price-input-wrap input{padding-left:3rem}
+.price-input-wrap .currency{position:absolute;left:1rem;top:50%;transform:translateY(-50%);font-size:.78rem;color:var(--text-muted)}
+
+/* پیش‌نمایش */
+.preview-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;max-width:400px;margin:0 auto}
+.preview-thumb{width:100%;height:200px;background:linear-gradient(135deg,#1a237e,#283593);display:flex;align-items:center;justify-content:center;font-size:4rem}
+.preview-info{padding:1.5rem}
+.preview-info h3{font-size:1.1rem;font-weight:700;color:var(--text-primary);margin-bottom:.5rem}
+.preview-info p{font-size:.8rem;color:var(--text-muted);line-height:1.8;margin-bottom:1rem}
+.preview-meta{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+.preview-meta .meta-item{font-size:.75rem;color:var(--text-muted);display:flex;align-items:center;gap:.3rem}
+.preview-meta .meta-item span{color:var(--accent);font-weight:600}
+.preview-price{font-size:1.2rem;font-weight:800;color:var(--accent);margin-bottom:1rem}
+.preview-price.free{color:#2ecc71}
+
+/* نوار پایین */
+.wizard-footer{display:flex;justify-content:space-between;align-items:center;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+.wizard-footer .btn-back{padding:.7rem 1.5rem;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-muted);font-size:.85rem;cursor:pointer;font-family:inherit;transition:all var(--ease)}
+.wizard-footer .btn-back:hover{border-color:var(--accent);color:var(--accent)}
+.wizard-footer .btn-next{padding:.7rem 2rem;background:var(--accent);border:none;border-radius:var(--radius-md);color:#000;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all var(--ease)}
+.wizard-footer .btn-next:hover{opacity:.9}
+.wizard-footer .btn-publish{padding:.7rem 2rem;background:#2ecc71;border:none;border-radius:var(--radius-md);color:#fff;font-size:.85rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all var(--ease)}
+.wizard-footer .btn-publish:hover{opacity:.9}
+.wizard-footer .btn-draft{padding:.7rem 1.5rem;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-muted);font-size:.85rem;cursor:pointer;font-family:inherit;transition:all var(--ease)}
+.wizard-footer .btn-draft:hover{border-color:var(--accent);color:var(--accent)}
+
+/* مودال ویدیو */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;max-width:500px;width:90%;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:1.5rem}
+.modal .form-group{margin-bottom:1rem}
+.modal-footer{display:flex;gap:.5rem;justify-content:flex-end;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border)}
+.modal-footer .btn-cancel{padding:.6rem 1.2rem;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);color:var(--text-muted);font-size:.8rem;cursor:pointer;font-family:inherit}
+.modal-footer .btn-save{padding:.6rem 1.5rem;background:var(--accent);border:none;border-radius:var(--radius-md);color:#000;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit}
+
+/* ریسپانسیو */
+@media(max-width:768px){
+  .form-row{grid-template-columns:1fr}
+  .steps-bar{flex-wrap:wrap;gap:.5rem}
+  .step-line{display:none}
+  .step-label{display:none}
+  .wizard-body{padding:0 .5rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav"><div class="container">
+<a href="/" class="nav-logo">آئو<span>را</span></a>
+<ul class="nav-links">
+  <li><a href="/">خانه</a></li>
+  <li><a href="/courses">خدمات و دوره‌ها</a></li>
+  <li><a href="/dashboard-professor" class="active">پنل استاد</a></li>
+</ul>
+<div class="nav-actions"><div id="authArea"></div></div>
+<button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+</div></nav>
+
+<div class="wizard-page">
+<div class="container">
+
+  <div class="wizard-header">
+    <h1>🎓 ساخت دوره جدید</h1>
+    <p>اطلاعات دوره‌ات رو مرحله به مرحله وارد کن</p>
+  </div>
+
+  <!-- نوار مراحل -->
+  <div class="steps-bar">
+    <div class="step-item active" data-step="1">
+      <div class="step-num">۱</div>
+      <div class="step-label">اطلاعات پایه</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-item" data-step="2">
+      <div class="step-num">۲</div>
+      <div class="step-label">سرفصل‌ها و ویدیوها</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-item" data-step="3">
+      <div class="step-num">۳</div>
+      <div class="step-label">قیمت‌گذاری</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step-item" data-step="4">
+      <div class="step-num">۴</div>
+      <div class="step-label">پیش‌نمایش و انتشار</div>
+    </div>
+  </div>
+
+  <div class="wizard-body">
+
+    <!-- ═══ مرحله ۱: اطلاعات پایه ═══ -->
+    <div class="wizard-step active" id="step1">
+      <div class="form-section">
+        <h3>📋 اطلاعات دوره</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>عنوان دوره *</label>
+            <input type="text" id="courseTitle" placeholder="مثال: اصول تولید محتوای دیجیتال">
+          </div>
+          <div class="form-group">
+            <label>دسته‌بندی *</label>
+            <select id="courseCategory">
+              <option value="">انتخاب کنید...</option>
+              <option>تولید محتوا</option>
+              <option>فیلم و مستند</option>
+              <option>طراحی</option>
+              <option>علم داده</option>
+              <option>برنامه‌نویسی</option>
+              <option>صداگذاری</option>
+              <option>تدوین</option>
+              <option>عکاسی</option>
+              <option>مدیریت پروژه</option>
+              <option>بازاریابی</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>توضیحات دوره *</label>
+          <textarea id="courseDesc" placeholder="توضیح مختصری از چیزی که در این دوره یاد می‌گیری..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>سطح دوره</label>
+            <select id="courseLevel">
+              <option>مبتدی</option>
+              <option selected>متوسط</option>
+              <option>پیشرفته</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>مدت زمان</label>
+            <input type="text" id="courseDuration" placeholder="مثال: ۸ هفته">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>برچسب‌ها (با کاما جدا کنید)</label>
+          <input type="text" id="courseTags" placeholder="مثال: تولید محتوا, تدوین, ویدیو">
+          <div class="hint">این برچسب‌ها به جستجوی دوره کمک می‌کنن</div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>🖼 تصویر دوره</h3>
+        <div class="upload-area" id="thumbUpload">
+          <div class="upload-icon">📤</div>
+          <div class="upload-text">تصویر دوره رو اینجا بنداز یا کلیک کن</div>
+          <div class="upload-text" style="font-size:.7rem;margin-top:.3rem">PNG, JPG — حداکثر ۲ مگابایت</div>
+          <input type="file" accept="image/*" id="thumbFile">
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ مرحله ۲: سرفصل‌ها و ویدیوها ═══ -->
+    <div class="wizard-step" id="step2">
+      <div class="form-section">
+        <h3>📚 سرفصل‌ها و درس‌ها</h3>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:1.5rem">سرفصل‌ها رو بساز و زیر هر سرفصل، درس‌ها رو با لینک ویدیو اضافه کن</p>
+        <div class="chapters-list" id="chaptersList">
+          <!-- با JS پر میشه -->
+        </div>
+        <button class="add-chapter-btn" id="addChapterBtn">➕ افزودن سرفصل جدید</button>
+      </div>
+    </div>
+
+    <!-- ═══ مرحله ۳: قیمت‌گذاری ═══ -->
+    <div class="wizard-step" id="step3">
+      <div class="form-section">
+        <h3>💰 قیمت‌گذاری</h3>
+        <div class="price-toggle">
+          <button class="active" data-type="free" id="priceFreeBtn">رایگان</button>
+          <button data-type="paid" id="pricePaidBtn">پولی</button>
+        </div>
+        <div id="priceSection" style="display:none">
+          <div class="form-group">
+            <label>قیمت دوره (تومان)</label>
+            <div class="price-input-wrap">
+              <input type="number" id="coursePrice" placeholder="0" min="0">
+              <span class="currency">تومان</span>
+            </div>
+            <div class="hint">قیمت رو بدون جداکننده وارد کن (مثال: ۴۵۰۰۰۰)</div>
+          </div>
+          <div class="form-group">
+            <label>قیمت قبل از تخفیف (اختیاری)</label>
+            <div class="price-input-wrap">
+              <input type="number" id="courseOriginalPrice" placeholder="0" min="0">
+              <span class="currency">تومان</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>⚙️ تنظیمات تکمیلی</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>گواهی پایان دوره</label>
+            <select id="courseCert">
+              <option value="yes">بله، گواهی صادر می‌شه</option>
+              <option value="no">خیر</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>دسترسی ویدیوها</label>
+            <select id="courseAccess">
+              <option value="always">همیشه در دسترس</option>
+              <option value="limited">محدود به مدت دوره</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ مرحله ۴: پیش‌نمایش ═══ -->
+    <div class="wizard-step" id="step4">
+      <div class="form-section">
+        <h3>👁 پیش‌نمایش دوره</h3>
+        <p style="font-size:.78rem;color:var(--text-muted);margin-bottom:1.5rem">این شکلیه که دوره‌ات توی بازارچه نمایش داده می‌شه</p>
+        <div class="preview-card">
+          <div class="preview-thumb" id="previewThumb">🎬</div>
+          <div class="preview-info">
+            <h3 id="previewTitle">عنوان دوره</h3>
+            <p id="previewDesc">توضیحات دوره</p>
+            <div class="preview-meta">
+              <div class="meta-item">📚 <span id="previewChapters">۰</span> سرفصل</div>
+              <div class="meta-item">🎬 <span id="previewLessons">۰</span> درس</div>
+              <div class="meta-item">📊 <span id="previewLevel">متوسط</span></div>
+            </div>
+            <div class="preview-price" id="previewPrice">رایگان</div>
+            <div style="font-size:.75rem;color:var(--text-muted)">ارائه‌دهنده: <span id="previewInstructor">شما</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section" id="validationErrors" style="display:none">
+        <h3 style="color:#e74c3c">⚠️ خطاهای اعتبارسنجی</h3>
+        <ul id="errorsList" style="font-size:.8rem;color:var(--text-muted);padding-right:1.2rem;line-height:2"></ul>
+      </div>
+    </div>
+
+    <!-- نوار پایین -->
+    <div class="wizard-footer">
+      <button class="btn-back" id="btnBack" style="visibility:hidden">← مرحله قبل</button>
+      <div style="display:flex;gap:.5rem">
+        <button class="btn-draft" id="btnDraft" style="display:none">💾 ذخیره پیش‌نویس</button>
+        <button class="btn-next" id="btnNext">مرحله بعد →</button>
+        <button class="btn-publish" id="btnPublish" style="display:none">🚀 انتشار دوره</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- مودال افزودن درس -->
+<div class="modal-overlay" id="lessonModal">
+<div class="modal">
+  <h3 id="lessonModalTitle">➕ افزودن درس جدید</h3>
+  <div class="form-group">
+    <label>عنوان درس *</label>
+    <input type="text" id="lessonTitle" placeholder="مثال: مقدمه‌ای بر تولید محتوا">
+  </div>
+  <div class="form-group">
+    <label>لینک ویدیو *</label>
+    <input type="text" id="lessonVideo" placeholder="https://example.com/video.mp4">
+    <div class="hint">لینک مستقیم فایل ویدیو (MP4) یا لینک آپارات/یوتیوب</div>
+  </div>
+  <div class="form-group">
+    <label>مدت زمان</label>
+    <input type="text" id="lessonDuration" placeholder="مثال: ۱۵:۳۰">
+  </div>
+  <div class="form-group">
+    <label>توضیحات درس (اختیاری)</label>
+    <textarea id="lessonDesc" placeholder="توضیح مختصر درباره این درس..." rows="2"></textarea>
+  </div>
+  <div class="modal-footer">
+    <button class="btn-cancel" id="cancelLesson">انصراف</button>
+    <button class="btn-save" id="saveLesson">ذخیره درس</button>
+  </div>
+</div>
+</div>
+
+<footer class="footer"><div class="container"><div class="footer-bottom"><span>© ۱۴۰۵ آئورا</span></div></div></footer>
+
+<script src="js/ajax.js"></script>
+<script src="js/app.js"></script>
+<script>
+$(document).ready(function () {
+  /* ═══ وضعیت ویزارد ═══ */
+  var currentStep = 1;
+  var totalSteps = 4;
+  var courseData = {
+    id: 'course_' + Date.now(),
+    title: '',
+    description: '',
+    category: '',
+    level: 'متوسط',
+    duration: '',
+    tags: [],
+    thumbnail: '',
+    chapters: [],
+    price: 0,
+    originalPrice: 0,
+    certificate: true,
+    accessType: 'always',
+    status: 'draft',
+    instructor: '',
+    instructorId: '',
+    students: 0,
+    rating: 0,
+    createdAt: new Date().toISOString()
+  };
+
+  var editingChapterIdx = -1;
+  var editingLessonIdx = -1;
+
+  /* ═══ بررسی لاگین ═══ */
+  var user = JSON.parse(localStorage.getItem('aoura_user') || 'null');
+  if (!user) {
+    alert('برای ساخت دوره اول باید وارد بشی');
+    window.location.href = '/login';
+    return;
+  }
+  courseData.instructor = user.name || user.email;
+  courseData.instructorId = user.id;
+
+  /* ═══ ناوبری مراحل ═══ */
+  function goToStep(step) {
+    if (step < 1 || step > totalSteps) return;
+    // اعتبارسنجی مرحله فعلی قبل رفتن به مرحله بعد
+    if (step > currentStep && !validateStep(currentStep)) return;
+
+    currentStep = step;
+    $('.wizard-step').removeClass('active');
+    $('#step' + step).addClass('active');
+
+    $('.step-item').removeClass('active done');
+    $('.step-line').removeClass('done');
+    for (var i = 1; i <= totalSteps; i++) {
+      if (i < currentStep) {
+        $('.step-item[data-step=' + i + ']').addClass('done');
+      } else if (i === currentStep) {
+        $('.step-item[data-step=' + i + ']').addClass('active');
+      }
+      if (i < currentStep) {
+        $('.step-item[data-step=' + i + ']').next('.step-line').addClass('done');
+      }
+    }
+
+    // دکمه‌ها
+    $('#btnBack').css('visibility', currentStep === 1 ? 'hidden' : 'visible');
+    $('#btnNext').toggle(currentStep < totalSteps);
+    $('#btnDraft').toggle(currentStep >= 2);
+    $('#btnPublish').toggle(currentStep === totalSteps);
+
+    // پیش‌نمایش در مرحله آخر
+    if (currentStep === totalSteps) {
+      updatePreview();
+    }
+
+    // اسکرول به بالا
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function validateStep(step) {
+    if (step === 1) {
+      var title = $('#courseTitle').val().trim();
+      var cat = $('#courseCategory').val();
+      var desc = $('#courseDesc').val().trim();
+      if (!title) { alert('عنوان دوره رو وارد کن'); $('#courseTitle').focus(); return false; }
+      if (!cat) { alert('دسته‌بندی رو انتخاب کن'); $('#courseCategory').focus(); return false; }
+      if (!desc) { alert('توضیحات دوره رو وارد کن'); $('#courseDesc').focus(); return false; }
+      courseData.title = title;
+      courseData.category = cat;
+      courseData.description = desc;
+      courseData.level = $('#courseLevel').val();
+      courseData.duration = $('#courseDuration').val();
+      courseData.tags = $('#courseTags').val().split(',').map(function(t){return t.trim()}).filter(Boolean);
+    }
+    if (step === 2) {
+      if (courseData.chapters.length === 0) { alert('حداقل یه سرفصل اضافه کن'); return false; }
+      var totalLessons = 0;
+      courseData.chapters.forEach(function(ch) { totalLessons += ch.lessons.length; });
+      if (totalLessons === 0) { alert('حداقل یه درس اضافه کن'); return false; }
+    }
+    if (step === 3) {
+      var isPaid = $('#pricePaidBtn').hasClass('active');
+      if (isPaid) {
+        courseData.price = parseInt($('#coursePrice').val()) || 0;
+        courseData.originalPrice = parseInt($('#courseOriginalPrice').val()) || 0;
+        if (courseData.price <= 0) { alert('قیمت دوره رو وارد کن'); return false; }
+      } else {
+        courseData.price = 0;
+        courseData.originalPrice = 0;
+      }
+      courseData.certificate = $('#courseCert').val() === 'yes';
+      courseData.accessType = $('#courseAccess').val();
+    }
+    return true;
+  }
+
+  $('#btnNext').on('click', function() { goToStep(currentStep + 1); });
+  $('#btnBack').on('click', function() { goToStep(currentStep - 1); });
+  $('.step-item').on('click', function() {
+    var s = parseInt($(this).data('step'));
+    if (s < currentStep) goToStep(s);
+  });
+
+  /* ═══ آپلود تصویر ═══ */
+  $('#thumbFile').on('change', function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { alert('حجم تصویر باید کمتر از ۲ مگابایت باشه'); return; }
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      courseData.thumbnail = ev.target.result;
+      $('#thumbUpload').addClass('has-image').html('<img src="' + ev.target.result + '" alt="تصویر دوره"><input type="file" accept="image/*" id="thumbFile">');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* ═══ سرفصل‌ها ═══ */
+  function renderChapters() {
+    var $list = $('#chaptersList');
+    $list.empty();
+    if (courseData.chapters.length === 0) {
+      $list.html('<div style="text-align:center;padding:2rem;color:var(--text-muted);font-size:.85rem">هنوز سرفصلی اضافه نشده. روی دکمه زیر کلیک کن 👇</div>');
+      return;
+    }
+    courseData.chapters.forEach(function(ch, ci) {
+      var lessonsHtml = '';
+      ch.lessons.forEach(function(les, li) {
+        lessonsHtml += '<div class="lesson-item">' +
+          '<div class="lesson-num">' + (li + 1) + '</div>' +
+          '<div class="lesson-title">' + les.title + '</div>' +
+          (les.duration ? '<div class="lesson-duration">' + les.duration + '</div>' : '') +
+          (les.video ? '<div class="lesson-video">🎬</div>' : '') +
+          '<div class="lesson-actions">' +
+            '<button onclick="editLesson(' + ci + ',' + li + ')" title="ویرایش">✏️</button>' +
+            '<button onclick="deleteLesson(' + ci + ',' + li + ')" title="حذف">🗑</button>' +
+          '</div>' +
+        '</div>';
+      });
+
+      $list.append(
+        '<div class="chapter-item">' +
+          '<div class="chapter-header" onclick="toggleChapter(' + ci + ')">' +
+            '<span class="chapter-drag">☰</span>' +
+            '<span class="chapter-title">' + ch.title + '</span>' +
+            '<span class="chapter-count">' + ch.lessons.length + ' درس</span>' +
+            '<div class="chapter-actions">' +
+              '<button onclick="event.stopPropagation();editChapter(' + ci + ')" title="ویرایش">✏️</button>' +
+              '<button onclick="event.stopPropagation();deleteChapter(' + ci + ')" title="حذف">🗑</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="chapter-body' + (ci === editingChapterIdx ? ' open' : '') + '" id="chBody' + ci + '">' +
+            '<div class="lessons-list">' + lessonsHtml + '</div>' +
+            '<button class="add-lesson-btn" onclick="openLessonModal(' + ci + ')">➕ افزودن درس</button>' +
+          '</div>' +
+        '</div>'
+      );
+    });
+  }
+
+  window.toggleChapter = function(ci) { $('#chBody' + ci).toggleClass('open'); };
+  window.deleteChapter = function(ci) {
+    if (confirm('سرفصل «' + courseData.chapters[ci].title + '» حذف بشه؟')) {
+      courseData.chapters.splice(ci, 1);
+      renderChapters();
+    }
+  };
+  window.editChapter = function(ci) {
+    var newTitle = prompt('عنوان جدید سرفصل:', courseData.chapters[ci].title);
+    if (newTitle && newTitle.trim()) {
+      courseData.chapters[ci].title = newTitle.trim();
+      renderChapters();
+    }
+  };
+  window.deleteLesson = function(ci, li) {
+    if (confirm('درس «' + courseData.chapters[ci].lessons[li].title + '» حذف بشه؟')) {
+      courseData.chapters[ci].lessons.splice(li, 1);
+      renderChapters();
+    }
+  };
+  window.editLesson = function(ci, li) {
+    editingChapterIdx = ci;
+    editingLessonIdx = li;
+    var les = courseData.chapters[ci].lessons[li];
+    $('#lessonModalTitle').text('✏️ ویرایش درس');
+    $('#lessonTitle').val(les.title);
+    $('#lessonVideo').val(les.video || '');
+    $('#lessonDuration').val(les.duration || '');
+    $('#lessonDesc').val(les.description || '');
+    $('#lessonModal').addClass('show');
+  };
+
+  $('#addChapterBtn').on('click', function() {
+    var title = prompt('عنوان سرفصل جدید:');
+    if (title && title.trim()) {
+      courseData.chapters.push({ title: title.trim(), lessons: [] });
+      editingChapterIdx = courseData.chapters.length - 1;
+      renderChapters();
+    }
+  });
+
+  /* ═══ مودال درس ═══ */
+  window.openLessonModal = function(ci) {
+    editingChapterIdx = ci;
+    editingLessonIdx = -1;
+    $('#lessonModalTitle').text('➕ افزودن درس جدید');
+    $('#lessonTitle').val('');
+    $('#lessonVideo').val('');
+    $('#lessonDuration').val('');
+    $('#lessonDesc').val('');
+    $('#lessonModal').addClass('show');
+  };
+
+  $('#cancelLesson').on('click', function() { $('#lessonModal').removeClass('show'); });
+  $('#lessonModal').on('click', function(e) { if (e.target === this) $(this).removeClass('show'); });
+
+  $('#saveLesson').on('click', function() {
+    var title = $('#lessonTitle').val().trim();
+    var video = $('#lessonVideo').val().trim();
+    if (!title) { alert('عنوان درس رو وارد کن'); return; }
+    var lesson = { title: title, video: video, duration: $('#lessonDuration').val().trim(), description: $('#lessonDesc').val().trim() };
+    if (editingLessonIdx >= 0) {
+      courseData.chapters[editingChapterIdx].lessons[editingLessonIdx] = lesson;
+    } else {
+      courseData.chapters[editingChapterIdx].lessons.push(lesson);
+    }
+    $('#lessonModal').removeClass('show');
+    renderChapters();
+  });
+
+  /* ═══ قیمت ═══ */
+  $('#priceFreeBtn').on('click', function() {
+    $(this).addClass('active');
+    $('#pricePaidBtn').removeClass('active');
+    $('#priceSection').slideUp();
+  });
+  $('#pricePaidBtn').on('click', function() {
+    $(this).addClass('active');
+    $('#priceFreeBtn').removeClass('active');
+    $('#priceSection').slideDown();
+  });
+
+  /* ═══ پیش‌نمایش ═══ */
+  function updatePreview() {
+    // جمع‌آوری آخرین داده‌ها
+    courseData.title = $('#courseTitle').val() || courseData.title;
+    courseData.description = $('#courseDesc').val() || courseData.description;
+    courseData.level = $('#courseLevel').val();
+    courseData.duration = $('#courseDuration').val();
+
+    $('#previewTitle').text(courseData.title || 'عنوان دوره');
+    $('#previewDesc').text(courseData.description || 'توضیحات دوره');
+    $('#previewLevel').text(courseData.level);
+    $('#previewChapters').text(courseData.chapters.length);
+    var totalLessons = 0;
+    courseData.chapters.forEach(function(ch) { totalLessons += ch.lessons.length; });
+    $('#previewLessons').text(totalLessons);
+    $('#previewInstructor').text(courseData.instructor);
+
+    if (courseData.price > 0) {
+      $('#previewPrice').removeClass('free').text(formatPrice(courseData.price) + ' تومان');
+    } else {
+      $('#previewPrice').addClass('free').text('رایگان');
+    }
+
+    if (courseData.thumbnail) {
+      $('#previewThumb').html('<img src="' + courseData.thumbnail + '" style="width:100%;height:100%;object-fit:cover">');
+    }
+
+    // اعتبارسنجی
+    var errors = [];
+    if (!courseData.title) errors.push('عنوان دوره وارد نشده');
+    if (!courseData.description) errors.push('توضیحات دوره وارد نشده');
+    if (!courseData.category) errors.push('دسته‌بندی انتخاب نشده');
+    if (courseData.chapters.length === 0) errors.push('حداقل یه سرفصل لازمه');
+    if (totalLessons === 0) errors.push('حداقل یه درس لازمه');
+    courseData.chapters.forEach(function(ch, i) {
+      ch.lessons.forEach(function(les, j) {
+        if (!les.video) errors.push('درس «' + les.title + '» لینک ویدیو نداره');
+      });
+    });
+
+    if (errors.length > 0) {
+      $('#validationErrors').show();
+      $('#errorsList').html(errors.map(function(e) { return '<li>' + e + '</li>'; }).join(''));
+    } else {
+      $('#validationErrors').hide();
+    }
+  }
+
+  /* ═══ ذخیره و انتشار ═══ */
+  function saveCourse(status) {
+    courseData.status = status;
+    courseData.updatedAt = new Date().toISOString();
+
+    // اطمینان از وجود فیلدهای لازم برای نمایش در بازارچه
+    if (!courseData.icon) {
+      var iconMap = {'تولید محتوا':'🎬','فیلم و مستند':'🎥','طراحی':'🎨','علم داده':'📊','برنامه‌نویسی':'🐍','صداگذاری':'🎙','تدوین':'🎞','عکاسی':'📸','مدیریت پروژه':'📋','بازاریابی':'📈'};
+      courseData.icon = iconMap[courseData.category] || '📚';
+    }
+    if (typeof courseData.students === 'undefined') courseData.students = 0;
+    if (typeof courseData.rating === 'undefined') courseData.rating = 0;
+    if (typeof courseData.featured === 'undefined') courseData.featured = false;
+    if (!courseData.instructorId) courseData.instructorId = user.id;
+    if (!courseData.image) courseData.image = '';
+
+    var courses = JSON.parse(localStorage.getItem('aora_courses') || '[]');
+    var existIdx = courses.findIndex(function(c) { return c.id === courseData.id; });
+    if (existIdx >= 0) {
+      courses[existIdx] = courseData;
+    } else {
+      courses.push(courseData);
+    }
+    localStorage.setItem('aora_courses', JSON.stringify(courses));
+
+    if (status === 'published') {
+      alert('✅ دوره با موفقیت منتشر شد!\n\nحالا توی بازارچه دوره‌ها نمایش داده می‌شه.');
+      window.location.href = '/course?id=' + courseData.id;
+    } else {
+      alert('💾 پیش‌نویس ذخیره شد.\n\nمی‌تونی بعداً از پنل استاد ادامه بدی.');
+      window.location.href = '/dashboard-professor';
+    }
+  }
+
+  $('#btnDraft').on('click', function() { saveCourse('draft'); });
+  $('#btnPublish').on('click', function() {
+    // اعتبارسنجی نهایی
+    if (!validateStep(1) || !validateStep(2) || !validateStep(3)) {
+      alert('لطفاً اول خطاهای اعتبارسنجی رو رفع کن');
+      return;
+    }
+    saveCourse('published');
+  });
+
+  /* ═══ منوی موبایل ═══ */
+  $('#mobileMenuBtn').on('click', function() { $('.nav-links').toggleClass('open'); });
+
+  /* ═══ مقداردهی اولیه ═══ */
+  renderChapters();
+});
+</script>
+
+</body>
+</html>

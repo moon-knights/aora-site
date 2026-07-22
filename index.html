@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>آئورا — پلتفرم آموزش مدرن علوم زیستی</title>
+<title>آئورا — استودیو تولید محتوا، آموزش و پروژه</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -28,46 +28,50 @@
 .hero-stat .num{font-size:1.8rem;font-weight:800;color:var(--accent);font-family:var(--font-mono)}
 .hero-stat .label{font-size:.72rem;color:var(--text-muted);margin-top:.15rem}
 
-/* ═══ ویژگی‌ها ═══ */
-.features{padding:5rem 0;background:var(--bg-surface)}
-.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
-.feature-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;text-align:center;transition:all var(--ease)}
-.feature-card:hover{border-color:var(--accent-dim);transform:translateY(-4px)}
-.feature-icon{font-size:2.5rem;margin-bottom:1rem}
-.feature-card h3{font-size:.95rem;font-weight:700;color:var(--text-primary);margin-bottom:.5rem}
-.feature-card p{font-size:.78rem;color:var(--text-muted);line-height:1.8}
+/* ═══ خدمات ═══ */
+.services{padding:5rem 0;background:var(--bg-surface)}
+.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.service-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;text-align:center;transition:all var(--ease)}
+.service-card:hover{border-color:var(--accent-dim);transform:translateY(-4px)}
+.service-icon{font-size:2.5rem;margin-bottom:1rem}
+.service-card h3{font-size:.95rem;font-weight:700;color:var(--text-primary);margin-bottom:.5rem}
+.service-card p{font-size:.78rem;color:var(--text-muted);line-height:1.8}
 
-/* ═══ دوره‌های ویژه ═══ */
-.courses-section{padding:5rem 0}
-.course-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
-.course-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:all var(--ease)}
-.course-card:hover{border-color:var(--accent-dim);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.3)}
-.course-thumb{width:100%;height:180px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden}
-.course-thumb .thumb-bg{position:absolute;inset:0;opacity:.15}
-.course-thumb .thumb-icon{position:relative;z-index:1}
-.course-info{padding:1.25rem}
-.course-info h3{font-size:.92rem;font-weight:700;color:var(--text-primary);margin-bottom:.35rem}
-.course-info p{font-size:.75rem;color:var(--text-muted);line-height:1.7;margin-bottom:.75rem}
-.course-meta{display:flex;align-items:center;justify-content:space-between}
-.course-price{font-size:.95rem;font-weight:800;color:var(--accent)}
-.course-price.free{color:#2ecc71}
-.course-tag{font-size:.65rem;padding:.2rem .6rem;background:var(--accent-dim);color:var(--accent);border-radius:var(--radius-sm);font-weight:600}
+/* ═══ نمونه‌کارها ═══ */
+.portfolio{padding:5rem 0}
+.portfolio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.portfolio-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:all var(--ease)}
+.portfolio-card:hover{border-color:var(--accent-dim);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.3)}
+.portfolio-thumb{width:100%;height:180px;background:var(--bg-surface);display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden}
+.portfolio-thumb .thumb-bg{position:absolute;inset:0;opacity:.15}
+.portfolio-thumb .thumb-icon{position:relative;z-index:1}
+.portfolio-info{padding:1.25rem}
+.portfolio-info h3{font-size:.92rem;font-weight:700;color:var(--text-primary);margin-bottom:.35rem}
+.portfolio-info p{font-size:.75rem;color:var(--text-muted);line-height:1.7;margin-bottom:.75rem}
+.portfolio-meta{display:flex;align-items:center;justify-content:space-between}
+.portfolio-tag{font-size:.65rem;padding:.2rem .6rem;background:var(--accent-dim);color:var(--accent);border-radius:var(--radius-sm);font-weight:600}
 
-/* ═══ اساتید ═══ */
-.professors{padding:5rem 0;background:var(--bg-surface)}
-.prof-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
-.prof-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;text-align:center;transition:all var(--ease)}
-.prof-card:hover{border-color:var(--accent-dim);transform:translateY(-4px)}
-.prof-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700}
-.prof-card h4{font-size:.88rem;font-weight:600;color:var(--text-primary);margin-bottom:.15rem}
-.prof-card p{font-size:.72rem;color:var(--text-muted)}
-.prof-card .prof-specialty{font-size:.7rem;color:var(--accent);margin-top:.35rem}
+/* ═══ تیم ═══ */
+.team{padding:5rem 0;background:var(--bg-surface)}
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+.team-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;text-align:center;transition:all var(--ease)}
+.team-card:hover{border-color:var(--accent-dim);transform:translateY(-4px)}
+.team-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 1rem;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700}
+.team-card h4{font-size:.88rem;font-weight:600;color:var(--text-primary);margin-bottom:.15rem}
+.team-card p{font-size:.72rem;color:var(--text-muted)}
+.team-card .team-role{font-size:.7rem;color:var(--accent);margin-top:.35rem}
 
 /* ═══ آمار ═══ */
 .stats-section{padding:4rem 0;background:linear-gradient(135deg,rgba(232,197,71,.03),rgba(232,197,71,.01))}
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;text-align:center}
 .stats-grid .stat-num{font-size:2.5rem;font-weight:800;color:var(--accent);font-family:var(--font-mono)}
 .stats-grid .stat-label{font-size:.75rem;color:var(--text-muted);margin-top:.25rem}
+
+/* ═══ مشتریان ═══ */
+.clients{padding:5rem 0;background:var(--bg-surface)}
+.clients-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;align-items:center;justify-items:center}
+.client-logo{font-size:1.4rem;font-weight:700;color:var(--text-muted);opacity:.5;transition:all var(--ease)}
+.client-logo:hover{opacity:1;color:var(--accent)}
 
 /* ═══ CTA ═══ */
 .home-cta{text-align:center;padding:5rem 0;background:linear-gradient(135deg,rgba(232,197,71,.05),rgba(232,197,71,.02));border-top:1px solid var(--accent-dim);border-bottom:1px solid var(--accent-dim)}
@@ -76,8 +80,9 @@
 
 /* ═══ ریسپانسیو ═══ */
 @media(max-width:1024px){
-  .feature-grid,.course-grid{grid-template-columns:1fr 1fr}
-  .prof-grid{grid-template-columns:1fr 1fr}
+  .service-grid,.portfolio-grid{grid-template-columns:1fr 1fr}
+  .team-grid{grid-template-columns:1fr 1fr}
+  .clients-grid{grid-template-columns:1fr 1fr 1fr}
   .stats-grid{grid-template-columns:1fr 1fr;gap:1rem}
 }
 @media(max-width:768px){
@@ -85,7 +90,8 @@
   .hero p{font-size:.9rem}
   .hero-stats{gap:1.5rem}
   .hero-stat .num{font-size:1.3rem}
-  .feature-grid,.course-grid,.prof-grid{grid-template-columns:1fr}
+  .service-grid,.portfolio-grid,.team-grid{grid-template-columns:1fr}
+  .clients-grid{grid-template-columns:1fr 1fr}
   .stats-grid{grid-template-columns:1fr 1fr}
   .home-cta h2{font-size:1.5rem}
 }
@@ -98,10 +104,10 @@
 <a href="/" class="nav-logo">آئو<span>را</span></a>
 <ul class="nav-links">
   <li><a href="/" class="active">خانه</a></li>
-  <li><a href="/courses">بازارچه دوره‌ها</a></li>
+  <li><a href="/courses">خدمات و دوره‌ها</a></li>
+  <li><a href="/research">نمونه‌کارها</a></li>
   <li><a href="/forum">تالار گفتگو</a></li>
   <li><a href="/resources">منابع</a></li>
-  <li><a href="/research">پژوهش</a></li>
   <li><a href="/about">درباره ما</a></li>
 </ul>
 <div class="nav-actions">
@@ -121,125 +127,148 @@
 </div>
 <div class="container">
   <div class="hero-content">
-    <div class="hero-badge">🎓 پلتفرم آموزش آنلاین علوم زیستی</div>
-    <h1>یادگیری علوم زیستی<br>با <span>آئورا</span></h1>
-    <p>بهترین دوره‌های آموزشی، اساتید برتر و جامعه‌ی پویای پژوهشی — همه در یک پلتفرم</p>
+    <div class="hero-badge">🎬 استودیو آئورا — تولید، آموزش، پژوهش</div>
+    <h1>ایده‌هات رو<br>به <span>واقعیت</span> تبدیل کن</h1>
+    <p>از تولید فیلم و مستند گرفته تا آموزش تخصصی و اجرای پروژه‌های حرفه‌ای — آئورا کنارته</p>
     <div class="hero-btns">
       <a href="/register" class="btn-primary" style="padding:.85rem 2.5rem;font-size:.95rem">
-        ثبت‌نام رایگان <span class="arrow">&larr;</span>
+        شروع همکاری <span class="arrow">&larr;</span>
       </a>
-      <a href="/courses" class="btn-ghost" style="padding:.85rem 2rem;font-size:.9rem">
-        مشاهده دوره‌ها
+      <a href="/research" class="btn-ghost" style="padding:.85rem 2rem;font-size:.9rem">
+        نمونه‌کارها
       </a>
     </div>
     <div class="hero-stats">
       <div class="hero-stat">
-        <div class="num" id="statCourses">۲۵+</div>
+        <div class="num">+۵۰</div>
+        <div class="label">پروژه موفق</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">+۲۰</div>
+        <div class="label">فیلم و مستند</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">+۱۵</div>
+        <div class="label">عضو تیم</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">+۳۰</div>
         <div class="label">دوره آموزشی</div>
       </div>
-      <div class="hero-stat">
-        <div class="num" id="statStudents">۵۰۰+</div>
-        <div class="label">دانشجو</div>
-      </div>
-      <div class="hero-stat">
-        <div class="num" id="statProfessors">۱۰+</div>
-        <div class="label">استاد برتر</div>
-      </div>
-      <div class="hero-stat">
-        <div class="num" id="statArticles">۱۲۷</div>
-        <div class="label">مقاله پژوهشی</div>
-      </div>
     </div>
   </div>
 </div>
 </section>
 
 
-<!-- ═══ ویژگی‌ها ═══ -->
-<section class="features">
+<!-- ═══ خدمات ═══ -->
+<section class="services">
 <div class="container">
-  <h2 class="section-title">چرا آئورا؟</h2>
-  <p class="section-subtitle">ویژگی‌هایی که آئورا را متمایز می‌کند</p>
-  <div class="feature-grid">
-    <div class="feature-card">
-      <div class="feature-icon">🎯</div>
-      <h3>آموزش تخصصی</h3>
-      <p>دوره‌های تخصصی علوم زیستی با سرفصل‌های به‌روز و کاربردی</p>
+  <h2 class="section-title">خدمات <span style="color:var(--accent)">آئورا</span></h2>
+  <p class="section-subtitle">هر چی نیاز داری، ما انجامش می‌دیم</p>
+  <div class="service-grid">
+    <div class="service-card">
+      <div class="service-icon">🎬</div>
+      <h3>تولید فیلم و مستند</h3>
+      <p>از ایده‌پردازی و فیلم‌نامه‌نویسی تا فیلم‌برداری، تدوین و اکران — یه تیم کامل کنارته</p>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">👨‍🏫</div>
-      <h3>اساتید برتر</h3>
-      <p>اساتید مجرب از بهترین دانشگاه‌های کشور</p>
+    <div class="service-card">
+      <div class="service-icon">📸</div>
+      <h3>عکاسی و تصویربرداری</h3>
+      <p>عکاسی تبلیغاتی، صنعتی، مستند و مراسم با تجهیزات حرفه‌ای</p>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">💬</div>
-      <h3>تالار گفتگو</h3>
-      <p>محیطی برای بحث و تبادل نظر بین دانشجویان و اساتید</p>
+    <div class="service-card">
+      <div class="service-icon">🎨</div>
+      <h3>طراحی و هویت بصری</h3>
+      <p>لوگو، ست اداری، بسته‌بندی، موشن‌گرافیک و هویت بصری برند</p>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">📊</div>
-      <h3>نظرسنجی‌ها</h3>
-      <p>نظرسنجی‌های تخصصی برای سنجش دانش و مشارکت</p>
+    <div class="service-card">
+      <div class="service-icon">📚</div>
+      <h3>آموزش و تولید محتوا</h3>
+      <p>طراحی و برگزاری دوره‌های تخصصی، تولید محتوای آموزشی و وبینار</p>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">📹</div>
-      <h3>جلسات آنلاین</h3>
-      <p>جلسات زنده با امکان اشتراک‌گذاری صفحه و چت</p>
+    <div class="service-card">
+      <div class="service-icon">🛠</div>
+      <h3>اجرای پروژه</h3>
+      <p>مدیریت و اجرای پروژه‌های تخصصی از مرحله ایده تا تحویل نهایی</p>
     </div>
-    <div class="feature-card">
-      <div class="feature-icon">📚</div>
-      <h3>منابع آموزشی</h3>
-      <p>دسترسی به منابع، مقالات و جزوه‌های تخصصی</p>
+    <div class="service-card">
+      <div class="service-icon">🎙</div>
+      <h3>صداگذاری و پادکست</h3>
+      <p>ضبط، ویرایش و میکس صدا برای فیلم، تبلیغات، پادکست و کتاب صوتی</p>
     </div>
   </div>
 </div>
 </section>
 
 
-<!-- ═══ دوره‌های ویژه ═══ -->
-<section class="courses-section">
+<!-- ═══ نمونه‌کارها ═══ -->
+<section class="portfolio">
 <div class="container">
-  <h2 class="section-title">دوره‌های <span style="color:var(--accent)">ویژه</span></h2>
-  <p class="section-subtitle">محبوب‌ترین دوره‌های آموزشی آئورا</p>
-  <div class="course-grid" id="featuredCourses">
-    <!-- با JS پر میشه -->
+  <h2 class="section-title">نمونه‌کارهای <span style="color:var(--accent)">ما</span></h2>
+  <p class="section-subtitle">بخشی از پروژه‌هایی که افتخار انجامشون رو داشتیم</p>
+  <div class="portfolio-grid" id="portfolioGrid">
+    <a href="/research" class="portfolio-card">
+      <div class="portfolio-thumb"><div class="thumb-bg" style="background:linear-gradient(135deg,#1a237e,#283593)"></div><span class="thumb-icon">🎬</span></div>
+      <div class="portfolio-info">
+        <h3>مستند «زندگی در اعماق»</h3>
+        <p>روایت بصری از اکوسیستم‌های دریایی خلیج فارس با فیلم‌برداری زیرآبی</p>
+        <div class="portfolio-meta"><span class="portfolio-tag">مستند</span><span style="font-size:.7rem;color:var(--text-muted)">۱۴۰۵</span></div>
+      </div>
+    </a>
+    <a href="/research" class="portfolio-card">
+      <div class="portfolio-thumb"><div class="thumb-bg" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)"></div><span class="thumb-icon">📸</span></div>
+      <div class="portfolio-info">
+        <h3>کمپین تبلیغاتی برند نوین</h3>
+        <p>طراحی هویت بصری، عکاسی تبلیغاتی و تولید محتوای شبکه‌های اجتماعی</p>
+        <div class="portfolio-meta"><span class="portfolio-tag">تبلیغات</span><span style="font-size:.7rem;color:var(--text-muted)">۱۴۰۵</span></div>
+      </div>
+    </a>
+    <a href="/research" class="portfolio-card">
+      <div class="portfolio-thumb"><div class="thumb-bg" style="background:linear-gradient(135deg,#b71c1c,#c62828)"></div><span class="thumb-icon">📚</span></div>
+      <div class="portfolio-info">
+        <h3>دوره جامع تولید محتوا</h3>
+        <p>طراحی و تولید ۱۲ جلسه آموزشی عملی برای تولید محتوای دیجیتال</p>
+        <div class="portfolio-meta"><span class="portfolio-tag">آموزش</span><span style="font-size:.7rem;color:var(--text-muted)">۱۴۰۵</span></div>
+      </div>
+    </a>
   </div>
   <div style="text-align:center;margin-top:2.5rem">
-    <a href="/courses" class="btn-ghost" style="padding:.7rem 2rem">مشاهده همه دوره‌ها</a>
+    <a href="/research" class="btn-ghost" style="padding:.7rem 2rem">مشاهده همه نمونه‌کارها</a>
   </div>
 </div>
 </section>
 
 
-<!-- ═══ اساتید ═══ -->
-<section class="professors">
+<!-- ═══ تیم ═══ -->
+<section class="team">
 <div class="container">
-  <h2 class="section-title">اساتید <span style="color:var(--accent)">برتر</span></h2>
-  <p class="section-subtitle">با بهترین اساتید علوم زیستی آشنا شوید</p>
-  <div class="prof-grid">
-    <div class="prof-card">
-      <div class="prof-avatar" style="background:rgba(232,197,71,.15);color:var(--accent)">س ا</div>
-      <h4>دکتر سارا احمدی</h4>
-      <p>مدیر آموزشی</p>
-      <div class="prof-specialty">زیست‌شناسی سلولی</div>
+  <h2 class="section-title">تیم <span style="color:var(--accent)">آئورا</span></h2>
+  <p class="section-subtitle">آدمایی که پشت هر پروژه هستن</p>
+  <div class="team-grid">
+    <div class="team-card">
+      <div class="team-avatar" style="background:rgba(232,197,71,.15);color:var(--accent)">س ا</div>
+      <h4>سارا احمدی</h4>
+      <p>مدیر تولید محتوا</p>
+      <div class="team-role">+۱۵ سال تجربه آموزش و تولید محتوا</div>
     </div>
-    <div class="prof-card">
-      <div class="prof-avatar" style="background:rgba(33,150,243,.15);color:#2196f3">ع ر</div>
-      <h4>دکتر علی رضایی</h4>
-      <p>مدیر پژوهشی</p>
-      <div class="prof-specialty">ژنتیک مولکولی</div>
+    <div class="team-card">
+      <div class="team-avatar" style="background:rgba(33,150,243,.15);color:#2196f3">ع ر</div>
+      <h4>علی رضایی</h4>
+      <p>مدیر پروژه</p>
+      <div class="team-role">متخصص مدیریت و اجرای پروژه‌های بزرگ</div>
     </div>
-    <div class="prof-card">
-      <div class="prof-avatar" style="background:rgba(76,175,80,.15);color:#4caf50">م ن</div>
-      <h4>دکتر مریم نوری</h4>
-      <p>مدیر فنی</p>
-      <div class="prof-specialty">بیوشیمی</div>
+    <div class="team-card">
+      <div class="team-avatar" style="background:rgba(76,175,80,.15);color:#4caf50">م ن</div>
+      <h4>مریم نوری</h4>
+      <p>کارگردان و تدوینگر</p>
+      <div class="team-role">کارگردانی بیش از ۲۰ فیلم و مستند</div>
     </div>
-    <div class="prof-card">
-      <div class="prof-avatar" style="background:rgba(255,152,0,.15);color:#ff9800">م ک</div>
+    <div class="team-card">
+      <div class="team-avatar" style="background:rgba(255,152,0,.15);color:#ff9800">م ک</div>
       <h4>محمد کاظمی</h4>
-      <p>توسعه‌دهنده ارشد</p>
-      <div class="prof-specialty">میکروبیولوژی</div>
+      <p>مدیر فنی و توسعه</p>
+      <div class="team-role">طراح و توسعه‌دهنده پلتفرم‌های آنلاین</div>
     </div>
   </div>
 </div>
@@ -251,21 +280,36 @@
 <div class="container">
   <div class="stats-grid">
     <div>
-      <div class="stat-num">۲۵+</div>
+      <div class="stat-num">+۵۰</div>
+      <div class="stat-label">پروژه موفق</div>
+    </div>
+    <div>
+      <div class="stat-num">+۲۰</div>
+      <div class="stat-label">فیلم و مستند</div>
+    </div>
+    <div>
+      <div class="stat-num">+۱۵</div>
+      <div class="stat-label">عضو تیم</div>
+    </div>
+    <div>
+      <div class="stat-num">+۳۰</div>
       <div class="stat-label">دوره آموزشی</div>
     </div>
-    <div>
-      <div class="stat-num">۵۰۰+</div>
-      <div class="stat-label">دانشجوی فعال</div>
-    </div>
-    <div>
-      <div class="stat-num">۱۰</div>
-      <div class="stat-label">استاد برتر</div>
-    </div>
-    <div>
-      <div class="stat-num">۱۲۷</div>
-      <div class="stat-label">مقاله پژوهشی</div>
-    </div>
+  </div>
+</div>
+</section>
+
+
+<!-- ═══ مشتریان ═══ -->
+<section class="clients">
+<div class="container">
+  <h2 class="section-title">مشتریان <span style="color:var(--accent)">ما</span></h2>
+  <p class="section-subtitle">به برندها و سازمان‌های مختلف خدمات ارائه دادیم</p>
+  <div class="clients-grid">
+    <div class="client-logo">🏢 شرکت نوین</div>
+    <div class="client-logo">🏛 سازمان فرهنگی</div>
+    <div class="client-logo">🎓 دانشگاه تهران</div>
+    <div class="client-logo">🏥 بیمارستان میلاد</div>
   </div>
 </div>
 </section>
@@ -274,14 +318,14 @@
 <!-- ═══ CTA ═══ -->
 <section class="home-cta">
 <div class="container">
-  <h2>آماده شروع هستید؟</h2>
-  <p>همین الان ثبت‌نام کنید و اولین قدم را بردارید</p>
+  <h2>پروژه‌ات رو شروع کن</h2>
+  <p>فرقی نمی‌کنه یه فیلم کوتاه باشه یه کمپین تبلیغاتی یا یه دوره آموزشی — ما آماده‌ایم</p>
   <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
     <a href="/register" class="btn-primary" style="padding:.85rem 2.5rem;font-size:.95rem">
       ثبت‌نام رایگان <span class="arrow">&larr;</span>
     </a>
-    <a href="/courses" class="btn-ghost" style="padding:.85rem 2rem;font-size:.9rem">
-      مشاهده دوره‌ها
+    <a href="/about" class="btn-ghost" style="padding:.85rem 2rem;font-size:.9rem">
+      بیشتر درباره ما
     </a>
   </div>
 </div>
@@ -293,31 +337,33 @@
 <div class="footer-grid">
   <div>
     <div class="footer-logo">آئو<span>را</span></div>
-    <p class="footer-about">پلتفرم آموزش مدرن علوم زیستی — یادگیری، پژوهش، رشد</p>
+    <p class="footer-about">استودیو آئورا — تولید محتوا، آموزش، پژوهش</p>
   </div>
   <div>
     <h4 class="footer-title">لینک‌ها</h4>
     <ul class="footer-links">
       <li><a href="/">خانه</a></li>
-      <li><a href="/courses">بازارچه دوره‌ها</a></li>
+      <li><a href="/courses">خدمات و دوره‌ها</a></li>
+      <li><a href="/research">نمونه‌کارها</a></li>
       <li><a href="/forum">تالار گفتگو</a></li>
       <li><a href="/about">درباره ما</a></li>
     </ul>
   </div>
   <div>
-    <h4 class="footer-title">دوره‌ها</h4>
+    <h4 class="footer-title">خدمات</h4>
     <ul class="footer-links">
-      <li><a href="/courses">زیست‌شناسی</a></li>
-      <li><a href="/courses">ژنتیک</a></li>
-      <li><a href="/courses">بیوشیمی</a></li>
-      <li><a href="/courses">میکروبیولوژی</a></li>
+      <li><a href="/courses">تولید فیلم و مستند</a></li>
+      <li><a href="/courses">طراحی و هویت بصری</a></li>
+      <li><a href="/courses">آموزش تخصصی</a></li>
+      <li><a href="/courses">اجرای پروژه</a></li>
     </ul>
   </div>
   <div>
     <h4 class="footer-title">تماس</h4>
     <ul class="footer-links">
-      <li>📧 support@aora.ir</li>
+      <li>📧 info@aora.ir</li>
       <li>📞 ۰۲۱-۱۲۳۴۵۶۷۸</li>
+      <li>📍 تهران، ایران</li>
     </ul>
   </div>
 </div>
@@ -338,46 +384,6 @@ $(document).ready(function () {
   if (typeof ContentManager !== 'undefined') {
     ContentManager.applyToPage('index.html');
   }
-
-  /* ── نمایش دوره‌های ویژه ── */
-  var courses = JSON.parse(localStorage.getItem('aora_courses') || '[]');
-  var colors = ['linear-gradient(135deg,#1a237e,#283593)','linear-gradient(135deg,#1b5e20,#2e7d32)','linear-gradient(135deg,#b71c1c,#c62828)','linear-gradient(135deg,#4a148c,#6a1b9a)','linear-gradient(135deg,#e65100,#ef6c00)','linear-gradient(135deg,#004d40,#00695c)'];
-  var icons = ['🧬','🔬','🧪','🦠','🧫','🩺'];
-  var $grid = $('#featuredCourses');
-
-  // اگه دوره‌ای توی localStorage نیست، نمونه بذار
-  if (courses.length === 0) {
-    courses = [
-      { id: 'c1', title: 'زیست‌شناسی سلولی و مولکولی', description: 'آموزش جامع ساختار و عملکرد سلول‌ها', price: 0, category: 'زیست‌شناسی', professor: 'دکتر سارا احمدی', chapters: ['مقدمه','ساختار سلول','غشاء سلول','میتوکندری','کلروپلاست','هسته سلول'] },
-      { id: 'c2', title: 'ژنتیک مولکولی پیشرفته', description: 'بررسی عمیق مکانیزم‌های ژنتیکی', price: 450000, category: 'ژنتیک', professor: 'دکتر علی رضایی', chapters: ['DNA و RNA','ترانسکریپشن','ترجمه','جهش‌ها','مهندسی ژنتیک'] },
-      { id: 'c3', title: 'بیوشیمی بالینی', description: 'کاربرد بیوشیمی در تشخیص بیماری‌ها', price: 380000, category: 'بیوشیمی', professor: 'دکتر مریم نوری', chapters: ['پروتئین‌ها','آنزیم‌ها','متابولیسم','قند خون','لیپیدها'] },
-      { id: 'c4', title: 'میکروبیولوژی عمومی', description: 'شناخت میکروارگانیسم‌ها و نقش آن‌ها', price: 320000, category: 'میکروبیولوژی', professor: 'محمد کاظمی', chapters: ['باکتری‌ها','ویروس‌ها','قارچ‌ها','ایمنی‌شناسی','ضدعفونی'] },
-      { id: 'c5', title: 'ایمنی‌شناسی', description: 'سیستم ایمنی بدن و مکانیزم‌های دفاعی', price: 0, category: 'ایمنی‌شناسی', professor: 'دکتر سارا احمدی', chapters: ['ایمنی ذاتی','ایمنی اکتسابی','آنتی‌بادی‌ها','واکسیناسیون'] },
-      { id: 'c6', title: 'بیوانفورماتیک', description: 'تحلیل داده‌های زیستی با کامپیوتر', price: 520000, category: 'بیوانفورماتیک', professor: 'دکتر علی رضایی', chapters: ['مقدمه','پایگاه داده','BLAST',' phylogenetics','ساختار پروتئین'] }
-    ];
-    localStorage.setItem('aora_courses', JSON.stringify(courses));
-  }
-
-  // فقط ۶ تا اول رو نشون بده
-  var featured = courses.slice(0, 6);
-  $.each(featured, function (i, c) {
-    var color = colors[i % colors.length];
-    var icon = icons[i % icons.length];
-    var priceHtml = c.price === 0
-      ? '<span class="course-price free">رایگان</span>'
-      : '<span class="course-price">' + formatPrice(c.price) + '</span>';
-
-    $grid.append(
-      '<a href="/course?id=' + c.id + '" class="course-card">' +
-        '<div class="course-thumb"><div class="thumb-bg" style="background:' + color + '"></div><span class="thumb-icon">' + icon + '</span></div>' +
-        '<div class="course-info">' +
-          '<h3>' + c.title + '</h3>' +
-          '<p>' + (c.description || '') + '</p>' +
-          '<div class="course-meta">' + priceHtml + '<span class="course-tag">' + (c.category || 'عمومی') + '</span></div>' +
-        '</div>' +
-      '</a>'
-    );
-  });
 
   /* ── منوی موبایل ── */
   $('#mobileMenuBtn').on('click', function () {

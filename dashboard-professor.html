@@ -149,8 +149,8 @@
 
 <!-- تب‌ها — بدون «پنل کارآموز» -->
 <div class="dash-tabs">
+<a href="/course-wizard" class="btn-primary" style="padding:.5rem 1.2rem;font-size:.8rem;text-decoration:none">➕ ساخت دوره جدید</a>
 <button class="dash-tab active" data-tab="mycourses">📚 دوره‌های من</button>
-<button class="dash-tab" data-tab="createcourse">➕ ایجاد دوره</button>
 <button class="dash-tab" data-tab="students">👥 کارآموزان من</button>
 <button class="dash-tab" data-tab="profile">👤 پروفایل</button>
 <button class="dash-tab" data-tab="settings">⚙ تنظیمات</button>
@@ -244,11 +244,10 @@ $(document).ready(function () {
         '<div class="empty-box">' +
         '<div class="icon">📚</div>' +
         '<h3>هنوز دوره‌ای ایجاد نکرده‌اید</h3>' +
-        '<p>از تب "ایجاد دوره" اولین دوره خود را بسازید</p>' +
-        '<button class="btn-primary tab-switch" data-tab="createcourse">➕ ایجاد دوره</button>' +
+        '<p>از طریق دکمه زیر اولین دوره خود را بسازید</p>' +
+        '<a href="/course-wizard" class="btn-primary" style="padding:.7rem 2rem;text-decoration:none;display:inline-block;margin-top:1rem">➕ ساخت دوره جدید</a>' +
         '</div>'
       );
-      bindTabSwitch();
       return;
     }
 
@@ -298,7 +297,7 @@ $(document).ready(function () {
     html += '<h3>➕ ایجاد دوره جدید</h3>';
     html += '<div class="cc-grid">';
 
-    html += '<div class="cc-field full"><label>عنوان دوره *</label><input type="text" id="ccTitle" placeholder="مثال: مبانی بیوانفارماتیک"></div>';
+    html += '<div class="cc-field full"><label>عنوان دوره *</label><input type="text" id="ccTitle" placeholder="مثال: اصول تولید محتوای دیجیتال"></div>';
 
     html += '<div class="cc-field"><label>دسته‌بندی *</label><select id="ccCategory">';
     categories.forEach(function (cat) { html += '<option value="' + cat + '">' + cat + '</option>'; });
@@ -318,7 +317,7 @@ $(document).ready(function () {
 
     html += '<div class="cc-field full"><label>توضیحات دوره *</label><textarea id="ccDesc" rows="4" placeholder="توضیحات کامل دوره..."></textarea></div>';
 
-    html += '<div class="cc-field full"><label>برچسب‌ها (با کاما جدا کنید)</label><input type="text" id="ccTags" placeholder="مثال: پایتون, بیوانفارماتیک, DNA"></div>';
+    html += '<div class="cc-field full"><label>برچسب‌ها (با کاما جدا کنید)</label><input type="text" id="ccTags" placeholder="مثال: تولید محتوا, تدوین, فیلم‌برداری"></div>';
 
     html += '<div class="cc-field full"><label>سرفصل‌ها (JSON)</label><textarea id="ccChapters" rows="3" placeholder=\'[{"title":"مقدمه","lessons":4},{"title":"فصل ۲","lessons":5}]\'></textarea>';
     html += '<div class="hint">فرمت: [{"title":"عنوان فصل","lessons":تعداد درس}]</div></div>';
@@ -491,7 +490,7 @@ $(document).ready(function () {
     html += '<div class="profile-field"><label>نام و نام خانوادگی</label><input type="text" id="pfName" value="' + (user.fullName || '') + '"></div>';
     html += '<div class="profile-field"><label>ایمیل</label><input type="email" value="' + user.email + '" disabled></div>';
     html += '<div class="profile-field"><label>شماره موبایل</label><input type="text" id="pfPhone" value="' + (user.phone || '') + '" placeholder="۰۹۱۲xxxxxxx" style="direction:ltr"></div>';
-    html += '<div class="profile-field"><label>تخصص اصلی</label><input type="text" id="pfSpecialty" value="' + (user.specialty || '') + '" placeholder="مثال: بیوانفارماتیک"></div>';
+    html += '<div class="profile-field"><label>تخصص اصلی</label><input type="text" id="pfSpecialty" value="' + (user.specialty || '') + '" placeholder="مثال: تولید فیلم"></div>';
     html += '<div class="profile-field"><label>دانشگاه / مؤسسه</label><input type="text" id="pfUni" value="' + (user.university || '') + '"></div>';
     html += '<div class="profile-field"><label>درباره من</label><textarea id="pfBio" rows="4" placeholder="سابقه آموزشی و پژوهشی...">' + (user.bio || '') + '</textarea></div>';
 

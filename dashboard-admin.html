@@ -1079,7 +1079,7 @@ $(document).ready(function () {
 
     
     var s = JSON.parse(localStorage.getItem('aoura_settings') || '{}');
-    var defaults = { siteName: 'آئورا', siteDesc: 'پلتفرم آموزش علوم زیستی', supportEmail: 'support@aoura.ir', supportPhone: '۰۲۱-۱۲۳۴۵۶۷۸', registrationOpen: true, maintenanceMode: false };
+    var defaults = { siteName: 'آئورا', siteDesc: 'استودیو تولید محتوا، آموزش و پروژه', supportEmail: 'support@aoura.ir', supportPhone: '۰۲۱-۱۲۳۴۵۶۷۸', registrationOpen: true, maintenanceMode: false };
     
      $('#clrU').off('click').on('click', function () { if (!confirm('حذف کاربران؟')) return; localStorage.removeItem('aoura_users'); updateBadges(); showNotification('کاربران پاک شدند.'); });
     $('#clrE').off('click').on('click', function () { if (!confirm('حذف ثبت‌نام‌ها؟')) return; localStorage.removeItem('aoura_enrollments'); showNotification('پاک شد.'); });
