@@ -220,6 +220,64 @@ var API = (function () {
       return { success: true, data: course };
     }
 
+    /* ── ویرایش دوره ── */
+    if (endpoint.match(/^\/courses\/.+/) && method === 'PUT') {
+      var id = endpoint.split('/')[2];
+      var courses = JSON.parse(localStorage.getItem('aora_courses') || '[]');
+      var idx = courses.findIndex(function (c) { return c.id === id; });
+      if (idx < 0) return { success: false, message: 'دوره یافت نشد.' };
+      // بروزرسانی فیلدها
+      var existing = courses[idx];
+      for (var key in data) {
+        if (data.hasOwnProperty(key) && key !== 'id') existing[key] = data[key];
+      }
+      courses[idx] = existing;
+      localStorage.setItem('aora_courses', JSON.stringify(courses));
+      return { success: true, data: existing };
+    }
+
+    /* ── حذف دوره ── */
+    if (endpoint.match(/^\/courses\/.+/) && method === 'DELETE') {
+      var id = endpoint.split('/')[2];
+      var courses = JSON.parse(localStorage.getItem('aora_courses') || '[]');
+      courses = courses.filter(function (c) { return c.id !== id; });
+      localStorage.setItem('aora_courses', JSON.stringify(courses));
+      return { success: true, data: null };
+    }
+
+    /* ── ایجاد دوره جدید ── */
+    if (endpoint === '/courses' && method === 'POST') {
+      var courses = JSON.parse(localStorage.getItem('aora_courses') || '[]');
+      var newId = data.id || 'course_' + Date.now();
+      var newCourse = {
+        id: newId,
+        title: data.title || '',
+        description: data.description || '',
+        category: data.category || '',
+        level: data.level || 'متوسط',
+        duration: data.duration || '',
+        tags: data.tags || [],
+        thumbnail: data.thumbnail || '',
+        image: data.image || '',
+        chapters: data.chapters || [],
+        price: data.price || 0,
+        originalPrice: data.originalPrice || 0,
+        icon: data.icon || '📚',
+        instructor: data.instructor || '',
+        instructorId: data.instructorId || '',
+        students: 0,
+        rating: 0,
+        featured: data.featured || false,
+        status: data.status || 'published',
+        certificate: data.certificate !== undefined ? data.certificate : true,
+        accessType: data.accessType || 'always',
+        createdAt: new Date().toISOString()
+      };
+      courses.push(newCourse);
+      localStorage.setItem('aora_courses', JSON.stringify(courses));
+      return { success: true, data: newCourse };
+    }
+
     /* ── اساتید ── */
     if (endpoint === '/professors' && method === 'GET') {
       var defaultProfs = getDefaultProfessors();

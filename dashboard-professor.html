@@ -362,24 +362,25 @@ $(document).ready(function () {
           try { return JSON.parse($('#ccChapters').val() || '[]'); }
           catch (e) { return []; }
         })(),
+        status: 'published',
         createdAt: new Date().toISOString()
       };
 
-      // ذخیره در localStorage
-      var courses = JSON.parse(localStorage.getItem('aora_courses') || '[]');
-      courses.unshift(newCourse);
-      localStorage.setItem('aora_courses', JSON.stringify(courses));
+      // ذخیره از طریق API
+      API.post('/courses', newCourse).done(function (result) {
+        var saved = result || newCourse;
+        myCourses.unshift(saved);
+        allCourses.unshift(saved);
+        $('#statMyCourses').text(myCourses.length);
 
-      // اضافه به لیست محلی
-      myCourses.unshift(newCourse);
-      allCourses.unshift(newCourse);
-      $('#statMyCourses').text(myCourses.length);
+        $msg.css('color', '#4caf50').text('دوره با موفقیت ایجاد شد! شناسه: ' + saved.id);
+        showNotification('دوره جدید ایجاد شد: ' + title);
 
-      $msg.css('color', '#4caf50').text('دوره با موفقیت ایجاد شد! شناسه: ' + newCourse.id);
-      showNotification('دوره جدید ایجاد شد: ' + title);
-
-      // پاک کردن فرم
-      $('#ccTitle,#ccDesc,#ccPrice,#ccOriginalPrice,#ccTags,#ccDuration,#ccChapters').val('');
+        // پاک کردن فرم
+        $('#ccTitle,#ccDesc,#ccPrice,#ccOriginalPrice,#ccTags,#ccDuration,#ccChapters').val('');
+      }).fail(function (errMsg) {
+        $msg.css('color', '#e74c3c').text('خطا در ایجاد دوره: ' + errMsg);
+      });
     });
   }
 
@@ -416,15 +417,14 @@ $(document).ready(function () {
       c.originalPrice = parseInt($('#ecOriginal').val()) || c.price;
       c.description = $('#ecDesc').val().trim();
 
-      // بروزرسانی در localStorage
-      var courses = JSON.parse(localStorage.getItem('aora_courses') || '[]');
-      var idx = courses.findIndex(function (x) { return x.id === c.id; });
-      if (idx >= 0) courses[idx] = c;
-      localStorage.setItem('aora_courses', JSON.stringify(courses));
-
-      $('#ecMsg').css('color', '#4caf50').text('بروزرسانی شد.');
-      showNotification('دوره بروزرسانی شد.');
-      setTimeout(function () { renderMyCourses(); }, 1000);
+      // بروزرسانی از طریق API
+      API.put('/courses/' + c.id, c).done(function () {
+        $('#ecMsg').css('color', '#4caf50').text('بروزرسانی شد.');
+        showNotification('دوره بروزرسانی شد.');
+        setTimeout(function () { renderMyCourses(); }, 1000);
+      }).fail(function (errMsg) {
+        $('#ecMsg').css('color', '#e74c3c').text('خطا: ' + errMsg);
+      });
     });
 
     $('.cancel-edit').on('click', function () { renderMyCourses(); });

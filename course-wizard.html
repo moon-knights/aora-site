@@ -705,22 +705,19 @@ $(document).ready(function () {
     if (!courseData.instructorId) courseData.instructorId = user.id;
     if (!courseData.image) courseData.image = '';
 
-    var courses = JSON.parse(localStorage.getItem('aora_courses') || '[]');
-    var existIdx = courses.findIndex(function(c) { return c.id === courseData.id; });
-    if (existIdx >= 0) {
-      courses[existIdx] = courseData;
-    } else {
-      courses.push(courseData);
-    }
-    localStorage.setItem('aora_courses', JSON.stringify(courses));
-
-    if (status === 'published') {
-      alert('✅ دوره با موفقیت منتشر شد!\n\nحالا توی بازارچه دوره‌ها نمایش داده می‌شه.');
-      window.location.href = '/course?id=' + courseData.id;
-    } else {
-      alert('💾 پیش‌نویس ذخیره شد.\n\nمی‌تونی بعداً از پنل استاد ادامه بدی.');
-      window.location.href = '/dashboard-professor';
-    }
+    // ذخیره از طریق API (هر دو حالت دمو و واقعی)
+    API.post('/courses', courseData).done(function (result) {
+      if (status === 'published') {
+        alert('✅ دوره با موفقیت منتشر شد!\n\nحالا توی بازارچه دوره‌ها نمایش داده می‌شه.');
+        var courseId = result && result.id ? result.id : courseData.id;
+        window.location.href = '/course?id=' + courseId;
+      } else {
+        alert('💾 پیش‌نویس ذخیره شد.\n\nمی‌تونی بعداً از پنل استاد ادامه بدی.');
+        window.location.href = '/dashboard-professor';
+      }
+    }).fail(function (errMsg) {
+      alert('❌ خطا در ذخیره دوره: ' + errMsg);
+    });
   }
 
   $('#btnDraft').on('click', function() { saveCourse('draft'); });
