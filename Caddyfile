@@ -77,8 +77,8 @@ aora.ir {
     @courseSingle path /course-single.html
     redir @courseSingle /course 301
 
-    @coursewizard path /course-wizard.html
-    redir @coursewizard /course-wizard 301
+    @courseWizard path /course-wizard.html
+    redir @courseWizard /course-wizard 301
 
     @surveyResults path /survey-results.html
     redir @surveyResults /survey-results 301
