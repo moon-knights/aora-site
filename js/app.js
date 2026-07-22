@@ -418,6 +418,26 @@ $(document).ready(function () {
     if (password.length < 6) { $msg.css('color','#e74c3c').text('رمز حداقل ۶ کاراکتر.'); return; }
     if (password !== confirm) { $msg.css('color','#e74c3c').text('رمز و تکرار مطابقت ندارند.'); return; }
 
+    // حالت API واقعی
+    if (typeof API !== 'undefined' && !API.config.demoMode) {
+      API.post('/auth/register', { fullName: fullName, email: email, password: password, role: 'student' })
+        .done(function (res) {
+          var user = res.user || res;
+          Auth.setCurrentUser(user);
+          if (res.token) API.setToken(res.token);
+          $msg.css('color','var(--accent)').text('ثبت‌نام موفق! در حال انتقال...');
+          setTimeout(function () {
+            var redirect = new URLSearchParams(window.location.search).get('redirect');
+            window.location.href = redirect ? decodeURIComponent(redirect) : '/dashboard-student';
+          }, 800);
+        })
+        .fail(function (msg) {
+          $msg.css('color','#e74c3c').text(msg);
+        });
+      return;
+    }
+
+    // حالت دمو
     var result = Auth.register({
       fullName: fullName, email: email, password: password,
       phone: phone, gender: gender, fatherName: fatherName, nationalCode: nationalCode
@@ -446,8 +466,31 @@ $(document).ready(function () {
 
     if (!email || !password) { $msg.css('color','#e74c3c').text('ایمیل و رمز را وارد کنید.'); return; }
 
-    var result = Auth.login(email, password);
+    // حالت API واقعی
+    if (typeof API !== 'undefined' && !API.config.demoMode) {
+      API.post('/auth/login', { email: email, password: password })
+        .done(function (res) {
+          var user = res.user || res;
+          Auth.setCurrentUser(user);
+          if (res.token) API.setToken(res.token);
+          $msg.css('color','var(--accent)').text('ورود موفق! خوش آمدید ' + (user.fullName || user.full_name || '').split(' ')[0]);
+          setTimeout(function () {
+            var redirect = new URLSearchParams(window.location.search).get('redirect');
+            if (redirect) { window.location.href = decodeURIComponent(redirect); }
+            else {
+              var m = { admin: '/dashboard-admin', professor: '/dashboard-professor', student: '/dashboard-student' };
+              window.location.href = m[user.role] || '/dashboard-student';
+            }
+          }, 800);
+        })
+        .fail(function (msg) {
+          $msg.css('color','#e74c3c').text(msg);
+        });
+      return;
+    }
 
+    // حالت دمو
+    var result = Auth.login(email, password);
     if (result.success) {
       $msg.css('color','var(--accent)').text('ورود موفق! خوش آمدید ' + result.user.fullName.split(' ')[0]);
       setTimeout(function () {

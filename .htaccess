@@ -1,0 +1,48 @@
+# ═══════════════════════════════════════════════════════════
+# آئورا — تنظیمات Apache
+# ═══════════════════════════════════════════════════════════
+
+RewriteEngine On
+
+# ── مسیریابی API ──
+# تمام درخواست‌های /api/* به api/index.php هدایت می‌شوند
+RewriteRule ^api/(.*)$ api/index.php [QSA,L]
+
+# ── مسیرهای تمیز (بدون پسوند .html) ──
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([^\.]+)$ $1.html [NC,L]
+
+# ── محافظت از فایل‌های حساس ──
+<Files "api/config.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<Files "api/db.sql">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<FilesMatch "\.(sql|log|md)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ── فشرده‌سازی ──
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json
+</IfModule>
+
+# ── کش مرورگر ──
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+</IfModule>
+
+# ──_charset ──
+AddDefaultCharset UTF-8

@@ -1,8 +1,8 @@
 var API = (function () {
   var config = {
-    baseUrl: '', 
-    demoMode: true, 
-    demoDelay: 600,
+    baseUrl: '/api', 
+    demoMode: false, 
+    demoDelay: 0,
     token: null
   };
 
@@ -73,7 +73,8 @@ var API = (function () {
     $.ajax(ajaxOptions)
       .done(function (response) {
         if (response.success !== false) {
-          deferred.resolve(response);
+          // اگر response.data وجود داشت، همان را برگردان (سازگار با demoMode)
+          deferred.resolve(response.data !== undefined ? response.data : response);
         } else {
           deferred.reject(response.message || 'خطای سرور');
         }

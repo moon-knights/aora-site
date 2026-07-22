@@ -1,0 +1,5 @@
+# محافظت از فایل‌های غیر PHP
+<FilesMatch "\.(sql|log|md|json)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
