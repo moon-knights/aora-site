@@ -401,13 +401,24 @@ $(document).ready(function () {
   var editingLessonIdx = -1;
 
   /* ═══ بررسی لاگین ═══ */
-  var user = JSON.parse(localStorage.getItem('aoura_user') || 'null');
+  var user = null;
+  try {
+    user = JSON.parse(localStorage.getItem('aoura_user') || 'null');
+  } catch(e) { user = null; }
   if (!user) {
-    alert('برای ساخت دوره اول باید وارد بشی');
-    window.location.href = '/login';
+    $('.wizard-body').html(
+      '<div style="text-align:center;padding:4rem 2rem">' +
+      '<div style="font-size:4rem;margin-bottom:1rem">🔒</div>' +
+      '<h2 style="font-size:1.3rem;font-weight:700;color:var(--text-primary);margin-bottom:.5rem">برای ساخت دوره اول باید وارد بشی</h2>' +
+      '<p style="color:var(--text-muted);margin-bottom:2rem;font-size:.85rem">اگه حساب کاربری نداری، اول ثبت‌نام کن</p>' +
+      '<div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">' +
+      '<a href="/login" class="btn-primary" style="padding:.7rem 2rem;text-decoration:none">ورود</a>' +
+      '<a href="/register" class="btn-ghost" style="padding:.7rem 2rem;text-decoration:none">ثبت‌نام</a>' +
+      '</div></div>'
+    );
     return;
   }
-  courseData.instructor = user.name || user.email;
+  courseData.instructor = user.fullName || user.name || user.email;
   courseData.instructorId = user.id;
 
   /* ═══ ناوبری مراحل ═══ */
