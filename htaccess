@@ -1,0 +1,64 @@
+# ═══════════════════════════════════════════
+# آئورا — .htaccess (Apache / cPanel)
+# ═══════════════════════════════════════════
+# این فایل رو توی روت اصلی سایت آپلود کن
+# (همون پوشه‌ای که index.html هست)
+# ═══════════════════════════════════════════
+
+RewriteEngine On
+
+# ═══ ریدایرکت .html → URL تمیز ═══
+
+RewriteRule ^index\.html$ / [R=301,L]
+RewriteRule ^courses\.html$ /courses [R=301,L]
+RewriteRule ^forum\.html$ /forum [R=301,L]
+RewriteRule ^about\.html$ /about [R=301,L]
+RewriteRule ^cart\.html$ /cart [R=301,L]
+RewriteRule ^resources\.html$ /resources [R=301,L]
+RewriteRule ^professors\.html$ /professors [R=301,L]
+RewriteRule ^research\.html$ /research [R=301,L]
+RewriteRule ^faq\.html$ /faq [R=301,L]
+RewriteRule ^register\.html$ /register [R=301,L]
+RewriteRule ^login\.html$ /login [R=301,L]
+RewriteRule ^students\.html$ /students [R=301,L]
+RewriteRule ^surveys\.html$ /surveys [R=301,L]
+RewriteRule ^survey-builder\.html$ /survey-builder [R=301,L]
+RewriteRule ^meetings\.html$ /meetings [R=301,L]
+RewriteRule ^meeting-room\.html$ /meeting-room [R=301,L]
+RewriteRule ^globalsetting\.html$ /globalsetting [R=301,L]
+RewriteRule ^dashboard-student\.html$ /dashboard-student [R=301,L]
+RewriteRule ^dashboard-professor\.html$ /dashboard-professor [R=301,L]
+RewriteRule ^dashboard-admin\.html$ /dashboard-admin [R=301,L]
+RewriteRule ^admin-page-builder\.html$ /admin-page-builder [R=301,L]
+RewriteRule ^course-single\.html$ /course [R=301,L]
+RewriteRule ^course-wizard\.html$ /course-wizard [R=301,L]
+RewriteRule ^survey-results\.html$ /survey-results [R=301,L]
+RewriteRule ^survey-view\.html$ /survey-view [R=301,L]
+RewriteRule ^meeting-lobby\.html$ /meeting-lobby [R=301,L]
+
+# ═══ سرو فایل تمیز (بدون .html) ═══
+# اگه فایل یا پوشه واقعی وجود داشت → همون رو نشون بده
+# اگه نبود → .html بهش اضافه کن و نشون بده
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+)$ $1.html [L]
+
+# ═══ فشرده‌سازی ═══
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>
+
+# ═══ کش مرورگر ═══
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/html "access plus 1 hour"
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+</IfModule>
