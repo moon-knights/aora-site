@@ -10,6 +10,11 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^api/(.*)$ api/index.php [QSA,L]
 
+# ── مسیر ویژه صفحه دوره ──
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^course$ course-single.html [NC,L]
+
 # ── مسیرهای تمیز (بدون پسوند .html) ──
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

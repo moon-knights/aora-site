@@ -78,6 +78,29 @@
 .home-cta h2{font-size:2rem;font-weight:800;color:var(--text-primary);margin-bottom:.5rem}
 .home-cta p{font-size:.95rem;color:var(--text-muted);margin-bottom:2rem}
 
+/* ═══ دورههای صفحه اصلی ═══ */
+.courses-home{padding:5rem 0;background:var(--bg-deep)}
+.courses-home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.25rem}
+.ch-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;transition:all var(--ease);display:flex;flex-direction:column;text-decoration:none;color:inherit}
+.ch-card:hover{border-color:var(--accent-dim);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.ch-card .ch-img{height:150px;background:linear-gradient(135deg,var(--bg-elevated),var(--bg-surface));display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative}
+.ch-card .ch-img .ch-badge{position:absolute;top:10px;right:10px;padding:.2rem .5rem;border-radius:20px;font-size:.58rem;font-weight:600}
+.ch-badge-mb{background:rgba(76,175,80,.2);color:#4caf50}
+.ch-badge-md{background:rgba(33,150,243,.2);color:#2196f3}
+.ch-badge-adv{background:rgba(255,152,0,.2);color:#ff9800}
+.ch-card .ch-body{padding:1rem;flex:1;display:flex;flex-direction:column}
+.ch-card .ch-title{font-size:.88rem;font-weight:600;color:var(--text-primary);margin-bottom:.4rem;line-height:1.5}
+.ch-card .ch-inst{font-size:.72rem;color:var(--text-muted);margin-bottom:.6rem;display:flex;align-items:center;gap:6px}
+.ch-card .ch-inst .ch-inst-av{width:20px;height:20px;border-radius:50%;background:var(--accent-glow);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.45rem;font-weight:600}
+.ch-card .ch-meta{display:flex;gap:.6rem;font-size:.65rem;color:var(--text-muted);margin-bottom:.6rem;flex-wrap:wrap}
+.ch-card .ch-meta span{display:flex;align-items:center;gap:3px}
+.ch-card .ch-footer{margin-top:auto;padding-top:.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ch-card .ch-price{font-size:.95rem;font-weight:700;color:var(--accent);font-family:var(--font-mono);direction:ltr}
+.ch-card .ch-price-free{font-size:.85rem;font-weight:600;color:#4caf50}
+.ch-card .ch-original{font-size:.65rem;color:var(--text-muted);text-decoration:line-through;margin-right:.4rem}
+.ch-card .ch-btn{padding:.35rem .7rem;background:var(--accent);color:var(--bg-deep);border:none;border-radius:var(--radius-sm);font-size:.7rem;font-weight:600;cursor:pointer;font-family:var(--font-fa);transition:all var(--ease);text-decoration:none}
+.ch-card .ch-btn:hover{box-shadow:0 4px 15px rgba(232,197,71,.3)}
+
 /* ═══ ریسپانسیو ═══ */
 @media(max-width:1024px){
   .service-grid,.portfolio-grid{grid-template-columns:1fr 1fr}
@@ -275,6 +298,21 @@
 </section>
 
 
+<!-- ═══ دورههای آموزشی ═══ -->
+<section class="courses-home">
+<div class="container">
+  <h2 class="section-title">دورههای <span style="color:var(--accent)">آموزشی</span></h2>
+  <p class="section-subtitle">از بین دورههای تخصصی آئورا، مسیر یادگیری خودت رو بساز</p>
+  <div class="courses-home-grid" id="homeCoursesGrid">
+    <div style="text-align:center;padding:3rem;color:var(--text-muted);grid-column:1/-1">در حال بارگذاری دورهها...</div>
+  </div>
+  <div style="text-align:center;margin-top:2.5rem">
+    <a href="/courses" class="btn-ghost" style="padding:.7rem 2rem">مشاهده همه دورهها</a>
+  </div>
+</div>
+</section>
+
+
 <!-- ═══ آمار ═══ -->
 <section class="stats-section">
 <div class="container">
@@ -389,6 +427,57 @@ $(document).ready(function () {
   $('#mobileMenuBtn').on('click', function () {
     $('.nav-links').toggleClass('open');
   });
+
+  /* ── بارگذاری دورهها در صفحه اصلی ── */
+  API.get('/courses').done(function (courses) {
+    if (!courses || !courses.length) {
+      $('#homeCoursesGrid').html('<div style="text-align:center;padding:3rem;color:var(--text-muted);grid-column:1/-1">هنوز دورهای ثبت نشده است.</div>');
+      return;
+    }
+    var featured = courses.filter(function(c){ return c.featured; });
+    var display = featured.length >= 4 ? featured.slice(0, 8) : courses.slice(0, 8);
+    renderHomeCourses(display);
+  }).fail(function () {
+    if (typeof API.getDefaultCourses === 'function') {
+      var defaults = API.getDefaultCourses();
+      renderHomeCourses(defaults.slice(0, 8));
+    } else {
+      $('#homeCoursesGrid').html('<div style="text-align:center;padding:3rem;color:var(--text-muted);grid-column:1/-1">خطا در بارگذاری دورهها</div>');
+    }
+  });
+
+  function renderHomeCourses(courses) {
+    var html = '';
+    courses.forEach(function (c) {
+      var disc = c.originalPrice > c.price ? Math.round((1 - c.price / c.originalPrice) * 100) : 0;
+      var lvlClass = c.level === 'مبتدی' ? 'ch-badge-mb' : c.level === 'متوسط' ? 'ch-badge-md' : 'ch-badge-adv';
+
+      html += '<a href="/course?id=' + c.id + '" class="ch-card">';
+      html += '<div class="ch-img"><span>' + (c.icon || '📚') + '</span>';
+      html += '<span class="ch-badge ' + lvlClass + '">' + c.level + '</span>';
+      if (disc > 0) html += '<span class="ch-badge" style="top:10px;left:10px;right:auto;background:#e74c3c;color:#fff">-' + disc + '%</span>';
+      html += '</div>';
+      html += '<div class="ch-body">';
+      html += '<div class="ch-title">' + c.title + '</div>';
+      html += '<div class="ch-inst"><span class="ch-inst-av">' + (c.instructor ? c.instructor.charAt(0) : '؟') + '</span>' + (c.instructor || '') + '</div>';
+      html += '<div class="ch-meta">';
+      if (c.duration) html += '<span>⏱ ' + c.duration + '</span>';
+      if (c.students) html += '<span>👥 ' + c.students + ' نفر</span>';
+      if (c.rating) html += '<span>⭐ ' + c.rating + '</span>';
+      html += '</div>';
+      html += '<div class="ch-footer">';
+      if (c.price > 0) {
+        html += '<div>';
+        if (disc > 0) html += '<span class="ch-original">' + c.originalPrice.toLocaleString('fa-IR') + '</span>';
+        html += '<span class="ch-price">' + c.price.toLocaleString('fa-IR') + ' ت</span></div>';
+      } else {
+        html += '<span class="ch-price-free">رایگان</span>';
+      }
+      html += '<span class="ch-btn">مشاهده دوره</span>';
+      html += '</div></div></a>';
+    });
+    $('#homeCoursesGrid').html(html);
+  }
 
 });
 </script>

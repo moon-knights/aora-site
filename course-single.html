@@ -202,21 +202,32 @@ $(document).ready(function () {
 
   /* ═══ پیدا کردن دوره ═══ */
   var course = null;
-  API.get('/courses/' + courseId).done(function (data) {
-    course = data;
+
+  // اول از localStorage بررسی کن
+  try {
+    var localCourses = JSON.parse(localStorage.getItem('aora_courses') || '[]');
+    course = localCourses.find(function(c) { return c.id === courseId; });
+  } catch(e) {}
+
+  if (course) {
     initPage();
-  }).fail(function () {
-    // تلاش برای پیدا کردن از داده‌های پیش‌فرض
-    if (typeof API.getDefaultCourses === 'function') {
-      var defaults = API.getDefaultCourses();
-      course = defaults.find(function(c) { return c.id === courseId; });
-    }
-    if (!course) {
-      $('body').html('<div style="text-align:center;padding:10rem 2rem"><h1>😔 دوره پیدا نشد</h1><p style="color:var(--text-muted);margin:1rem 0">این دوره وجود ندارد یا حذف شده است.</p><a href="/courses" class="btn-primary" style="padding:.7rem 2rem;text-decoration:none">بازگشت به بازارچه</a></div>');
-      return;
-    }
-    initPage();
-  });
+  } else {
+    API.get('/courses/' + courseId).done(function (data) {
+      course = data;
+      initPage();
+    }).fail(function () {
+      // تلاش برای پیدا کردن از داده‌های پیش‌فرض
+      if (typeof API.getDefaultCourses === 'function') {
+        var defaults = API.getDefaultCourses();
+        course = defaults.find(function(c) { return c.id === courseId; });
+      }
+      if (!course) {
+        $('body').html('<div style="text-align:center;padding:10rem 2rem"><h1>😔 دوره پیدا نشد</h1><p style="color:var(--text-muted);margin:1rem 0">این دوره وجود ندارد یا حذف شده است.</p><a href="/courses" class="btn-primary" style="padding:.7rem 2rem;text-decoration:none">بازگشت به بازارچه</a></div>');
+        return;
+      }
+      initPage();
+    });
+  }
 
   function initPage() {
 

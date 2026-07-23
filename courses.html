@@ -217,10 +217,24 @@ $(document).ready(function () {
 
   /* ── بارگذاری دوره‌ها ── */
   API.get('/courses').done(function (courses) {
+    if (!courses || !courses.length) {
+      // fallback به داده‌های پیش‌فرض
+      if (typeof API.getDefaultCourses === 'function') {
+        courses = API.getDefaultCourses();
+      }
+    }
     allCourses = courses;
     renderFeatured(courses.filter(function (c) { return c.featured; }));
     renderGrid(courses);
-    $('#statCourses').text(courses.length);
+    $('#resultsCount').text('نمایش ' + courses.length + ' دوره');
+  }).fail(function () {
+    if (typeof API.getDefaultCourses === 'function') {
+      var defaults = API.getDefaultCourses();
+      allCourses = defaults;
+      renderFeatured(defaults.filter(function (c) { return c.featured; }));
+      renderGrid(defaults);
+      $('#resultsCount').text('نمایش ' + defaults.length + ' دوره');
+    }
   });
 
 
