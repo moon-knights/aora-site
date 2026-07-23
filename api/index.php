@@ -35,6 +35,11 @@ if (strpos($uri, '/api') === 0) {
     $uri = substr($uri, 4);
 }
 
+// اگر مسیر خالی بود، از query parameter بخوان (fallback برای سرورهایی که rewrite ندارند)
+if (empty(trim($uri, '/')) && isset($_GET['route'])) {
+    $uri = '/' . $_GET['route'];
+}
+
 // مسیریابی
 $segments = explode('/', trim($uri, '/'));
 $resource = $segments[0] ?? '';

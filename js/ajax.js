@@ -80,6 +80,34 @@ var API = (function () {
         }
       })
       .fail(function (xhr) {
+        // اگر 404 یا network error بود، با route query parameter دوباره امتحان کن
+        if ((xhr.status === 404 || xhr.status === 0) && !options._retried) {
+          var retryOptions = $.extend({}, options, { _retried: true });
+          var routePath = endpoint.replace(/^\//, '');
+          var retryUrl = config.baseUrl + '/index.php?route=' + encodeURIComponent(routePath);
+          var retryAjax = $.extend({}, ajaxOptions, { url: retryUrl });
+          $.ajax(retryAjax)
+            .done(function (response) {
+              if (response.success !== false) {
+                deferred.resolve(response.data !== undefined ? response.data : response);
+              } else {
+                deferred.reject(response.message || 'خطای سرور');
+              }
+            })
+            .fail(function (xhr2) {
+              var msg = 'خطا در ارتباط با سرور.';
+              if (xhr2.status === 401) {
+                msg = 'نشست شما منقضی شده. لطفاً دوباره وارد شوید.';
+                clearToken();
+                if (!options.noRedirect) window.location.href = '/login';
+              } else if (xhr2.status === 403) msg = 'شما اجازه دسترسی به این بخش را ندارید.';
+              else if (xhr2.status === 404) msg = 'موردی یافت نشد.';
+              else if (xhr2.responseJSON && xhr2.responseJSON.message) msg = xhr2.responseJSON.message;
+              deferred.reject(msg);
+            });
+          return;
+        }
+
         var msg = 'خطا در ارتباط با سرور.';
         if (xhr.status === 401) {
           msg = 'نشست شما منقضی شده. لطفاً دوباره وارد شوید.';

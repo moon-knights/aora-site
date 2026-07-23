@@ -1081,11 +1081,6 @@ $(document).ready(function () {
     var s = JSON.parse(localStorage.getItem('aoura_settings') || '{}');
     var defaults = { siteName: 'آئورا', siteDesc: 'استودیو تولید محتوا، آموزش و پروژه', supportEmail: 'support@aoura.ir', supportPhone: '۰۲۱-۱۲۳۴۵۶۷۸', registrationOpen: true, maintenanceMode: false };
     
-     $('#clrU').off('click').on('click', function () { if (!confirm('حذف کاربران؟')) return; localStorage.removeItem('aoura_users'); updateBadges(); showNotification('کاربران پاک شدند.'); });
-    $('#clrE').off('click').on('click', function () { if (!confirm('حذف ثبت‌نام‌ها؟')) return; localStorage.removeItem('aoura_enrollments'); showNotification('پاک شد.'); });
-    $('#clrF').off('click').on('click', function () { if (!confirm('حذف تالار؟')) return; localStorage.removeItem('aora_forum'); showNotification('پاک شد.'); });
-    $('#clrA').off('click').on('click', function () { if (!confirm('⚠️ همه داده‌ها حذف می‌شوند؟')) return; localStorage.clear(); showNotification('پاک شد. بارگذاری...'); setTimeout(function () { location.reload(); }, 1500); });
-    
     for (var k in defaults) { if (s[k] === undefined) s[k] = defaults[k]; }
     var h = '<div class="panel"><div class="panel-header"><h3>⚙ تنظیمات عمومی</h3></div><div class="panel-body">';
     h += '<div class="form-grid">';

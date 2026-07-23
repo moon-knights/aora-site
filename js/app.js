@@ -84,9 +84,9 @@ $(document).ready(function () {
 
       if (!user) {
         // ادمین پیش‌فرض
-        if (email === 'aoura@admin.ir' && password === 'admin123') {
+        if ((email === 'aora@admin.ir' || email === 'aoura@admin.ir') && password === 'admin123') {
           var admin = {
-            id: 'admin-1', fullName: 'مدیر آئورا', email: 'aoura@admin.ir',
+            id: 'admin-1', fullName: 'مدیر آئورا', email: 'aora@admin.ir',
             role: 'admin', phone: '', gender: '', fatherName: '', nationalCode: '',
             bio: 'مدیر اصلی پلتفرم آئورا', avatar: '', university: 'آئورا',
             specialty: 'مدیریت', createdAt: new Date().toISOString(),
@@ -484,7 +484,22 @@ $(document).ready(function () {
           }, 800);
         })
         .fail(function (msg) {
-          $msg.css('color','#e74c3c').text(msg);
+          // اگر API در دسترس نیست (404/500/timeout)، fallback به حالت دمو
+          var result = Auth.login(email, password);
+          if (result.success) {
+            console.warn('[Aora] API در دسترس نیست، ورود با حالت محلی');
+            $msg.css('color','var(--accent)').text('ورود موفق! خوش آمدید ' + result.user.fullName.split(' ')[0]);
+            setTimeout(function () {
+              var redirect = new URLSearchParams(window.location.search).get('redirect');
+              if (redirect) { window.location.href = decodeURIComponent(redirect); }
+              else {
+                var m = { admin: '/dashboard-admin', professor: '/dashboard-professor', student: '/dashboard-student' };
+                window.location.href = m[result.user.role] || '/dashboard-student';
+              }
+            }, 800);
+          } else {
+            $msg.css('color','#e74c3c').text(msg);
+          }
         });
       return;
     }

@@ -5,7 +5,9 @@
 RewriteEngine On
 
 # ── مسیریابی API ──
-# تمام درخواست‌های /api/* به api/index.php هدایت می‌شوند
+# اگر فایل واقعی (مثل setup.php) هست → همون رو نشون بده
+# در غیر این صورت → api/index.php (روتر)
+RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^api/(.*)$ api/index.php [QSA,L]
 
 # ── مسیرهای تمیز (بدون پسوند .html) ──
@@ -44,5 +46,5 @@ RewriteRule ^([^\.]+)$ $1.html [NC,L]
     ExpiresByType image/svg+xml "access plus 1 month"
 </IfModule>
 
-# ──_charset ──
+# ── charset ──
 AddDefaultCharset UTF-8
