@@ -5,6 +5,27 @@
 
 require_once __DIR__ . '/config.php';
 
+// ── بررسی حالت تعمیرات ──
+// اگر maintenance_mode در دیتابیس فعال باشد، فقط ادمین‌ها اجازه دسترسی دارند
+try {
+    $maintDb = getDB();
+    $maintStmt = $maintDb->query('SELECT maintenance_mode FROM site_settings WHERE id = 1');
+    $maintSettings = $maintStmt->fetch();
+    if ($maintSettings && (int)$maintSettings['maintenance_mode'] === 1) {
+        $currentUser = getCurrentUser();
+        if (!$currentUser || $currentUser['role'] !== 'admin') {
+            http_response_code(503);
+            echo json_encode([
+                'success' => false,
+                'message' => 'سایت در حال بروزرسانی است. لطفاً چند دقیقه دیگر مراجعه کنید.'
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+    }
+} catch (Exception $e) {
+    // اگر خطا رخ داد، ادامه بده
+}
+
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = rtrim($uri, '/');

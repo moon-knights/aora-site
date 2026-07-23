@@ -34,6 +34,21 @@
 6. **`course-study.html` هم اصلاً وجود نداشت** (لینک «ادامه یادگیری») — به‌جای ساخت یک صفحه تکراری، لینک‌ها به `dashboard-student.html?course=ID` تغییر کردند و آن صفحه طوری اصلاح شد که با `?course=` مستقیم به تب محتوای همان دوره برود (این تب از قبل به‌طور کامل و درست پیاده‌سازی شده بود).
 7. **`faq.html` وجود نداشت** ولی از فوتر تقریباً همه صفحات سایت لینک داده می‌شد — صفحه سوالات متداول ساخته شد.
 
+## 🔄 مهاجرت به PHP خالص (حذف ASP.NET)
+
+backend ASP.NET (C#) به‌طور کامل حذف شد و تمام عملکردها به PHP منتقل شد:
+
+- **`api/settings.php`** — endpointهای جدید اضافه شد:
+  - `POST /api/settings/logo` — آپلود لوگو با محدودیت حجم و فرمت
+  - `PUT /api/settings/header` — ذخیره هدر گلوبال (HTML/CSS/GrapesJS)
+  - `PUT /api/settings/footer` — ذخیره فوتر گلوبال
+  - `GET /api/settings/render/{slug}` — رندر صفحه کامل با هدر/فوتر گلوبال
+  - `GET /api/settings/render-home` — رندر صفحه اصلی
+  - پشتیبانی از `maintenanceMode` و `faviconUrl` در PUT تنظیمات
+- **`api/index.php`** — بررسی حالت تعمیرات (maintenance mode) اضافه شد. اگر `maintenance_mode` در دیتابیس فعال باشد، فقط ادمین‌ها اجازه دسترسی دارند.
+- **تابع `buildFullPageHtml()`** — معادل PHP کلاس `PageRenderer.cs` در `settings.php` پیاده‌سازی شد.
+- تمام endpointهای ASP.NET قبلاً در PHP موجود بودند و فقط endpointهای تنظیمات تکمیل شدند.
+
 ## ⚠️ محدودیت‌ها و کارهای باقی‌مانده (مهم)
 
 - **من دسترسی به .NET SDK یا SQL Server ندارم**، پس نتوانستم واقعاً `dotnet build` یا `dotnet ef migrations add` را اجرا کنم. تمام اصلاحات از طریق بازبینی دقیق کد (بررسی تعادل آکولادها، سینتکس، namespaceها) انجام شده، ولی توصیه می‌کنم بعد از دریافت پروژه، این دستورات را اجرا کنید:
