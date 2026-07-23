@@ -4,6 +4,9 @@
 // بعد از اجرا این فایل را حذف کنید!
 // ═══════════════════════════════════════════════════════════
 
+// خواندن تنظیمات (باید قبل از هر echo بارگذاری شود، چون داخلش header() صدا زده می‌شود)
+require_once __DIR__ . '/config.php';
+
 header('Content-Type: text/html; charset=utf-8');
 
 echo '<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8"><title>نصب آئورا</title>
@@ -13,9 +16,6 @@ pre{background:#16213e;padding:15px;border-radius:8px;overflow-x:auto;direction:
 code{color:#e0c54f}</style></head><body>';
 
 echo '<h1>🔧 نصب آئورا</h1>';
-
-// خواندن تنظیمات
-require_once __DIR__ . '/config.php';
 
 echo '<h2>۱. اتصال دیتابیس</h2>';
 try {
@@ -83,7 +83,7 @@ echo '<p class="ok">✅ تنظیمات پیش‌فرض ذخیره شد</p>';
 
 echo '<h2>🎉 نصب کامل شد!</h2>';
 echo '<p>حالا:</p>';
-<parameter name="content">echo '<ol>';
+echo '<ol>';
 echo '<li>این فایل (<code>api/setup.php</code>) را <strong>حذف کنید</strong></li>';
 echo '<li>به <a href="/" style="color:#e0c54f">صفحه اصلی سایت</a> بروید</li>';
 echo '<li>از <a href="/login" style="color:#e0c54f">صفحه ورود</a> با اطلاعات ادمین وارد شوید</li>';

@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS `site_settings` (
 
 -- ادمین پیش‌فرض (رمز: admin123)
 INSERT IGNORE INTO `users` (`id`, `full_name`, `email`, `password_hash`, `role`, `is_active`, `created_at`)
-VALUES (1, 'مدیر آئورا', 'aora@admin.ir', '$2y$10$YourHashHere', 'admin', 1, NOW());
+VALUES (1, 'مدیر آئورا', 'aora@admin.ir', '$2b$10$W3mH4cu6IOPAQnfwOWjHtOKp85opQ8I4K7pq0IqWMTPV2lzt/M2j2', 'admin', 1, NOW());
 
 -- تنظیمات پیش‌فرض
 INSERT IGNORE INTO `site_settings` (`id`, `site_name`, `updated_at`)

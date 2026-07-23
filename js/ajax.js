@@ -536,4 +536,4 @@ var API = (function () {
     getDefaultProfessors: getDefaultProfessors
   };
 
-})
+})()
