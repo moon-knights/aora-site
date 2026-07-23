@@ -6,9 +6,9 @@
 // ── تنظیمات MySQL ──
 // ⚠️ مقادیر زیر را با اطلاعات دیتابیس واقعی خود جایگزین کنید
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'aora_db');        // نام دیتابیس
-define('DB_USER', 'aora_user');      // نام کاربری دیتابیس
-define('DB_PASS', 'YOUR_PASSWORD');  // رمز عبور دیتابیس
+define('DB_NAME', 'cylijgfm_AoraDbContext');        // نام دیتابیس
+define('DB_USER', 'cylijgfm_Morteza_Heydari');      // نام کاربری دیتابیس
+define('DB_PASS', 'M@o#r$i&8585');  // رمز عبور دیتابیس
 define('DB_CHARSET', 'utf8mb4');
 
 // ── JWT Secret Key ──
