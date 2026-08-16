@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
 .dash-page{padding-top:80px;min-height:100vh}
 .dash-header{background:linear-gradient(135deg,var(--bg-surface),var(--bg-deep));padding:2.5rem 0;border-bottom:1px solid var(--border)}
@@ -79,13 +80,12 @@
 <nav class="nav" id="mainNav"><div class="container">
 <a href="/" class="nav-logo">آئو<span>را</span></a>
 <ul class="nav-links">
-<li><a href="/">خانه</a></li>
-<li><a href="/courses">بازارچه دوره‌ها</a></li>
-<li><a href="/forum">تالار گفتگو</a></li>
-<li><a href="/resources">منابع</a></li>
+  <li><a href="/"><i data-lucide="home"></i> خانه</a></li>
+  <li><a href="/courses"><i data-lucide="book-open"></i> دوره‌ها</a></li>
+  <li><a href="/surveys"><i data-lucide="clipboard-list"></i> نظرسنجی</a></li>
 </ul>
-<div class="nav-actions"><a href="/cart" class="nav-cart">🛒 <span id="cartCount">0</span></a><div id="authArea"></div></div>
-<button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+<div class="nav-actions"><a href="/cart" class="nav-cart"><i data-lucide="shopping-cart"></i> <span id="cartCount">0</span></a><div id="authArea"></div></div>
+<button class="mobile-menu-btn" id="mobileMenuBtn"><i data-lucide="menu"></i></button>
 </div></nav>
 
 <div class="dash-page">
@@ -410,6 +410,6 @@ $(document).ready(function () {
 
 });
 </script>
-<script>$(document).ready(function(){$("#mobileMenuBtn").on("click",function(){$(".nav-links").toggleClass("open")});});</script>
+<script>if(typeof lucide!=='undefined')lucide.createIcons();</script>
 </body>
 </html>

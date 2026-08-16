@@ -9,9 +9,54 @@ $(document).ready(function () {
     else $('#mainNav').removeClass('scrolled');
   });
 
-  var currentPage = window.location.pathname.split('/').pop() || '/';
+  var currentPath = window.location.pathname;
+  // نرمال‌سازی: حذف اسلش انتهایی (به جز ریشه)
+  if (currentPath.length > 1 && currentPath.endsWith('/')) currentPath = currentPath.slice(0, -1);
+  var currentPage = currentPath.split('/').pop() || '/';
   $('.nav-links a').each(function () {
-    if ($(this).attr('href') === currentPage) $(this).addClass('active');
+    var href = $(this).attr('href');
+    if (!href || href === '#') return;
+    // نرمال‌سازی href
+    var normHref = href;
+    if (normHref.length > 1 && normHref.endsWith('/')) normHref = normHref.slice(0, -1);
+    var hrefPage = normHref.split('/').pop() || '/';
+    if (hrefPage === currentPage || href === currentPath) $(this).addClass('active');
+  });
+
+  /* ═══ Mobile Menu Toggle ═══ */
+  $('#mobileMenuBtn').off('click.aora').on('click.aora', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var $links = $('.nav-links');
+    var $btn = $(this);
+    var willOpen = !$links.hasClass('open');
+    $links.toggleClass('open', willOpen);
+    // تغییر آیکون دکمه
+    $btn.find('i').attr('data-lucide', willOpen ? 'x' : 'menu');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    if (!willOpen) {
+      $('.has-dropdown').removeClass('open');
+    }
+  });
+
+  /* ═══ Mobile Dropdown Toggle (click-to-open) ═══ */
+  $(document).off('click.aoraMobileDropdown').on('click.aoraMobileDropdown', '.nav-links.open .has-dropdown > a', function (e) {
+    var $parent = $(this).closest('.has-dropdown');
+    // اگر دراپ‌داون باز نیست، بازش کن و ناوبری رو بزن
+    if (!$parent.hasClass('open')) {
+      e.preventDefault();
+      $parent.siblings('.has-dropdown.open').removeClass('open');
+      $parent.addClass('open');
+    }
+    // اگر بازه، اجازه بده لینک کار کنه (ناوبری عادی)
+  });
+
+  /* بستن منوی موبایل وقتی بیرون کلیک می‌شه */
+  $(document).on('click.aoraClose', function (e) {
+    if (!$(e.target).closest('#mainNav').length) {
+      $('.nav-links').removeClass('open');
+      $('.has-dropdown').removeClass('open');
+    }
   });
 
 
@@ -99,6 +144,11 @@ $(document).ready(function () {
         return { success: false, message: 'ایمیل یا رمز عبور اشتباه است.' };
       }
 
+      // بررسی فعال بودن حساب
+      if (user.isActive === false) {
+        return { success: false, message: 'حساب کاربری غیرفعال شده است.' };
+      }
+
       user.lastLoginAt = new Date().toISOString();
       var idx = users.findIndex(function (u) { return u.id === user.id; });
       if (idx >= 0) users[idx] = user;
@@ -155,11 +205,11 @@ $(document).ready(function () {
           '</div></div>'
         );
 
-        $('#userMenuBtn').off('click.aora').on('click.aora', function (e) {
+        $('#userMenuBtn').off('click.aoraUser').on('click.aoraUser', function (e) {
           e.stopPropagation();
           $('#userDropdown').toggleClass('open');
         });
-        $(document).off('click.aoraDropdown').on('click.aoraDropdown', function () {
+        $(document).off('click.aoraUserClose').on('click.aoraUserClose', function () {
           $('#userDropdown').removeClass('open');
         });
         $('#logoutBtn').off('click.aora').on('click.aora', function (e) { e.preventDefault(); Auth.logout(); });
@@ -468,7 +518,7 @@ $(document).ready(function () {
 
     // حالت API واقعی
     if (typeof API !== 'undefined' && !API.config.demoMode) {
-      API.post('/auth/login', { email: email, password: password })
+      API.post('/auth/login', { email: email, password: password }, { noRedirect: true })
         .done(function (res) {
           var user = res.user || res;
           Auth.setCurrentUser(user);

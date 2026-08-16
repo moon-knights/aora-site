@@ -58,16 +58,41 @@ if ($action === 'login' && $method === 'POST') {
 
     if (!$email || !$password) jsonError('ایمیل و رمز را وارد کنید.');
 
+    // Rate limiting ساده: حداکثر 10 تلاش در 5 دقیقه
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $rateLimitKey = 'login_attempts_' . md5($ip . $email);
+    
+    // بررسی تعداد تلاش‌های قبلی (با فایل موقت)
+    $rateLimitFile = sys_get_temp_dir() . '/aora_rate_' . md5($rateLimitKey) . '.json';
+    $attempts = [];
+    if (file_exists($rateLimitFile)) {
+        $attempts = json_decode(file_get_contents($rateLimitFile), true) ?: [];
+        // حذف تلاش‌های قدیمی‌تر از 5 دقیقه
+        $attempts = array_filter($attempts, function($t) { return $t > time() - 300; });
+    }
+    
+    if (count($attempts) >= 10) {
+        jsonError('تعداد تلاش‌های ورود زیاد است. لطفاً 5 دقیقه صبر کنید.', 429);
+    }
+    
     $stmt = $db->prepare('SELECT * FROM users WHERE email = ?');
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
     if (!$user || !password_verify($password, $user['password_hash'])) {
+        // ثبت تلاش ناموفق
+        $attempts[] = time();
+        file_put_contents($rateLimitFile, json_encode($attempts));
         jsonError('ایمیل یا رمز عبور اشتباه است.', 401);
     }
 
     if (!$user['is_active']) {
         jsonError('حساب کاربری غیرفعال شده است.', 403);
+    }
+
+    // حذف فایل rate limit پس از ورود موفق
+    if (file_exists($rateLimitFile)) {
+        @unlink($rateLimitFile);
     }
 
     // بروزرسانی آخرین ورود

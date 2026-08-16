@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
 /* ═══ ویزارد ═══ */
 .wizard-page{min-height:100vh;padding-top:100px;padding-bottom:3rem}
@@ -134,12 +135,12 @@
 <nav class="nav" id="mainNav"><div class="container">
 <a href="/" class="nav-logo">آئو<span>را</span></a>
 <ul class="nav-links">
-  <li><a href="/">خانه</a></li>
-  <li><a href="/courses">خدمات و دوره‌ها</a></li>
-  <li><a href="/dashboard-professor" class="active">پنل استاد</a></li>
+  <li><a href="/"><i data-lucide="home"></i> خانه</a></li>
+  <li><a href="/courses"><i data-lucide="book-open"></i> دوره‌ها</a></li>
+  <li><a href="/surveys"><i data-lucide="clipboard-list"></i> نظرسنجی</a></li>
 </ul>
 <div class="nav-actions"><div id="authArea"></div></div>
-<button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+<button class="mobile-menu-btn" id="mobileMenuBtn"><i data-lucide="menu"></i></button>
 </div></nav>
 
 <div class="wizard-page">
@@ -731,12 +732,12 @@ $(document).ready(function () {
   });
 
   /* ═══ منوی موبایل ═══ */
-  $('#mobileMenuBtn').on('click', function() { $('.nav-links').toggleClass('open'); });
 
   /* ═══ مقداردهی اولیه ═══ */
   renderChapters();
 });
 </script>
 
+<script>if(typeof lucide!=='undefined')lucide.createIcons();</script>
 </body>
 </html>

@@ -125,6 +125,15 @@ var Survey = (function(){
           html += '<span>' + (q.minLabel || '') + '</span><span>' + (q.maxLabel || '') + '</span></div>';
         }
         break;
+      case 'phone':
+        html += '<input type="tel" name="q_' + q.id + '" placeholder="09xxxxxxxxx" style="direction:ltr;text-align:left">';
+        break;
+      case 'url':
+        html += '<input type="url" name="q_' + q.id + '" placeholder="https://..." style="direction:ltr;text-align:left">';
+        break;
+      case 'color':
+        html += '<input type="color" name="q_' + q.id + '" style="width:60px;height:40px;border:none;cursor:pointer;background:transparent">';
+        break;
       case 'date':
         html += '<input type="date" name="q_' + q.id + '">';
         break;
@@ -245,13 +254,16 @@ var Survey = (function(){
     { type: 'textarea', icon: '📝', name: 'متن بلند', group: 'متنی' },
     { type: 'email', icon: '📧', name: 'ایمیل', group: 'متنی' },
     { type: 'number', icon: '🔢', name: 'عدد', group: 'متنی' },
+    { type: 'phone', icon: '📞', name: 'تلفن', group: 'متنی' },
+    { type: 'url', icon: '🔗', name: 'لینک', group: 'متنی' },
     { type: 'radio', icon: '◉', name: 'تک‌انتخابی', group: 'انتخابی' },
     { type: 'checkbox', icon: '☑️', name: 'چندانتخابی', group: 'انتخابی' },
     { type: 'select', icon: '▼', name: 'لیست کشویی', group: 'انتخابی' },
     { type: 'rating', icon: '⭐', name: 'امتیاز ستاره', group: 'مقیاس' },
     { type: 'scale', icon: '📊', name: 'مقیاس عددی', group: 'مقیاس' },
     { type: 'date', icon: '📅', name: 'تاریخ', group: 'متفرقه' },
-    { type: 'file', icon: '📎', name: 'فایل پیوست', group: 'متفرقه' }
+    { type: 'file', icon: '📎', name: 'فایل پیوست', group: 'متفرقه' },
+    { type: 'color', icon: '🎨', name: 'رنگ', group: 'متفرقه' }
   ];
 
   /* ── API عمومی ── */

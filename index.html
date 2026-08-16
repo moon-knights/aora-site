@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 /* ═══ هیرو ═══ */
@@ -127,17 +128,31 @@
 <a href="/" class="nav-logo">آئو<span>را</span></a>
 <ul class="nav-links">
   <li><a href="/" class="active">خانه</a></li>
-  <li><a href="/courses">خدمات و دوره‌ها</a></li>
-  <li><a href="/research">نمونه‌کارها</a></li>
-  <li><a href="/forum">تالار گفتگو</a></li>
-  <li><a href="/resources">منابع</a></li>
-  <li><a href="/about">درباره ما</a></li>
+  <li class="has-dropdown">
+    <a href="#">خدمات <i data-lucide="chevron-down" class="dropdown-arrow"></i></a>
+    <div class="nav-dropdown">
+      <a href="/courses"><i data-lucide="book-open"></i> دوره‌ها</a>
+      <a href="/professors"><i data-lucide="users"></i> اساتید</a>
+      <a href="/students"><i data-lucide="graduation-cap"></i> دانشجویان</a>
+      <a href="/meetings"><i data-lucide="video"></i> جلسات</a>
+    </div>
+  </li>
+  <li class="has-dropdown">
+    <a href="#">پژوهش <i data-lucide="chevron-down" class="dropdown-arrow"></i></a>
+    <div class="nav-dropdown">
+      <a href="/research"><i data-lucide="folder-open"></i> نمونه‌کارها</a>
+      <a href="/resources"><i data-lucide="library"></i> منابع</a>
+    </div>
+  </li>
+  <li><a href="/forum"><i data-lucide="messages-square"></i> تالار گفتگو</a></li>
+  <li><a href="/about"><i data-lucide="info"></i> درباره ما</a></li>
+  <li><a href="/faq"><i data-lucide="help-circle"></i> سوالات</a></li>
 </ul>
 <div class="nav-actions">
-  <a href="/cart" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+  <a href="/cart" class="nav-cart"><i data-lucide="shopping-cart"></i> <span id="cartCount">0</span></a>
   <div id="authArea"></div>
 </div>
-<button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+<button class="mobile-menu-btn" id="mobileMenuBtn"><i data-lucide="menu"></i></button>
 </div></nav>
 
 
@@ -191,32 +206,32 @@
   <p class="section-subtitle">هر چی نیاز داری، ما انجامش می‌دیم</p>
   <div class="service-grid">
     <div class="service-card">
-      <div class="service-icon">🎬</div>
+      <div class="service-icon"><i data-lucide="clapperboard"></i></div>
       <h3>تولید فیلم و مستند</h3>
       <p>از ایده‌پردازی و فیلم‌نامه‌نویسی تا فیلم‌برداری، تدوین و اکران — یه تیم کامل کنارته</p>
     </div>
     <div class="service-card">
-      <div class="service-icon">📸</div>
+      <div class="service-icon"><i data-lucide="camera"></i></div>
       <h3>عکاسی و تصویربرداری</h3>
       <p>عکاسی تبلیغاتی، صنعتی، مستند و مراسم با تجهیزات حرفه‌ای</p>
     </div>
     <div class="service-card">
-      <div class="service-icon">🎨</div>
+      <div class="service-icon"><i data-lucide="palette"></i></div>
       <h3>طراحی و هویت بصری</h3>
       <p>لوگو، ست اداری، بسته‌بندی، موشن‌گرافیک و هویت بصری برند</p>
     </div>
     <div class="service-card">
-      <div class="service-icon">📚</div>
+      <div class="service-icon"><i data-lucide="book-open"></i></div>
       <h3>آموزش و تولید محتوا</h3>
       <p>طراحی و برگزاری دوره‌های تخصصی، تولید محتوای آموزشی و وبینار</p>
     </div>
     <div class="service-card">
-      <div class="service-icon">🛠</div>
+      <div class="service-icon"><i data-lucide="wrench"></i></div>
       <h3>اجرای پروژه</h3>
       <p>مدیریت و اجرای پروژه‌های تخصصی از مرحله ایده تا تحویل نهایی</p>
     </div>
     <div class="service-card">
-      <div class="service-icon">🎙</div>
+      <div class="service-icon"><i data-lucide="mic"></i></div>
       <h3>صداگذاری و پادکست</h3>
       <p>ضبط، ویرایش و میکس صدا برای فیلم، تبلیغات، پادکست و کتاب صوتی</p>
     </div>
@@ -399,9 +414,9 @@
   <div>
     <h4 class="footer-title">تماس</h4>
     <ul class="footer-links">
-      <li>📧 info@aora.ir</li>
-      <li>📞 ۰۲۱-۱۲۳۴۵۶۷۸</li>
-      <li>📍 تهران، ایران</li>
+      <li><i data-lucide="mail"></i> info@aora.ir</li>
+      <li><i data-lucide="phone"></i> ۰۲۱-۱۲۳۴۵۶۷۸</li>
+      <li><i data-lucide="map-pin"></i> تهران، ایران</li>
     </ul>
   </div>
 </div>
@@ -422,11 +437,6 @@ $(document).ready(function () {
   if (typeof ContentManager !== 'undefined') {
     ContentManager.applyToPage('index.html');
   }
-
-  /* ── منوی موبایل ── */
-  $('#mobileMenuBtn').on('click', function () {
-    $('.nav-links').toggleClass('open');
-  });
 
   /* ── بارگذاری دورهها در صفحه اصلی ── */
   API.get('/courses').done(function (courses) {
@@ -483,4 +493,5 @@ $(document).ready(function () {
 </script>
 
 </body>
+<script>if(typeof lucide!=='undefined')lucide.createIcons();</script>
 </html>

@@ -2,20 +2,28 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>نظرسنجی‌ساز — آرا</title>
+<title>نظرسنجی‌ساز — آئورا</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
 <nav class="nav" id="mainNav"><div class="container">
-<a href="/" class="nav-logo">آ<span>را</span></a>
-<div style="display:flex;align-items:center;gap:1rem">
-<a href="/" style="font-size:.75rem;color:var(--text-muted)">بازگشت</a>
+<a href="/" class="nav-logo">آئو<span>را</span></a>
+<ul class="nav-links">
+  <li><a href="/"><i data-lucide="home"></i> خانه</a></li>
+  <li><a href="/courses"><i data-lucide="book-open"></i> دوره‌ها</a></li>
+  <li><a href="/surveys" class="active"><i data-lucide="clipboard-list"></i> نظرسنجی</a></li>
+</ul>
+<div class="nav-actions">
+  <a href="/cart" class="nav-cart"><i data-lucide="shopping-cart"></i> <span id="cartCount">0</span></a>
+  <div id="authArea"></div>
 </div>
+<button class="mobile-menu-btn" id="mobileMenuBtn"><i data-lucide="menu"></i></button>
 </div></nav>
 
 <div class="tool-page">
@@ -23,7 +31,7 @@
 <div class="container">
 <div class="tool-icon" style="background:linear-gradient(135deg,#1a237e,#0d47a1)">📋</div>
 <div>
-<h1>نظرسنجی‌ساز آرا</h1>
+<h1>نظرسنجی‌ساز آئورا</h1>
 <p>پرسشنامه‌های آنلاین بسازید، به اشتراک بگذارید و نتایج را تحلیل کنید</p>
 </div>
 </div>
@@ -111,6 +119,8 @@ $(document).ready(function(){
       html += '<a href="/survey-view?id=' + s.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">مشاهده</a>';
       html += '<a href="/survey-results?id=' + s.id + '" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">نتایج</a>';
       html += '<button onclick="copySurveyLink(\'' + s.id + '\')" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">کپی لینک</button>';
+      html += '<button onclick="duplicateSurvey(\'' + s.id + '\')" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">کپی</button>';
+      html += '<button onclick="toggleSurveyStatus(\'' + s.id + '\')" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem">' + (s.status === 'active' ? 'بستن' : 'فعال‌سازی') + '</button>';
       html += '<button onclick="deleteThisSurvey(\'' + s.id + '\')" class="btn-ghost" style="padding:.4rem .8rem;font-size:.72rem;color:#e74c3c;border-color:#e74c3c">حذف</button>';
       html += '</div>';
       html += '</div>';
@@ -135,7 +145,29 @@ $(document).ready(function(){
       renderDashboard();
     }
   };
+
+  window.duplicateSurvey = function(id){
+    var survey = Survey.getById(id);
+    if(!survey) return;
+    var copy = JSON.parse(JSON.stringify(survey));
+    copy.id = 'sv_' + Date.now();
+    copy.title = copy.title + ' (کپی)';
+    copy.createdAt = new Date().toISOString();
+    copy.status = 'active';
+    var surveys = Survey.getAll();
+    surveys.unshift(copy);
+    localStorage.setItem('aora_surveys', JSON.stringify(surveys));
+    renderDashboard();
+  };
+
+  window.toggleSurveyStatus = function(id){
+    var survey = Survey.getById(id);
+    if(!survey) return;
+    Survey.update(id, { status: survey.status === 'active' ? 'closed' : 'active' });
+    renderDashboard();
+  };
 });
 </script>
 </body>
+<script>if(typeof lucide!=='undefined')lucide.createIcons();</script>
 </html>

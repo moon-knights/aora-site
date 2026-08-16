@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
 .about-page{padding-top:80px}
 .about-hero{text-align:center;padding:5rem 0 3rem;background:linear-gradient(180deg,var(--bg-surface),var(--bg-deep))}
@@ -60,18 +61,31 @@
 <a href="/" class="nav-logo">آئو<span>را</span></a>
 <ul class="nav-links">
   <li><a href="/">خانه</a></li>
-  <li><a href="/courses">بازارچه دوره‌ها</a></li>
-  <li><a href="/professors">اساتید</a></li>
-  <li><a href="/forum">تالار گفتگو</a></li>
-  <li><a href="/resources">منابع</a></li>
-  <li><a href="/research">پژوهش</a></li>
-  <li><a href="/about" class="active">درباره ما</a></li>
+  <li class="has-dropdown">
+    <a href="#">خدمات <i data-lucide="chevron-down" class="dropdown-arrow"></i></a>
+    <div class="nav-dropdown">
+      <a href="/courses"><i data-lucide="book-open"></i> دوره‌ها</a>
+      <a href="/professors"><i data-lucide="users"></i> اساتید</a>
+      <a href="/students"><i data-lucide="graduation-cap"></i> دانشجویان</a>
+      <a href="/meetings"><i data-lucide="video"></i> جلسات</a>
+    </div>
+  </li>
+  <li class="has-dropdown">
+    <a href="#">پژوهش <i data-lucide="chevron-down" class="dropdown-arrow"></i></a>
+    <div class="nav-dropdown">
+      <a href="/research"><i data-lucide="folder-open"></i> نمونه‌کارها</a>
+      <a href="/resources"><i data-lucide="library"></i> منابع</a>
+    </div>
+  </li>
+  <li><a href="/forum"><i data-lucide="messages-square"></i> تالار گفتگو</a></li>
+  <li><a href="/about" class="active"><i data-lucide="info"></i> درباره ما</a></li>
+  <li><a href="/faq"><i data-lucide="help-circle"></i> سوالات</a></li>
 </ul>
 <div class="nav-actions">
-  <a href="/cart" class="nav-cart">🛒 <span id="cartCount">0</span></a>
+  <a href="/cart" class="nav-cart"><i data-lucide="shopping-cart"></i> <span id="cartCount">0</span></a>
   <div id="authArea"></div>
-<button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
 </div>
+<button class="mobile-menu-btn" id="mobileMenuBtn"><i data-lucide="menu"></i></button>
 </div></nav>
 
 <div class="about-page">
@@ -204,8 +218,8 @@
   <div>
     <h4 class="footer-title">تماس</h4>
     <ul class="footer-links">
-      <li>📧 support@aoura.ir</li>
-      <li>📞 ۰۲۱-۱۲۳۴۵۶۷۸</li>
+      <li><i data-lucide="mail"></i> support@aoura.ir</li>
+      <li><i data-lucide="phone"></i> ۰۲۱-۱۲۳۴۵۶۷۸</li>
     </ul>
   </div>
 </div>
@@ -230,6 +244,6 @@ $(document).ready(function () {
 
 });
 </script>
-<script>$(document).ready(function(){$("#mobileMenuBtn").on("click",function(){$(".nav-links").toggleClass("open")});});</script>
+<script>if(typeof lucide!=='undefined')lucide.createIcons();</script>
 </body>
 </html>

@@ -4,6 +4,14 @@
 
 RewriteEngine On
 
+# ── Security Headers ──
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
 # ── مسیریابی API ──
 # اگر فایل واقعی (مثل setup.php) هست → همون رو نشون بده
 # در غیر این صورت → api/index.php (روتر)
@@ -27,6 +35,27 @@ RewriteRule ^([^\.]+)$ $1.html [NC,L]
 </Files>
 
 <Files "api/db.sql">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# محافظت از فایل‌های نصب و بازنشانی (باید بعد از استفاده حذف شوند)
+<Files "api/setup.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<Files "api/reset-admin.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<Files "api/test.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<Files "api/diagnostic.php">
     Order Allow,Deny
     Deny from all
 </Files>

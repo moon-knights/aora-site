@@ -2,20 +2,28 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ساخت نظرسنجی — آرا</title>
+<title>ساخت نظرسنجی — آئورا</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
 <nav class="nav" id="mainNav"><div class="container">
-<a href="/" class="nav-logo">آ<span>را</span></a>
-<div style="display:flex;align-items:center;gap:1rem">
-<a href="/surveys" style="font-size:.75rem;color:var(--text-muted)">بازگشت به لیست</a>
+<a href="/" class="nav-logo">آئو<span>را</span></a>
+<ul class="nav-links">
+  <li><a href="/"><i data-lucide="home"></i> خانه</a></li>
+  <li><a href="/courses"><i data-lucide="book-open"></i> دوره‌ها</a></li>
+  <li><a href="/surveys"><i data-lucide="clipboard-list"></i> نظرسنجی</a></li>
+</ul>
+<div class="nav-actions">
+  <a href="/cart" class="nav-cart"><i data-lucide="shopping-cart"></i> <span id="cartCount">0</span></a>
+  <div id="authArea"></div>
 </div>
+<button class="mobile-menu-btn" id="mobileMenuBtn"><i data-lucide="menu"></i></button>
 </div></nav>
 
 <div class="tool-page">
@@ -37,6 +45,8 @@
 <button class="field-btn" data-type="textarea"><span class="icon">📝</span> متن بلند</button>
 <button class="field-btn" data-type="email"><span class="icon">📧</span> ایمیل</button>
 <button class="field-btn" data-type="number"><span class="icon">🔢</span> عدد</button>
+<button class="field-btn" data-type="phone"><span class="icon">📞</span> تلفن</button>
+<button class="field-btn" data-type="url"><span class="icon">🔗</span> لینک</button>
 </div>
 <div class="toolbox-section">
 <h4>فیلدهای انتخابی</h4>
@@ -53,6 +63,7 @@
 <h4>متفرقه</h4>
 <button class="field-btn" data-type="date"><span class="icon">📅</span> تاریخ</button>
 <button class="field-btn" data-type="file"><span class="icon">📎</span> فایل پیوست</button>
+<button class="field-btn" data-type="color"><span class="icon">🎨</span> رنگ</button>
 </div>
 </div>
 
@@ -341,4 +352,5 @@ $(document).ready(function(){
 });
 </script>
 </body>
+<script>if(typeof lucide!=='undefined')lucide.createIcons();</script>
 </html>

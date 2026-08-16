@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
 /* ═══════════════════════════════════════════════════════════════
    پنل ادمین — CSS کامل و بدون تکرار
@@ -586,7 +587,46 @@ $(document).ready(function () {
   }
 
   function renderUTab(tab) {
-    var users = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+    var localUsers = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+    
+    // تلاش برای بارگذاری کاربران از دیتابیس
+    if (typeof API !== 'undefined' && !API.config.demoMode) {
+      API.get('/admin/users').done(function (dbUsers) {
+        if (Array.isArray(dbUsers)) {
+          // ادغام کاربران دیتابیس با محلی (محلی اولویت دارد)
+          var localEmails = localUsers.map(function (u) { return u.email.toLowerCase(); });
+          dbUsers.forEach(function (du) {
+            if (localEmails.indexOf(du.email.toLowerCase()) < 0) {
+              localUsers.push({
+                id: 'db_' + du.id,
+                dbId: du.id,
+                fullName: du.fullName || du.full_name,
+                email: du.email,
+                role: du.role,
+                phone: du.phone || '',
+                gender: du.gender || '',
+                fatherName: du.fatherName || du.father_name || '',
+                nationalCode: du.nationalCode || du.national_code || '',
+                bio: du.bio || '',
+                avatar: du.avatar || '',
+                university: du.university || '',
+                specialty: du.specialty || '',
+                createdAt: du.createdAt || du.created_at,
+                isActive: du.isActive !== undefined ? du.isActive : du.is_active
+              });
+            }
+          });
+        }
+        _renderUTabFiltered(tab, localUsers);
+      }).fail(function () {
+        _renderUTabFiltered(tab, localUsers);
+      });
+    } else {
+      _renderUTabFiltered(tab, localUsers);
+    }
+  }
+  
+  function _renderUTabFiltered(tab, users) {
     var filtered = users.filter(function (u) {
       if (tab === 'students') return u.role === 'student';
       if (tab === 'professors') return u.role === 'professor';
@@ -644,6 +684,17 @@ $(document).ready(function () {
       var u = all.find(function (x) { return x.id === id; });
       all = all.filter(function (x) { return x.id !== id; });
       localStorage.setItem('aoura_users', JSON.stringify(all));
+      
+      // حذف از دیتابیس از طریق API
+      if (typeof API !== 'undefined' && !API.config.demoMode) {
+        var dbId = u && u.dbId ? u.dbId : (id.startsWith('db_') ? id.replace('db_', '') : null);
+        if (dbId) {
+          API.del('/admin/users/' + dbId).fail(function (msg) {
+            console.warn('[Aora] حذف از دیتابیس ناموفق:', msg);
+          });
+        }
+      }
+      
       renderUTab(u && u.role === 'professor' ? 'professors' : u && u.role === 'admin' ? 'admins' : 'students');
       updateBadges();
       showNotification('کاربر حذف شد.');
@@ -683,8 +734,31 @@ $(document).ready(function () {
       var nu = { id: 'u_' + Date.now(), fullName: name, email: email.toLowerCase(), password: pass, role: role, phone: $('#nuPhone').val().trim() || '', gender: '', fatherName: '', nationalCode: '', bio: $('#nuBio').val().trim() || '', avatar: '', university: '', specialty: '', createdAt: new Date().toISOString(), lastLoginAt: null, isActive: true };
       if (role === 'student') { nu.gender = $('#nuGen').val() || ''; nu.fatherName = $('#nuFather').val().trim() || ''; nu.nationalCode = $('#nuNat').val().trim() || ''; }
       if (role === 'professor') { nu.specialty = $('#nuSpec').val().trim() || ''; nu.university = $('#nuUni').val().trim() || ''; }
+      
+      // ذخیره در localStorage
       users.push(nu);
       localStorage.setItem('aoura_users', JSON.stringify(users));
+      
+      // تلاش برای ذخیره در دیتابیس از طریق API
+      if (typeof API !== 'undefined' && !API.config.demoMode) {
+        API.post('/admin/users', { fullName: name, email: email.toLowerCase(), password: pass, role: role })
+          .done(function (res) {
+            console.log('[Aora] کاربر در دیتابیس هم ذخیره شد:', res);
+            // بروزرسانی ID محلی با ID دیتابیس
+            if (res && res.data && res.data.id) {
+              var localUsers = JSON.parse(localStorage.getItem('aoura_users') || '[]');
+              var localIdx = localUsers.findIndex(function (u) { return u.email === email.toLowerCase(); });
+              if (localIdx >= 0) {
+                localUsers[localIdx].dbId = res.data.id;
+                localStorage.setItem('aoura_users', JSON.stringify(localUsers));
+              }
+            }
+          })
+          .fail(function (msg) {
+            console.warn('[Aora] ذخیره در دیتابیس ناموفق (محلی ذخیره شد):', msg);
+          });
+      }
+      
       closeModal();
       renderUTab(role === 'professor' ? 'professors' : role === 'admin' ? 'admins' : 'students');
       updateBadges();
@@ -1142,5 +1216,6 @@ $(document).ready(function () {
 
 });
 </script>
+<script>if(typeof lucide!=='undefined')lucide.createIcons();</script>
 </body>
 </html>

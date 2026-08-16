@@ -124,6 +124,7 @@
     <script src="https://unpkg.com/grapesjs-plugin-forms@2.0.5/dist/grapesjs-plugin-forms.min.js"></script>
     <script src="https://unpkg.com/grapesjs-blocks-basic@1.0.1/dist/grapesjs-blocks-basic.min.js"></script>
     <script src="js/ajax.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
     <script>
     (function() {
         'use strict';
@@ -363,7 +364,8 @@
             return '<!DOCTYPE html><html lang="fa" dir="rtl"><head>' +
                    '<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
                    '<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">' +
-                   '<style>' + css + '</style></head><body>' + html + '</body></html>';
+                   '<style>' + css + '</style></head><body>' + html + '<script>if(typeof lucide!=='undefined')lucide.createIcons();</script>
+</body></html>';
         }
 
         // ═══ ذخیره خودکار (هر ۶۰ ثانیه) ═══
@@ -375,7 +377,9 @@
 
     })();
     </script>
+<script>if(typeof lucide!=='undefined')lucide.createIcons();</script>
 </body>
+<script>if(typeof lucide!=='undefined')lucide.createIcons();</script>
 </html>
 ```</p>
 
